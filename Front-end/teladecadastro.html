@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Cadastro - Formatis</title>
+  <link rel="icon" href="favicon1.png" type="image/png">
+  <style>
+    body {
+      font-family: 'Segoe UI', sans-serif;
+      background-color: #4582f5;
+      margin: 0;
+      padding: 0;
+      color: #fff; 
+    }
+
+    .wrapper {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+    }
+
+    .container {
+      background: rgba(0, 0, 0, 0.4);
+      padding: 40px;
+      border-radius: 12px;
+      box-shadow: 0 8px 16px rgba(0,0,0,0.3);
+      width: 100%;
+      max-width: 350px;
+      text-align: center;
+      animation: fadeIn 1s ease-in-out;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+
+    h2 {
+      text-align: center;
+      color: #fff;
+      font-size: 2rem;
+    }
+
+    label {
+      display: block;
+      margin-top: 15px;
+      font-weight: bold;
+      color: #fff;
+    }
+
+    input[type="text"],
+    input[type="email"],
+    input[type="password"] {
+      width: 100%;
+      padding: 10px;
+      margin-top: 5px;
+      border: 1px solid #ccc;
+      border-radius: 4px;
+      box-sizing: border-box;
+    }
+
+    button {
+      width: 100%;
+      padding: 12px;
+      margin-top: 20px;
+      background-color: #00c9ff;
+      color: white;
+      border: none;
+      border-radius: 4px;
+      font-size: 16px;
+      cursor: pointer;
+      transition: background-color 0.3s;
+    }
+
+    button:hover {
+      background-color: #007acc;
+    }
+
+    .mensagem {
+      margin-top: 15px;
+      text-align: center;
+      font-size: 0.95rem;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="wrapper">
+    <div class="container">
+      <h2>Cadastro Formatis ia</h2>
+      <form id="cadastroForm">
+        <label for="nome">Nome completo</label>
+        <input type="text" id="nome" name="nome" required>
+
+        <label for="email">E-mail</label>
+        <input type="email" id="email" name="email" required>
+
+        <label for="senha">Senha</label>
+        <input type="password" id="senha" name="senha" required>
+
+        <button type="submit">Cadastrar</button>
+        <div class="mensagem" id="mensagem"></div>
+      </form>
+    </div>
+  </div>
+
+  <script>
+    document.getElementById('cadastroForm').addEventListener('submit', function(event) {
+      event.preventDefault();
+
+      const nome = document.getElementById('nome').value.trim();
+      const email = document.getElementById('email').value.trim();
+      const senha = document.getElementById('senha').value.trim();
+      const mensagem = document.getElementById('mensagem');
+
+      if (!nome || !email || !senha) {
+        mensagem.textContent = 'Preencha todos os campos.';
+        mensagem.style.color = 'red';
+        return;
+      }
+
+      if (localStorage.getItem(email)) {
+        mensagem.textContent = 'Este e-mail já está cadastrado.';
+        mensagem.style.color = 'red';
+        return;
+      }
+
+      const usuario = { nome, email, senha };
+      localStorage.setItem(email, JSON.stringify(usuario));
+      mensagem.textContent = 'Cadastro realizado com sucesso! Redirecionando...';
+      mensagem.style.color = 'lightgreen';
+
+      setTimeout(() => {
+        window.location.href = 'telalogin.html'; // ajuste conforme o nome correto do seu arquivo
+      }, 2000);
+    });
+  </script>
+
+</body>
+</html>
+

@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Formatis - Login</title>
+   <link rel="icon" href="favicon1.png" type="image/png">
+  <style>
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      font-family: 'Segoe UI', sans-serif;
+      background: linear-gradient(135deg, #4582f5, #2b41ff);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      min-height: 100vh;
+      color: #fff;
+      padding: 20px;
+    }
+
+    .login-container {
+      background: rgba(0, 0, 0, 0.4);
+      padding: 40px;
+      border-radius: 12px;
+      box-shadow: 0 8px 16px rgba(0,0,0,0.3);
+      width: 100%;
+      max-width: 400px;
+      text-align: center;
+      animation: fadeIn 1s ease-in-out;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(-20px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    h2 {
+      margin-bottom: 20px;
+      font-size: 2rem;
+    }
+
+    input {
+      width: 100%;
+      padding: 12px;
+      margin: 10px 0;
+      border: none;
+      border-radius: 6px;
+      font-size: 1rem;
+    }
+
+    .button-group {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      width: 100%;
+      margin-top: 10px;
+    }
+
+    button {
+      width: 100%;
+      padding: 12px;
+      background-color: #00c9ff;
+      border: none;
+      border-radius: 6px;
+      font-size: 1rem;
+      color: #fff;
+      cursor: pointer;
+      transition: background-color 0.3s ease;
+    }
+
+    button:hover {
+      background-color: #007acc;
+    }
+
+    .error {
+      color: #ff8080;
+      font-size: 0.9rem;
+      margin-top: 10px;
+    }
+
+    @media (max-width: 600px) {
+      body {
+        padding: 10px;
+      }
+
+      .login-container {
+        padding: 20px;
+      }
+
+      h2 {
+        font-size: 1.5rem;
+      }
+
+      input, button {
+        font-size: 0.95rem;
+        padding: 10px;
+      }
+    }
+
+    
+  </style>
+</head>
+<body>
+  
+  <div class="login-container">
+    <h2>Faça login ou cadastre-se para continuar</h2>
+    <input type="text" id="username" placeholder="Usuário">
+    <input type="password" id="password" placeholder="Senha">
+    <div class="button-group">
+      <button onclick="login()">Entrar</button>
+      <button onclick="cadastro()">Cadastrar</button>
+    </div>
+    <div id="error-message" class="error"></div>
+  </div>
+
+  <script>
+  function login() {
+    const user = document.getElementById('username').value;
+    const pass = document.getElementById('password').value;
+    const error = document.getElementById('error-message');
+
+    if (user === '' || pass === '') {
+      error.textContent = 'Preencha todos os campos.';
+    } else if (user === 'admin@admin' && pass === '1234') {
+      error.textContent = '';
+      // Redirecionar para o ambiente virtual
+      window.location.href = 'file:///C:/Users/gusta/OneDrive/%C3%81rea%20de%20Trabalho/formulario.html'; // substitua pelo nome da sua página
+    } else {
+      error.textContent = 'Usuário ou senha incorretos.';
+    }
+  }
+
+  function cadastro() {
+    // Redirecionar para a tela de cadastro
+    window.location.href = 'file:///C:/Users/gusta/OneDrive/%C3%81rea%20de%20Trabalho/teladecadastro.html'; // substitua pelo nome da sua página
+  }
+</script>
+</body>
+</html>

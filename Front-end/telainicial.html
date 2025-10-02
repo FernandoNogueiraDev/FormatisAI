@@ -1,0 +1,217 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Inicio - Formatis</title>
+  <link rel="icon" href="favicon1.png" type="image/png">
+
+  <style>
+    body {
+      margin: 0;
+      font-family: Arial, sans-serif;
+    }
+
+    .navbar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      background-color: #3d4ff7;
+      padding: 10px 20px;
+    }
+
+    .logo img {
+      height: 55px;
+      width: auto;
+    }
+
+    .nav-links {
+      display: flex;
+      list-style: none;
+      margin: 0;
+      padding: 0;
+    }
+
+    .nav-links li {
+      margin: 0 15px;
+    }
+
+    .nav-links a {
+      text-decoration: none;
+      color: white;
+      font-weight: bold;
+      transition: color 0.3s;
+    }
+
+    .nav-links a:hover {
+      color: #ffca28;
+    }
+
+    .search-box {
+      display: flex;
+      align-items: center;
+    }
+
+    .search-box input[type="text"] {
+      padding: 6px;
+      border: none;
+      border-radius: 4px 0 0 4px;
+      outline: none;
+    }
+
+    .search-box button {
+      padding: 6px 12px;
+      border: none;
+      background-color: #ffca28;
+      color: #0d47a1;
+      font-weight: bold;
+      border-radius: 0 4px 4px 0;
+      cursor: pointer;
+      transition: background-color 0.3s;
+    }
+
+    .search-box button:hover {
+      background-color: #ffc107;
+    }
+
+    .container-curso {
+      background: grey;
+      padding: 12px;
+      border-radius: 12px;
+      width: 100%;
+      max-width: 250px;
+      text-align: center;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      color: white;
+    }
+
+    .curso-wrapper {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 20px;
+      padding: 40px;
+    }
+
+    .curso-wrapper h2 {
+      width: 100%;
+      text-align: center;
+      color: #3d4ff7;
+      margin-bottom: 30px;
+    }
+
+    .container-curso button {
+      margin-top: 10px;
+      padding: 8px 16px;
+      border: none;
+      border-radius: 8px;
+      background-color: #3d4ff7;
+      color: white;
+      font-weight: bold;
+      cursor: pointer;
+      transition: background-color 0.3s;
+    }
+
+    .container-curso button:hover {
+      background-color: #00bcd4;
+    }
+  </style>
+</head>
+
+<body>
+
+  <nav class="navbar">
+    <div class="logo">
+      <a href="telainicial.html">
+        <img src="logo.png" alt="Infinity Cursos">
+      </a>
+    </div>
+
+    <ul class="nav-links">
+      <li><a href="#quem-somos">Quem Somos</a></li>
+      <li><a href="#cursos">Cursos</a></li>
+      <li><a href="#meus-cursos">Meus Cursos</a></li>
+      <li><a href="#ajuda">Ajuda</a></li>
+    </ul>
+
+    <div class="search-box">
+      <input type="text" placeholder="Procurar cursos...">
+      <button>Pesquisar</button>
+    </div>
+  </nav>
+
+  <!-- Saudação e banner -->
+  <section style="padding: 40px; text-align: center; background-color: #eef2ff;">
+    <h1 style="color: #3d4ff7;">Bem-vindo à Formatis, Gustavo!</h1>
+    <p style="font-size: 18px; color: #333;">Explore trilhas personalizadas, cursos recomendados e conteúdos gerados por IA especialmente para você.</p>
+    <a href="#meus-cursos" style="display: inline-block; margin-top: 20px; padding: 12px 24px; background-color: #3d4ff7; color: white; border-radius: 8px; text-decoration: none; font-weight: bold;">Ver meus cursos</a>
+  </section>
+
+  <!-- Categorias de aprendizado -->
+  <section style="padding: 40px; background-color: #f5f5f5;">
+    <h2 style="text-align: center; color: #3d4ff7;">Categorias populares</h2>
+    <div class="curso-wrapper">
+      <div class="container-curso">
+        <h3>Programação</h3>
+        <p>Aprenda Python, JavaScript, HTML e mais.</p>
+        <button>Acessar</button>
+      </div>
+      <div class="container-curso">
+        <h3>Design</h3>
+        <p>UI/UX, ferramentas criativas e prototipagem.</p>
+        <button>Acessar</button>
+      </div>
+      <div class="container-curso">
+        <h3>Negócios</h3>
+        <p>Marketing, gestão, empreendedorismo e vendas.</p>
+        <button>Acessar</button>
+      </div>
+      <div class="container-curso">
+        <h3>Idiomas</h3>
+        <p>Inglês, espanhol, francês e mais.</p>
+        <button>Acessar</button>
+      </div>
+    </div>
+  </section>
+
+  <!-- Recomendações da IA -->
+  <section style="padding: 40px; background-color: #fff;">
+    <h2 style="text-align: center; color: #3d4ff7;">Recomendações da IA para hoje</h2>
+    <div class="curso-wrapper">
+      <div class="container-curso">
+        <h3>Como a IA está mudando o mundo</h3>
+        <p>Artigo interativo sobre impactos da inteligência artificial.</p>
+        <button>Ler agora</button>
+      </div>
+      <div class="container-curso">
+        <h3>Curso rápido: IA em 10 minutos</h3>
+        <p>Vídeo introdutório para iniciantes.</p>
+        <button>Assistir</button>
+      </div>
+    </div>
+  </section>
+
+  <!-- Seção de cursos gerados pela IA -->
+  <section id="meus-cursos" class="curso-wrapper" style="background-color: #f5f5f5;">
+    <h2>Cursos gerados para você</h2>
+    <div class="container-curso">
+      <h3>Introdução à IA</h3>
+      <p>Conceitos básicos e aplicações práticas da inteligência artificial.</p>
+      <button>Acessar</button>
+    </div>
+    <div class="container-curso">
+      <h3>Machine Learning</h3>
+      <p>Como algoritmos aprendem com dados e geram previsões.</p>
+      <button>Acessar</button>
+    </div>
+    <div class="container-curso">
+      <h3>IA na Educação</h3>
+      <p>Transformações no ensino com uso de inteligência artificial.</p>
+      <button>Acessar</button>
+    </div>
+  </section>
+
+</body>
+</html>
