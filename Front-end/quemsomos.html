@@ -1,0 +1,289 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Quem somos - Fomatis</title>
+  <link rel="icon" href="imgs/favicon.jpg" type="image/png">
+  <style>
+    body { margin: 0; font-family: Arial, sans-serif; }
+
+    .navbar {
+      display: flex; justify-content: space-around; align-items: center;
+      margin: auto;
+    }
+    .logo img { height: 55px; width: auto; }
+    .nav-links { display: flex; list-style: none; margin: 0; padding: 0; }
+    .nav-links li { margin: 0 15px; }
+    .nav-links a { text-decoration: none; color: #3d4ff7; font-weight: bold; transition: color 0.3s; }
+    .nav-links a:hover { color: #ffca28; }
+   
+    .search-box {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.search-toggle {
+  background: none;
+  border: none;
+  font-size: 20px;
+  cursor: pointer;
+  color: white;
+  padding: 6px;
+}
+
+.search-input {
+  width: 0;
+  opacity: 0;
+  padding: 6px;
+  border: none;
+  border-radius: 4px;
+  outline: none;
+  transition: width 0.3s ease, opacity 0.3s ease;
+  margin-left: 10px;
+}
+
+.search-box.active .search-input {
+  width: 200px;
+  opacity: 1;
+}
+
+    .container-curso {
+      background: grey; padding: 12px; border-radius: 12px; width: 100%; max-width: 250px;
+      text-align: center; display: flex; flex-direction: column; align-items: center; color: white;
+    }
+    .curso-wrapper { display: flex; flex-wrap: wrap; justify-content: center; gap: 20px; padding: 40px; }
+    .curso-wrapper h2 { width: 100%; text-align: center; color: #3d4ff7; margin-bottom: 30px; }
+    .container-curso button {
+      margin-top: 10px; padding: 8px 16px; border: none; border-radius: 8px;
+      background-color: #3d4ff7; color: white; font-weight: bold; cursor: pointer; transition: background-color 0.3s;
+    }
+    .container-curso button:hover { background-color: #00bcd4; }
+
+    .btn-group { display: flex; justify-content: center; gap: 10px; flex-wrap: wrap; margin-top: 10px; }
+    .btn {
+      padding: 10px 20px; border: 2px solid transparent; border-radius: 8px;
+      background: #f0f0f0; color: #222; cursor: pointer;
+      transition: transform 0.2s ease, box-shadow 0.3s ease; font-weight: bold;
+    }
+    .btn:hover { transform: scale(1.05); box-shadow: 0 0 10px rgba(255,255,255,0.3); }
+    .btn.selected { color: #000; background: #fff; animation: rainbow-glow 2.5s linear infinite; }
+    @keyframes rainbow-glow {
+      0% { box-shadow: 0 0 16px rgba(255, 0, 0, 0.8); }
+      25% { box-shadow: 0 0 16px rgba(255, 165, 0, 0.8); }
+      50% { box-shadow: 0 0 16px rgba(0, 255, 0, 0.8); }
+      75% { box-shadow: 0 0 16px rgba(0, 0, 255, 0.8); }
+      100% { box-shadow: 0 0 16px rgba(238, 130, 238, 0.8); }
+    }
+    .hidden { display: none; }
+    .submit-btn { margin-top: 30px; display: flex; justify-content: center; }
+    #enviarBtn { background: transparent; color: white; border: 2px solid white; }
+
+    /* Modal */
+    #modalCurso {
+      display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+      background: rgba(0,0,0,0.6); z-index: 9999; justify-content: center; align-items: center;
+    }
+    #modalCurso .container {
+      background: #fff; color: #333; padding: 30px; border-radius: 16px;
+      max-width: 800px; width: 90%; box-shadow: 0 0 20px rgba(0,0,0,0.3);
+      position: relative; animation: fadeIn 0.5s ease;
+    }
+    @keyframes fadeIn {
+      from { opacity: 0; transform: scale(0.95); }
+      to { opacity: 1; transform: scale(1); }
+    }
+
+    .input-box {
+  display: block;
+  margin: 20px auto;
+  width: 95%;
+  max-width: 700px;
+  padding: 14px 18px;
+  font-size: 18px;
+  border-radius: 8px;
+  border: 2px solid #ccc;
+  outline: none;
+  transition: border-color 0.3s;
+  box-sizing: border-box;
+}
+.input-box:focus {
+  border-color: #3d4ff7;
+  box-shadow: 0 0 0 2px rgba(61, 79, 247, 0.2);
+}
+.main-content {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 20px;
+}
+
+#gerarBtn {
+  background-color: #0056d2; /* azul mais forte */
+  color: white;
+  font-size: 18px;
+  padding: 14px 28px;
+  border: none;
+  border-radius: 10px;
+  font-weight: bold;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+#gerarBtn:hover {
+  background-color: #003ea1;
+}
+
+#mensagemStatus {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+  margin: 20px auto;
+  font-weight: bold;
+  font-size: 16px;
+  padding: 12px 20px;
+  border-radius: 8px;
+  max-width: 500px;
+  min-height: 40px;
+  transition: opacity 1s ease-out;
+}
+
+#mensagemStatus.fade-out {
+  opacity: 0;
+}
+
+.fade-out {
+  transition: opacity 0.5s ease;
+  opacity: 0;
+}
+  </style>
+</head>
+<body>
+  <div class="page">
+  <!-- NAVBAR -->
+  <nav class="navbar">
+    <div class="logo">
+      <a href="index.html"><img src="imgs/logo.jpg" alt="Infinity Cursos"></a>
+    </div>
+    <ul class="nav-links">
+      <li><a href="#meus-cursos">Minhas trilhas</a></li>
+      <li><a href="telacursos.html">Cursos</a></li>
+      <li><a href="quemsomos.html">Quem Somos</a></li>
+      <li><a href="#ajuda">Ajuda</a></li>
+    </ul>
+    <div class="search-box">
+  <button class="search-toggle">
+    🔍
+  </button>
+  <input type="text" class="search-input" placeholder="Procurar cursos...">
+</div>
+
+    </div>
+  </nav>
+
+  <!-- Quem somos -->
+  <section style="padding: 40px; text-align: center; background-color: #eef2ff;">
+    <h1 style="color: #3d4ff7;">Quem Somos</h1>
+    <p style="font-size: 18px; color: #333;">Na Fomatis, acreditamos que cada pessoa tem um caminho único de aprendizado — e que descobrir esse caminho é o primeiro passo para alcançar o sucesso. <br/>
+    Nossa plataforma foi criada com um propósito claro: ajudar alunos a encontrar a área de estudo que mais combina com seus interesses, habilidades e objetivos. <br/>
+    Através de trilhas personalizadas de aprendizado, guiamos o estudante desde a descoberta até o desenvolvimento prático, conectando-o com conteúdos relevantes e experiências que realmente fazem sentido.<br/>
+    Mais do que uma ferramenta de ensino, a Fomatis é uma parceira de jornada. Queremos inspirar a curiosidade, fortalecer a autoconfiança e mostrar que aprender pode — e deve — ser algo empolgante.<br/><br/>
+    <span style="color: #3d4ff7; font-weight: bold;">Aqui, o foco é você: seu ritmo, suas metas e o seu futuro.</span></p>
+  </section>
+
+  <!-- Missão, visão e valores -->
+  <section style="padding: 40px; text-align: center; background-color: #f5f5f5;">
+    <h2 style="text-align: center; color: #3d4ff7;">Missão</h2>
+    <p style="font-size: 18px; color: #333;">Guiar alunos na descoberta de seus talentos e interesses por meio de trilhas de aprendizado personalizadas, tornando o processo de estudar mais direcionado, envolvente e eficaz. <br/>
+    Queremos transformar a forma como as pessoas aprendem — ajudando cada uma a construir seu próprio caminho de conhecimento e realização.</p> <br/><br/>
+
+    <h2 style="text-align: center; color: #3d4ff7;">Visão</h2>
+    <p style="font-size: 18px; color: #333;">Ser referência em personalização do aprendizado no Brasil, conectando tecnologia e educação para formar estudantes mais conscientes, autônomos e preparados para os desafios do futuro.</p> <br/><br/>
+
+    <h2 style="text-align: center; color: #3d4ff7;">Valores</h2>
+    <p style="font-size: 18px; color: #333;"><span style="font-weight: bold;">Personalização:</span> cada aluno é único, e seu aprendizado também deve ser.<br/>
+    <span style="font-weight: bold;">Acessibilidade:</span> educação de qualidade deve ser possível para todos.<br/>
+    <span style="font-weight: bold;">Inovação:</span> usamos tecnologia como ferramenta de transformação e descoberta.<br/>
+    <span style="font-weight: bold;">Autonomia:</span> incentivamos o estudante a ser protagonista da própria jornada.<br/>
+    <span style="font-weight: bold;">Empatia:</span> entendemos que por trás de cada clique existe uma pessoa com sonhos, dúvidas e potencial.<br/>
+    <span style="font-weight: bold;">Evolução contínua:</span> aprendemos junto com nossos usuários, sempre buscando melhorar.</p>
+  </section>
+
+  <!-- Nosso propósito -->
+  <section style="padding: 40px; text-align: center;">
+    <h2 style="text-align: center; color: #3d4ff7;">Nosso propósito</h2>
+    <p style="font-size: 18px; color: #333;">Na Fomatis, acreditamos que aprender é muito mais do que acumular conhecimento — é descobrir o próprio caminho.<br/>
+    Nosso propósito é transformar a jornada de aprendizado em uma experiência personalizada, significativa e inspiradora, onde cada aluno possa se enxergar progredindo, passo a passo, rumo ao que realmente ama fazer.<br/>
+    Queremos mostrar que o estudo não precisa ser algo imposto, e sim uma escolha consciente, guiada por curiosidade, propósito e paixão.<br/>
+    Com tecnologia, empatia e visão de futuro, a Fomatis existe para formar mentes curiosas, criativas e confiantes — prontas para aprender, evoluir e transformar o mundo.</p>
+  </section>
+
+ <script>
+    document.querySelector('.search-toggle').addEventListener('click', () => {
+    document.querySelector('.search-box').classList.toggle('active');
+  });
+
+  document.getElementById("gerarBtn").addEventListener("click", function () {
+    const tema = document.querySelector(".input-box").value.trim();
+    const tipoSelecionado = document.querySelector("#tipoConteudo .btn.selected");
+    const nivelSelecionado = document.querySelector("#nivelBtns .btn.selected");
+    const duracaoSelecionada = document.querySelector("#duracaoBtns .btn.selected");
+    const mensagemStatus = document.getElementById("mensagemStatus");
+
+    const tipoValor = tipoSelecionado ? tipoSelecionado.getAttribute("data-value") : "";
+    const duracaoObrigatoria = (tipoValor === "video" || tipoValor === "ambos");
+
+    let erro = "";
+
+    if (!tema) {
+      erro = " Digite o tema do curso.";
+    } else if (!tipoSelecionado) {
+      erro = " Selecione o tipo de conteúdo.";
+    } else if (!nivelSelecionado) {
+      erro = " Selecione o nível de conhecimento.";
+    } else if (duracaoObrigatoria && !duracaoSelecionada) {
+      erro = " Selecione a duração do vídeo.";
+    }
+
+    if (erro) {
+      mensagemStatus.style.color = "red";
+      mensagemStatus.textContent = erro;
+      mensagemStatus.classList.remove("fade-out");
+      mensagemStatus.style.opacity = '1';
+
+      setTimeout(() => {
+        mensagemStatus.classList.add("fade-out");
+        setTimeout(() => {
+          mensagemStatus.textContent = '';
+          mensagemStatus.classList.remove("fade-out");
+          mensagemStatus.style.opacity = '1';
+        }, 500);
+      }, 1000);
+
+      return;
+    }
+  });
+
+  // Adiciona seleção visual aos botões
+  document.querySelectorAll(".btn-group .btn").forEach(btn => {
+    btn.addEventListener("click", () => {
+      const grupo = btn.parentElement;
+      grupo.querySelectorAll(".btn").forEach(b => b.classList.remove("selected"));
+      btn.classList.add("selected");
+
+      // Mostrar duração se tipo for vídeo ou ambos
+      if (grupo.id === "tipoConteudo") {
+        const valor = btn.getAttribute("data-value");
+        const duracao = document.getElementById("duracaoSection");
+        if (valor === "video" || valor === "ambos") {
+          duracao.classList.remove("hidden");
+        } else {
+          duracao.classList.add("hidden");
+        }
+      }
+    });
+  });
+</script>
+</body>
+</html>
