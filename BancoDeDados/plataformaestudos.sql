@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Tempo de geração: 05/10/2025 às 22:37
+-- Tempo de geração: 05/10/2025 às 23:05
 -- Versão do servidor: 10.4.32-MariaDB
 -- Versão do PHP: 8.2.12
 
@@ -31,6 +31,7 @@ CREATE TABLE `aluno` (
   `idAluno` int(11) NOT NULL,
   `nome` varchar(100) NOT NULL,
   `email` varchar(100) NOT NULL,
+  `senha` varchar(100) NOT NULL,
   `data_nascimento` date NOT NULL,
   `criacao_em` timestamp NOT NULL DEFAULT current_timestamp()
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_general_ci;

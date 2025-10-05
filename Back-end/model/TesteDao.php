@@ -18,7 +18,7 @@ require_once './Aluno.php';
     <ol>
     <?php
     foreach (Aluno::selectTodos() as $teste) {
-        echo "<li>" . $teste->getidAluno() . "; " . $teste->getNome() . "; " . $teste->getEmail() . "; " . $teste->getDataNascimento() . "; " . "</li>";
+        echo "<li>" . $teste->getidAluno() . "; " . $teste->getNome() . "; " . $teste->getEmail() . "; " . $teste->getSenha() . "; " . $teste->getDataNascimento() . "; " . "</li>";
     }
     ?>
     </ol>

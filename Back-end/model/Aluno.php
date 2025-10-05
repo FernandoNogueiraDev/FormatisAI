@@ -6,15 +6,17 @@ class Aluno {
     private $idAluno;
     private $nome;
     private $email;
+    private $senha;
     private $data_nascimento;
     private $criacao_em;
 
 
-    function __construct($idAluno, $nome, $email, $data_nascimento, $criacao_em)
+    function __construct($idAluno, $nome, $email, $senha, $data_nascimento, $criacao_em)
     {
         $this->idAluno = $idAluno;
         $this->nome = $nome;
         $this->email = $email;
+        $this->senha = $senha;
         $this->data_nascimento = $data_nascimento;
         $this->criacao_em = $criacao_em;
 
@@ -51,6 +53,16 @@ class Aluno {
         $this->email = $email;
     }
 
+    public function getSenha()
+    {
+        return $this->senha;
+    }
+
+    public function setSenha($senha)
+    {
+        $this->senha = $senha;
+    }
+
     public function getDataNascimento()
     {
         return $this->data_nascimento;
@@ -72,39 +84,39 @@ class Aluno {
     }
 
     public static function create($Aluno) {
-        $sql = 'INSERT INTO Aluno (nome, email, data_nascimento) VALUES (?,?,?)';
+        $sql = 'INSERT INTO Aluno (nome, email, senha data_nascimento) VALUES (?,?,?)';
         $banco = new Banco();
         $stmt = $banco->conexao()->prepare($sql);
-        $stmt->bindParam($Aluno->getNome(), $Aluno->getEmail(), $Aluno->getDataNascimento());
+        $stmt->bindParam($Aluno->getNome(), $Aluno->getEmail(), $Aluno->getSenha(), $Aluno->getDataNascimento());
     }
 
     public static function update($Aluno) {
-        $sql = 'UPDATE Aluno SET nome = ?, email = ?, data_nascimento = ? WHERE idAluno = ?';
+        $sql = 'UPDATE Aluno SET nome = ?, email = ?, senha = ?, data_nascimento = ? WHERE idAluno = ?';
         $banco = new Banco();
         $stmt = $banco->conexao()->prepare($sql);
-        $stmt->bindParam($Aluno->getNome(), $Aluno->getEmail(), $Aluno->getDataNascimento(), $Aluno->getIdAluno());
+        $stmt->bindParam($Aluno->getNome(), $Aluno->getEmail(), $Aluno->getSenha(), $Aluno->getDataNascimento(), $Aluno->getIdAluno());
     }
 
     public static function selectTodos() {
-        $sql = 'SELECT idAluno, nome, email, data_nascimento, criacao_em FROM aluno';
+        $sql = 'SELECT idAluno, nome, email, senha data_nascimento, criacao_em FROM aluno';
         $banco = new Banco();
         $resultSet = $banco->conexao()->query($sql);
         $listaRS = $resultSet->fetchAll();
 
         $listaAlunos = [];
         foreach($listaRS as $item){
-            $listaAlunos[] = new Aluno($item['idAluno'], $item['nome'], $item['email'], $item['data_nascimento'], $item['criacao_em']);
+            $listaAlunos[] = new Aluno($item['idAluno'], $item['nome'], $item['email'], $item['senha'], $item['data_nascimento'], $item['criacao_em']);
         }
 
         return $listaAlunos;
     }
 
     public static function selectPorId($id) {
-        $sql = "SELECT idAluno, nome, email, data_nascimento, criacao_em FROM aluno WHERE idAluno = $id";
+        $sql = "SELECT idAluno, nome, email, senha, data_nascimento, criacao_em FROM aluno WHERE idAluno = $id";
         $banco = new Banco();
         $resultSet = $banco->conexao()->query($sql);
         $item = $resultSet->fetch();
-        $Aluno = new Aluno($item['idAluno'], $item['nome'], $item['email'], $item['data_nascimento'], $item['criacao_em']);
+        $Aluno = new Aluno($item['idAluno'], $item['nome'], $item['email'], $item['senha'], $item['data_nascimento'], $item['criacao_em']);
         return $Aluno;
     }
 }
