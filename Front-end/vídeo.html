@@ -1,0 +1,271 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+  <meta charset="UTF-8">
+  <title>Player de Vídeo - Formatis AI</title>
+  <link rel="icon" href="favicon1.png" type="image/png">
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background-color: #f0f0f0;
+      padding: 40px;
+      text-align: center;
+    }
+
+    h1 {
+      color: #333;
+      margin-bottom: 30px;
+    }
+
+    .video-container {
+      position: relative;
+      width: 100%;
+      max-width: 720px;
+      margin: 0 auto;
+      box-shadow: 0 0 10px rgba(0,0,0,0.2);
+      border-radius: 12px;
+      overflow: hidden;
+    }
+
+    #player {
+      width: 100%;
+      height: 405px;
+    }
+
+    iframe {
+      width: 100%;
+      height: 100%;
+      border: none;
+    }
+
+    .feedback-section {
+      margin-top: 30px;
+    }
+
+    .feedback-title {
+      font-size: 20px;
+      color: #333;
+      margin-bottom: 15px;
+      transition: opacity 0.5s ease;
+    }
+
+    .feedback-buttons {
+      display: flex;
+      justify-content: center;
+      gap: 20px;
+      transition: opacity 0.5s ease;
+    }
+
+    .feedback-buttons button {
+      font-size: 18px;
+      padding: 12px 24px;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      transition: transform 0.2s ease, box-shadow 0.3s ease;
+    }
+
+    .like-btn {
+      background-color: #4caf50;
+      color: white;
+    }
+
+    .dislike-btn {
+      background-color: #f44336;
+      color: white;
+    }
+
+    .feedback-buttons button:hover {
+      transform: scale(1.05);
+      box-shadow: 0 0 10px rgba(0,0,0,0.2);
+    }
+
+    .feedback-message {
+      margin-top: 20px;
+      font-size: 18px;
+      color: #333;
+      opacity: 0;
+      transition: opacity 0.5s ease;
+    }
+
+    .feedback-message.show {
+      opacity: 1;
+    }
+
+    .hidden {
+      display: none;
+    }
+
+    .feedback-form {
+      margin-top: 20px;
+      text-align: left;
+      max-width: 500px;
+      margin-left: auto;
+      margin-right: auto;
+      background: #fff;
+      padding: 20px;
+      border-radius: 12px;
+      box-shadow: 0 0 10px rgba(0,0,0,0.1);
+    }
+
+    .feedback-form label {
+      display: block;
+      margin-bottom: 10px;
+      font-size: 16px;
+      cursor: pointer;
+    }
+
+    .feedback-form input[type="checkbox"] {
+      margin-right: 10px;
+    }
+
+    .outro-input {
+      margin-top: 10px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .outro-input input[type="text"] {
+      flex: 1;
+      padding: 8px;
+      border-radius: 6px;
+      border: 1px solid #ccc;
+    }
+
+    .submit-feedback {
+      margin-top: 20px;
+      text-align: center;
+    }
+
+    .submit-feedback button {
+      padding: 10px 20px;
+      background-color: #3d4ff7;
+      color: white;
+      border: none;
+      border-radius: 8px;
+      font-weight: bold;
+      cursor: pointer;
+      transition: background-color 0.3s ease;
+    }
+
+    .submit-feedback button:hover {
+      background-color: #00bcd4;
+    }
+  </style>
+</head>
+<body>
+
+  <h1>Assista ao conteúdo do curso</h1>
+
+  <div class="video-container">
+    <div id="player"></div>
+  </div>
+
+  <div class="feedback-section">
+    <div id="feedbackTitle" class="feedback-title">Gostou do conteúdo apresentado?</div>
+    <div id="feedbackButtons" class="feedback-buttons">
+      <button class="like-btn" id="likeBtn">👍 Gostei</button>
+      <button class="dislike-btn" id="dislikeBtn">👎 Não gostei</button>
+    </div>
+
+    <div id="mensagemFeedback" class="feedback-message">Agradecemos seu feedback!</div>
+
+    <div id="formularioFeedback" class="feedback-form hidden">
+      <label><input type="checkbox" value="irrelevante"> Não achei o conteúdo relevante</label>
+      <label><input type="checkbox" value="nao-procurava"> Não era o que eu estava procurando</label>
+      <label><input type="checkbox" value="nao-condiz"> O conteúdo apresentado não condiz com o meu curso</label>
+      <label><input type="checkbox" id="outroCheckbox" value="outro"> Outro</label>
+
+      <div id="outroTexto" class="outro-input hidden">
+        <label for="outroInput">Descreva:</label>
+        <input type="text" id="outroInput" placeholder="Digite aqui...">
+      </div>
+
+      <div class="submit-feedback">
+        <button id="enviarBtn">Enviar</button>
+      </div>
+    </div>
+  </div>
+
+  <script src="https://www.youtube.com/iframe_api"></script>
+  <script>
+    document.addEventListener('DOMContentLoaded', function () {
+      const videoId = 'GTFIBhDooik';
+      const feedbackKey = 'feedback_' + videoId;
+
+      const feedbackTitle = document.getElementById('feedbackTitle');
+      const feedbackButtons = document.getElementById('feedbackButtons');
+      const mensagemFeedback = document.getElementById('mensagemFeedback');
+      const formularioFeedback = document.getElementById('formularioFeedback');
+      const outroCheckbox = document.getElementById('outroCheckbox');
+      const outroTexto = document.getElementById('outroTexto');
+      const enviarBtn = document.getElementById('enviarBtn');
+
+      // Oculta feedback se já foi enviado
+      if (localStorage.getItem(feedbackKey)) {
+        feedbackTitle.classList.add('hidden');
+        feedbackButtons.classList.add('hidden');
+        formularioFeedback.classList.add('hidden');
+        mensagemFeedback.classList.add('show');
+      }
+
+      document.getElementById('likeBtn').addEventListener('click', () => {
+        feedbackTitle.classList.add('hidden');
+        feedbackButtons.classList.add('hidden');
+        mensagemFeedback.classList.add('show');
+        localStorage.setItem(feedbackKey, 'like');
+      });
+
+      document.getElementById('dislikeBtn').addEventListener('click', () => {
+        feedbackTitle.classList.add('hidden');
+        feedbackButtons.classList.add('hidden');
+        formularioFeedback.classList.remove('hidden');
+      });
+
+      outroCheckbox.addEventListener('change', function () {
+        outroTexto.classList.toggle('hidden', !this.checked);
+      });
+
+      enviarBtn.addEventListener('click', () => {
+        formularioFeedback.classList.add('hidden');
+        mensagemFeedback.classList.add('show');
+        localStorage.setItem(feedbackKey, 'dislike');
+      });
+
+      // YouTube API
+      let player;
+      let tempoSalvo = localStorage.getItem('progresso_' + videoId);
+
+      window.onYouTubeIframeAPIReady = function () {
+        player = new YT.Player('player', {
+          videoId: videoId,
+          playerVars: {
+            autoplay: 0,
+            controls: 1,
+          },
+          events: {
+            onReady: onPlayerReady,
+            onStateChange: onPlayerStateChange
+          }
+        });
+      };
+
+      function onPlayerReady(event) {
+        if (tempoSalvo) {
+          event.target.seekTo(parseFloat(tempoSalvo), true);
+        }
+      }
+
+      function onPlayerStateChange(event) {
+        if (event.data === YT.PlayerState.PLAYING) {
+          setInterval(() => {
+            const tempoAtual = player.getCurrentTime();
+            localStorage.setItem('progresso_' + videoId, tempoAtual);
+          }, 5000);
+        }
+      }
+    });
+  </script>
+</body>
+</html>
