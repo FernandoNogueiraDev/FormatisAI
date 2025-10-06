@@ -1,152 +1,334 @@
--- phpMyAdmin SQL Dump
--- version 5.2.1
--- https://www.phpmyadmin.net/
---
--- Host: 127.0.0.1
--- Tempo de geração: 05/10/2025 às 23:05
--- Versão do servidor: 10.4.32-MariaDB
--- Versão do PHP: 8.2.12
+-- MySQL Workbench Forward Engineering
 
-SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
-START TRANSACTION;
-SET time_zone = "+00:00";
+SET @OLD_UNIQUE_CHECKS=@@UNIQUE_CHECKS, UNIQUE_CHECKS=0;
+SET @OLD_FOREIGN_KEY_CHECKS=@@FOREIGN_KEY_CHECKS, FOREIGN_KEY_CHECKS=0;
+SET @OLD_SQL_MODE=@@SQL_MODE, SQL_MODE='ONLY_FULL_GROUP_BY,STRICT_TRANS_TABLES,NO_ZERO_IN_DATE,NO_ZERO_DATE,ERROR_FOR_DIVISION_BY_ZERO,NO_ENGINE_SUBSTITUTION';
 
+-- -----------------------------------------------------
+-- Schema PlataformaEstudos
+-- -----------------------------------------------------
 
-/*!40101 SET @OLD_CHARACTER_SET_CLIENT=@@CHARACTER_SET_CLIENT */;
-/*!40101 SET @OLD_CHARACTER_SET_RESULTS=@@CHARACTER_SET_RESULTS */;
-/*!40101 SET @OLD_COLLATION_CONNECTION=@@COLLATION_CONNECTION */;
-/*!40101 SET NAMES utf8mb4 */;
+-- -----------------------------------------------------
+-- Schema PlataformaEstudos
+-- -----------------------------------------------------
+CREATE SCHEMA IF NOT EXISTS `PlataformaEstudos` DEFAULT CHARACTER SET utf8 ;
+USE `PlataformaEstudos` ;
 
---
--- Banco de dados: `plataformaestudos`
---
-
--- --------------------------------------------------------
-
---
--- Estrutura para tabela `aluno`
---
-
-CREATE TABLE `aluno` (
-  `idAluno` int(11) NOT NULL,
-  `nome` varchar(100) NOT NULL,
-  `email` varchar(100) NOT NULL,
+-- -----------------------------------------------------
+-- Table `PlataformaEstudos`.`Aluno`
+-- -----------------------------------------------------
+CREATE TABLE IF NOT EXISTS `PlataformaEstudos`.`Aluno` (
+  `idAluno` INT NOT NULL AUTO_INCREMENT,
+  `nome` VARCHAR(100) NOT NULL,
+  `email` VARCHAR(100) NOT NULL,
   `senha` varchar(100) NOT NULL,
-  `data_nascimento` date NOT NULL,
-  `criacao_em` timestamp NOT NULL DEFAULT current_timestamp()
-) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_general_ci;
+  `data_nascimento` DATE NOT NULL,
+  `criacao_em` TIMESTAMP NOT NULL,
+  PRIMARY KEY (`idAluno`))
+ENGINE = InnoDB;
 
---
--- Acionadores `aluno`
---
+
+-- -----------------------------------------------------
+-- Table `PlataformaEstudos`.`historico_escolar`
+-- -----------------------------------------------------
+CREATE TABLE IF NOT EXISTS `PlataformaEstudos`.`historico_escolar` (
+  `idHistorico_escolar` INT NOT NULL AUTO_INCREMENT,
+  `aluno_id` INT NOT NULL,
+  `disciplina` VARCHAR(120) NOT NULL,
+  `periodo` VARCHAR(20) NULL,
+  `media` DECIMAL(4,2) NULL,
+  `carga_horaria` INT NULL,
+  PRIMARY KEY (`idHistorico_escolar`),
+  INDEX `idAluno_idx` (`aluno_id` ASC),
+  CONSTRAINT `fk_historico_aluno`
+    FOREIGN KEY (`aluno_id`)
+    REFERENCES `PlataformaEstudos`.`Aluno` (`idAluno`)
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION)
+ENGINE = InnoDB;
+
+
+-- -----------------------------------------------------
+-- Table `PlataformaEstudos`.`Fonte`
+-- -----------------------------------------------------
+CREATE TABLE IF NOT EXISTS `PlataformaEstudos`.`Fonte` (
+  `idFonte` INT NOT NULL AUTO_INCREMENT,
+  `nome_fonte` VARCHAR(120) NOT NULL,
+  PRIMARY KEY (`idFonte`))
+ENGINE = InnoDB;
+
+
+-- -----------------------------------------------------
+-- Table `PlataformaEstudos`.`conteudo`
+-- -----------------------------------------------------
+CREATE TABLE IF NOT EXISTS `PlataformaEstudos`.`conteudo` (
+  `idConteudo` INT NOT NULL AUTO_INCREMENT,
+  `fonte_id` INT NOT NULL,
+  `titulo` VARCHAR(200) NOT NULL,
+  `categoria` VARCHAR(100) NOT NULL,
+  `dificuldade` ENUM('basico', 'intermediario', 'avancado') NULL,
+  `link` VARCHAR(500) NOT NULL,
+  `duracao_min` INT NULL,
+  PRIMARY KEY (`idConteudo`),
+  INDEX `idFonte_idx` (`fonte_id` ASC),
+  CONSTRAINT `fk_Fonte`
+    FOREIGN KEY (`fonte_id`)
+    REFERENCES `PlataformaEstudos`.`Fonte` (`idFonte`)
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION)
+ENGINE = InnoDB;
+
+
+-- -----------------------------------------------------
+-- Table `PlataformaEstudos`.`trilha_estudo`
+-- -----------------------------------------------------
+CREATE TABLE IF NOT EXISTS `PlataformaEstudos`.`trilha_estudo` (
+  `idTrilha_estudo` INT NOT NULL AUTO_INCREMENT,
+  `aluno_id` INT NOT NULL,
+  `titulo` VARCHAR(200) NULL,
+  `descricao` TEXT NULL,
+  `status` ENUM('ativa', 'pausada', 'concluida') NULL,
+  PRIMARY KEY (`idTrilha_estudo`),
+  INDEX `idaluno_idx` (`aluno_id` ASC),
+  CONSTRAINT `fk_trilha_estudo_aluno`
+    FOREIGN KEY (`aluno_id`)
+    REFERENCES `PlataformaEstudos`.`Aluno` (`idAluno`)
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION)
+ENGINE = InnoDB;
+
+
+-- -----------------------------------------------------
+-- Table `PlataformaEstudos`.`trilha_conteudo`
+-- -----------------------------------------------------
+CREATE TABLE IF NOT EXISTS `PlataformaEstudos`.`trilha_conteudo` (
+  `idTrilha_conteudo` INT NOT NULL AUTO_INCREMENT,
+  `trilha_id` INT NOT NULL,
+  `conteudo_id` INT NOT NULL,
+  `ordem` INT NOT NULL,
+  `obrigatorio` TINYINT NOT NULL,
+  `estimativa_min` INT NULL,
+  PRIMARY KEY (`idTrilha_conteudo`),
+  INDEX `idtrilha_estudo_idx` (`trilha_id` ASC),
+  INDEX `idconteudo_idx` (`conteudo_id` ASC),
+  CONSTRAINT `fk_trilha_conteudo_tEstudo`
+    FOREIGN KEY (`trilha_id`)
+    REFERENCES `PlataformaEstudos`.`trilha_estudo` (`idTrilha_estudo`)
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION,
+  CONSTRAINT `fk_conteudo`
+    FOREIGN KEY (`conteudo_id`)
+    REFERENCES `PlataformaEstudos`.`conteudo` (`idConteudo`)
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION)
+ENGINE = InnoDB;
+
+
+-- -----------------------------------------------------
+-- Table `PlataformaEstudos`.`sugestao_conteudo`
+-- -----------------------------------------------------
+CREATE TABLE IF NOT EXISTS `PlataformaEstudos`.`sugestao_conteudo` (
+  `idSugestao_conteudo` INT NOT NULL AUTO_INCREMENT,
+  `aluno_id` INT NOT NULL,
+  `trilhaConteudo_id` INT NOT NULL,
+  `titulo_sugerido` VARCHAR(200) NULL,
+  `motivo` TEXT NULL,
+  `origem` VARCHAR(20) NOT NULL,
+  `aceito` TINYINT NOT NULL,
+  `criado_em` TIMESTAMP NOT NULL,
+  PRIMARY KEY (`idSugestao_conteudo`),
+  INDEX `idtrilha_conteudo_idx` (`trilhaConteudo_id` ASC),
+  INDEX `idaluno_idx` (`aluno_id` ASC),
+  CONSTRAINT `fk_suge_conteudo_aluno`
+    FOREIGN KEY (`aluno_id`)
+    REFERENCES `PlataformaEstudos`.`Aluno` (`idAluno`)
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION,
+  CONSTRAINT `fk_suge_conteudo_tConteudo`
+    FOREIGN KEY (`trilhaConteudo_id`)
+    REFERENCES `PlataformaEstudos`.`trilha_conteudo` (`idTrilha_conteudo`)
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION)
+ENGINE = InnoDB;
+
+
+-- -----------------------------------------------------
+-- Table `PlataformaEstudos`.`progresso_trilha`
+-- -----------------------------------------------------
+CREATE TABLE IF NOT EXISTS `PlataformaEstudos`.`progresso_trilha` (
+  `idProgresso_conteudo` INT NOT NULL AUTO_INCREMENT,
+  `aluno_id` INT NOT NULL,
+  `trilhaConteudo_id` INT NOT NULL,
+  `status` ENUM('pendente', 'em andamento', 'concluido') NOT NULL,
+  `inicio` TIMESTAMP NULL,
+  `fim` TIMESTAMP NULL,
+  `nota` DECIMAL(5,2) NULL,
+  PRIMARY KEY (`idProgresso_conteudo`),
+  INDEX `idaluno_idx` (`aluno_id` ASC),
+  INDEX `idtrilha_conteudo_idx` (`trilhaConteudo_id` ASC),
+  CONSTRAINT `fk_progre_trilha_aluno`
+    FOREIGN KEY (`aluno_id`)
+    REFERENCES `PlataformaEstudos`.`Aluno` (`idAluno`)
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION,
+  CONSTRAINT `fk_progre_trilha_tConteudo`
+    FOREIGN KEY (`trilhaConteudo_id`)
+    REFERENCES `PlataformaEstudos`.`trilha_conteudo` (`idTrilha_conteudo`)
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION)
+ENGINE = InnoDB;
+
+
+-- -----------------------------------------------------
+-- Table `PlataformaEstudos`.`area_interesse`
+-- -----------------------------------------------------
+CREATE TABLE IF NOT EXISTS `PlataformaEstudos`.`area_interesse` (
+  `idArea_interesse` INT NOT NULL,
+  `nome_area` VARCHAR(100) NOT NULL,
+  PRIMARY KEY (`idArea_interesse`))
+ENGINE = InnoDB;
+
+
+-- -----------------------------------------------------
+-- Table `PlataformaEstudos`.`preferencia_aluno`
+-- -----------------------------------------------------
+CREATE TABLE IF NOT EXISTS `PlataformaEstudos`.`preferencia_aluno` (
+  `idPreferencia_aluno` INT NOT NULL AUTO_INCREMENT,
+  `aluno_id` INT NOT NULL,
+  `areaInteresse_id` INT NOT NULL,
+  `objetivo_carreira` TEXT NULL,
+  `nivel_dificuldade_preferido` VARCHAR(20) NULL,
+  PRIMARY KEY (`idPreferencia_aluno`),
+  INDEX `idaluno_idx` (`aluno_id` ASC),
+  INDEX `idarea_interesse_idx` (`areaInteresse_id` ASC),
+  CONSTRAINT `fk_pref_aluno`
+    FOREIGN KEY (`aluno_id`)
+    REFERENCES `PlataformaEstudos`.`Aluno` (`idAluno`)
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION,
+  CONSTRAINT `fk_area_interesse`
+    FOREIGN KEY (`areaInteresse_id`)
+    REFERENCES `PlataformaEstudos`.`area_interesse` (`idArea_interesse`)
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION)
+ENGINE = InnoDB;
+
+
+-- -----------------------------------------------------
+-- Table `PlataformaEstudos`.`relatorio`
+-- -----------------------------------------------------
+CREATE TABLE IF NOT EXISTS `PlataformaEstudos`.`relatorio` (
+  `idRelatorio` INT NOT NULL AUTO_INCREMENT,
+  `aluno_id` INT NOT NULL,
+  `trilha_id` INT NOT NULL,
+  `data_ref` DATE NOT NULL,
+  `desempenho_score` DECIMAL(5,2) NULL,
+  `recomendacoes` TEXT NULL,
+  PRIMARY KEY (`idRelatorio`),
+  INDEX `idaluno_idx` (`aluno_id` ASC),
+  INDEX `idtrilha_estudo_idx` (`trilha_id` ASC),
+  CONSTRAINT `fk_relatorio_aluno`
+    FOREIGN KEY (`aluno_id`)
+    REFERENCES `PlataformaEstudos`.`Aluno` (`idAluno`)
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION,
+  CONSTRAINT `fk_relatorio_trilha_estudo`
+    FOREIGN KEY (`trilha_id`)
+    REFERENCES `PlataformaEstudos`.`trilha_estudo` (`idTrilha_estudo`)
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION)
+ENGINE = InnoDB;
+
+
+SET SQL_MODE=@OLD_SQL_MODE;
+SET FOREIGN_KEY_CHECKS=@OLD_FOREIGN_KEY_CHECKS;
+SET UNIQUE_CHECKS=@OLD_UNIQUE_CHECKS;
+
+---------------------------------------------------------------------------------------
+-- VIEWS
+--------------------------------------------------------------------------------------
+
+CREATE OR REPLACE VIEW vw_aluno_historico AS
+SELECT a.idAluno, a.nome, a.email, h.disciplina, h.periodo, h.media, h.carga_horaria
+FROM Aluno a
+LEFT JOIN historico_escolar h ON a.idAluno = h.aluno_id;
+/* Visualizar dados completos do aluno e seu histórico escolar */
+
+CREATE OR REPLACE VIEW vw_fonte_conteudo AS
+SELECT c.idConteudo, c.titulo, f.nome_fonte AS fonte, c.categoria, c.dificuldade, c.link
+FROM conteudo c
+JOIN Fonte f ON f.idFonte = c.fonte_id;
+/* Exibir origem e fonte dos conteúdos cadastrados */
+
+CREATE OR REPLACE VIEW vw_trilhas_personalizadas AS
+SELECT t.idTrilha_estudo, a.nome AS aluno, t.titulo AS trilha, t.descricao, t.status
+FROM trilha_estudo t
+JOIN Aluno a ON a.idAluno = t.aluno_id;
+/* Unir dados de trilhas com os nomes dos alunos */
+
+CREATE OR REPLACE VIEW vw_conteudos_recomendados AS
+SELECT DISTINCT c.idConteudo, c.titulo, c.categoria, c.dificuldade, f.nome_fonte AS fonte, ad.aluno_id
+FROM (
+    SELECT h2.aluno_id,
+           CASE
+               WHEN AVG(h2.media) IS NULL OR AVG(h2.media) < 6 THEN 'basico'
+               WHEN AVG(h2.media) BETWEEN 6 AND 8 THEN 'intermediario'
+               ELSE 'avancado'
+           END AS alvo_dificuldade
+    FROM historico_escolar h2
+    GROUP BY h2.aluno_id
+) AS ad
+JOIN conteudo c ON c.dificuldade = ad.alvo_dificuldade
+JOIN Fonte f ON f.idFonte = c.fonte_id
+ORDER BY ad.aluno_id;
+/* Sugerir conteúdos com base no desempenho individual do aluno */
+
+CREATE OR REPLACE VIEW vw_relatorios_trilhas AS
+SELECT r.idRelatorio, a.nome AS aluno, t.titulo AS trilha, r.data_ref, r.desempenho_score, r.recomendacoes
+FROM relatorio r
+JOIN trilha_estudo t ON r.trilha_id = t.idTrilha_estudo
+JOIN Aluno a ON r.aluno_id = a.idAluno;
+/* Exibir relatórios de desempenho e recomendações dos alunos */
+
+--------------------------------------------------------------------------------------
+-- TRIGGERS
+-------------------------------------------------------------------------------------
 DELIMITER $$
-CREATE TRIGGER `trg_aluno_delete` BEFORE DELETE ON `aluno` FOR EACH ROW BEGIN
-    INSERT INTO relatorio (aluno_id, trilha_id, data_ref, desempenho_score, recomendacoes)
-    VALUES (OLD.idAluno, NULL, CURDATE(), 0, CONCAT('Aluno ', OLD.nome, ' removido.'));
-    DELETE FROM trilha_estudo WHERE aluno_id = OLD.idAluno;
-END
-$$
-DELIMITER ;
-DELIMITER $$
-CREATE TRIGGER `trg_init_aluno` AFTER INSERT ON `aluno` FOR EACH ROW BEGIN
+
+CREATE TRIGGER trg_init_aluno
+AFTER INSERT ON Aluno
+FOR EACH ROW
+BEGIN
     DECLARE novaTrilha INT;
     INSERT INTO trilha_estudo (aluno_id, titulo, descricao, status)
     VALUES (NEW.idAluno, CONCAT('Trilha Base de ', NEW.nome), 'Trilha inicial personalizada.', 'ativa');
     SET novaTrilha = LAST_INSERT_ID();
     INSERT INTO relatorio (aluno_id, trilha_id, data_ref, desempenho_score, recomendacoes)
     VALUES (NEW.idAluno, novaTrilha, CURDATE(), 0, 'Nenhuma recomendação inicial.');
-END
-$$
-DELIMITER ;
+END$$
+/* Inicializa trilha e relatório quando um novo aluno é cadastrado */
 
--- --------------------------------------------------------
+CREATE TRIGGER trg_update_progresso_trilha
+AFTER UPDATE ON progresso_trilha
+FOR EACH ROW
+BEGIN
+    DECLARE media DECIMAL(5,2);
+    DECLARE concluidos INT;
+    DECLARE total INT;
+    SELECT AVG(nota), SUM(CASE WHEN status = 'concluido' THEN 1 ELSE 0 END), COUNT(*) INTO media, concluidos, total
+    FROM progresso_trilha WHERE trilhaConteudo_id = NEW.trilhaConteudo_id;
+    SET media = IFNULL(media, 0);
+    UPDATE relatorio
+    SET desempenho_score = media,
+        recomendacoes = CONCAT('Conteúdos concluídos: ', concluidos, '/', total)
+    WHERE trilha_id = (SELECT trilha_id FROM trilha_conteudo WHERE idTrilha_conteudo = NEW.trilhaConteudo_id);
+END$$
+/* Atualiza relatório quando há progresso em um conteúdo da trilha */
 
---
--- Estrutura para tabela `area_interesse`
---
-
-CREATE TABLE `area_interesse` (
-  `idArea_interesse` int(11) NOT NULL,
-  `nome_area` varchar(100) NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_general_ci;
-
--- --------------------------------------------------------
-
---
--- Estrutura para tabela `conteudo`
---
-
-CREATE TABLE `conteudo` (
-  `idConteudo` int(11) NOT NULL,
-  `fonte_id` int(11) NOT NULL,
-  `titulo` varchar(200) NOT NULL,
-  `categoria` varchar(100) NOT NULL,
-  `dificuldade` enum('basico','intermediario','avancado') DEFAULT NULL,
-  `link` varchar(500) NOT NULL,
-  `duracao_min` int(11) DEFAULT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_general_ci;
-
--- --------------------------------------------------------
-
---
--- Estrutura para tabela `fonte`
---
-
-CREATE TABLE `fonte` (
-  `idFonte` int(11) NOT NULL,
-  `nome_fonte` varchar(120) NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_general_ci;
-
--- --------------------------------------------------------
-
---
--- Estrutura para tabela `historico_escolar`
---
-
-CREATE TABLE `historico_escolar` (
-  `idHistorico_escolar` int(11) NOT NULL,
-  `aluno_id` int(11) NOT NULL,
-  `disciplina` varchar(120) NOT NULL,
-  `periodo` varchar(20) DEFAULT NULL,
-  `media` decimal(4,2) DEFAULT NULL,
-  `carga_horaria` int(11) DEFAULT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_general_ci;
-
--- --------------------------------------------------------
-
---
--- Estrutura para tabela `preferencia_aluno`
---
-
-CREATE TABLE `preferencia_aluno` (
-  `idPreferencia_aluno` int(11) NOT NULL,
-  `aluno_id` int(11) NOT NULL,
-  `areaInteresse_id` int(11) NOT NULL,
-  `objetivo_carreira` text DEFAULT NULL,
-  `nivel_dificuldade_preferido` varchar(20) DEFAULT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_general_ci;
-
--- --------------------------------------------------------
-
---
--- Estrutura para tabela `progresso_trilha`
---
-
-CREATE TABLE `progresso_trilha` (
-  `idProgresso_conteudo` int(11) NOT NULL,
-  `aluno_id` int(11) NOT NULL,
-  `trilhaConteudo_id` int(11) NOT NULL,
-  `status` enum('pendente','em andamento','concluido') NOT NULL,
-  `inicio` timestamp NULL DEFAULT NULL,
-  `fim` timestamp NULL DEFAULT NULL,
-  `nota` decimal(5,2) DEFAULT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_general_ci;
-
---
--- Acionadores `progresso_trilha`
---
-DELIMITER $$
-CREATE TRIGGER `trg_sugestao_conteudo` AFTER INSERT ON `progresso_trilha` FOR EACH ROW BEGIN
+CREATE TRIGGER trg_sugestao_conteudo
+AFTER INSERT ON progresso_trilha
+FOR EACH ROW
+BEGIN
     DECLARE media_aluno DECIMAL(5,2);
     SELECT AVG(media) INTO media_aluno
     FROM historico_escolar
@@ -163,418 +345,17 @@ CREATE TRIGGER `trg_sugestao_conteudo` AFTER INSERT ON `progresso_trilha` FOR EA
           'Baixo desempenho médio detectado pela IA', 'IA', 0, NOW()
         );
     END IF;
-END
-$$
+END$$
+/* Gera sugestão automática de revisão baseada na média individual do aluno */
+
+CREATE TRIGGER trg_aluno_delete
+BEFORE DELETE ON Aluno
+FOR EACH ROW
+BEGIN
+    INSERT INTO relatorio (aluno_id, trilha_id, data_ref, desempenho_score, recomendacoes)
+    VALUES (OLD.idAluno, NULL, CURDATE(), 0, CONCAT('Aluno ', OLD.nome, ' removido.'));
+    DELETE FROM trilha_estudo WHERE aluno_id = OLD.idAluno;
+END$$
+/* Insere log de exclusão do aluno e remove suas trilhas */
+
 DELIMITER ;
-DELIMITER $$
-CREATE TRIGGER `trg_update_progresso_trilha` AFTER UPDATE ON `progresso_trilha` FOR EACH ROW BEGIN
-    DECLARE media DECIMAL(5,2);
-    DECLARE concluidos INT;
-    DECLARE total INT;
-    SELECT AVG(nota), SUM(CASE WHEN status = 'concluido' THEN 1 ELSE 0 END), COUNT(*) INTO media, concluidos, total
-    FROM progresso_trilha WHERE trilhaConteudo_id = NEW.trilhaConteudo_id;
-    SET media = IFNULL(media, 0);
-    UPDATE relatorio
-    SET desempenho_score = media,
-        recomendacoes = CONCAT('Conteúdos concluídos: ', concluidos, '/', total)
-    WHERE trilha_id = (SELECT trilha_id FROM trilha_conteudo WHERE idTrilha_conteudo = NEW.trilhaConteudo_id);
-END
-$$
-DELIMITER ;
-
--- --------------------------------------------------------
-
---
--- Estrutura para tabela `relatorio`
---
-
-CREATE TABLE `relatorio` (
-  `idRelatorio` int(11) NOT NULL,
-  `aluno_id` int(11) NOT NULL,
-  `trilha_id` int(11) DEFAULT NULL,
-  `data_ref` date NOT NULL,
-  `desempenho_score` decimal(5,2) DEFAULT NULL,
-  `recomendacoes` text DEFAULT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_general_ci;
-
--- --------------------------------------------------------
-
---
--- Estrutura para tabela `sugestao_conteudo`
---
-
-CREATE TABLE `sugestao_conteudo` (
-  `idSugestao_conteudo` int(11) NOT NULL,
-  `aluno_id` int(11) NOT NULL,
-  `trilhaConteudo_id` int(11) NOT NULL,
-  `titulo_sugerido` varchar(200) DEFAULT NULL,
-  `motivo` text DEFAULT NULL,
-  `origem` varchar(20) NOT NULL,
-  `aceito` tinyint(4) NOT NULL,
-  `criado_em` timestamp NOT NULL DEFAULT current_timestamp()
-) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_general_ci;
-
--- --------------------------------------------------------
-
---
--- Estrutura para tabela `trilha_conteudo`
---
-
-CREATE TABLE `trilha_conteudo` (
-  `idTrilha_conteudo` int(11) NOT NULL,
-  `trilha_id` int(11) NOT NULL,
-  `conteudo_id` int(11) NOT NULL,
-  `ordem` int(11) NOT NULL,
-  `obrigatorio` tinyint(4) NOT NULL,
-  `estimativa_min` int(11) DEFAULT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_general_ci;
-
--- --------------------------------------------------------
-
---
--- Estrutura para tabela `trilha_estudo`
---
-
-CREATE TABLE `trilha_estudo` (
-  `idTrilha_estudo` int(11) NOT NULL,
-  `aluno_id` int(11) NOT NULL,
-  `titulo` varchar(200) DEFAULT NULL,
-  `descricao` text DEFAULT NULL,
-  `status` enum('ativa','pausada','concluida') DEFAULT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_general_ci;
-
--- --------------------------------------------------------
-
---
--- Estrutura stand-in para view `vw_aluno_historico`
--- (Veja abaixo para a visão atual)
---
-CREATE TABLE `vw_aluno_historico` (
-`idAluno` int(11)
-,`nome` varchar(100)
-,`email` varchar(100)
-,`disciplina` varchar(120)
-,`periodo` varchar(20)
-,`media` decimal(4,2)
-,`carga_horaria` int(11)
-);
-
--- --------------------------------------------------------
-
---
--- Estrutura stand-in para view `vw_conteudos_recomendados`
--- (Veja abaixo para a visão atual)
---
-CREATE TABLE `vw_conteudos_recomendados` (
-`idConteudo` int(11)
-,`titulo` varchar(200)
-,`categoria` varchar(100)
-,`dificuldade` enum('basico','intermediario','avancado')
-,`fonte` varchar(120)
-,`aluno_id` int(11)
-);
-
--- --------------------------------------------------------
-
---
--- Estrutura stand-in para view `vw_fonte_conteudo`
--- (Veja abaixo para a visão atual)
---
-CREATE TABLE `vw_fonte_conteudo` (
-`idConteudo` int(11)
-,`titulo` varchar(200)
-,`fonte` varchar(120)
-,`categoria` varchar(100)
-,`dificuldade` enum('basico','intermediario','avancado')
-,`link` varchar(500)
-);
-
--- --------------------------------------------------------
-
---
--- Estrutura stand-in para view `vw_relatorios_trilhas`
--- (Veja abaixo para a visão atual)
---
-CREATE TABLE `vw_relatorios_trilhas` (
-`idRelatorio` int(11)
-,`aluno` varchar(100)
-,`trilha` varchar(200)
-,`data_ref` date
-,`desempenho_score` decimal(5,2)
-,`recomendacoes` text
-);
-
--- --------------------------------------------------------
-
---
--- Estrutura stand-in para view `vw_trilhas_personalizadas`
--- (Veja abaixo para a visão atual)
---
-CREATE TABLE `vw_trilhas_personalizadas` (
-`idTrilha_estudo` int(11)
-,`aluno` varchar(100)
-,`trilha` varchar(200)
-,`descricao` text
-,`status` enum('ativa','pausada','concluida')
-);
-
--- --------------------------------------------------------
-
---
--- Estrutura para view `vw_aluno_historico`
---
-DROP TABLE IF EXISTS `vw_aluno_historico`;
-
-CREATE ALGORITHM=UNDEFINED DEFINER=`root`@`localhost` SQL SECURITY DEFINER VIEW `vw_aluno_historico`  AS SELECT `a`.`idAluno` AS `idAluno`, `a`.`nome` AS `nome`, `a`.`email` AS `email`, `h`.`disciplina` AS `disciplina`, `h`.`periodo` AS `periodo`, `h`.`media` AS `media`, `h`.`carga_horaria` AS `carga_horaria` FROM (`aluno` `a` left join `historico_escolar` `h` on(`a`.`idAluno` = `h`.`aluno_id`)) ;
-
--- --------------------------------------------------------
-
---
--- Estrutura para view `vw_conteudos_recomendados`
---
-DROP TABLE IF EXISTS `vw_conteudos_recomendados`;
-
-CREATE ALGORITHM=UNDEFINED DEFINER=`root`@`localhost` SQL SECURITY DEFINER VIEW `vw_conteudos_recomendados`  AS SELECT DISTINCT `c`.`idConteudo` AS `idConteudo`, `c`.`titulo` AS `titulo`, `c`.`categoria` AS `categoria`, `c`.`dificuldade` AS `dificuldade`, `f`.`nome_fonte` AS `fonte`, `ad`.`aluno_id` AS `aluno_id` FROM (((select `h2`.`aluno_id` AS `aluno_id`,case when avg(`h2`.`media`) is null or avg(`h2`.`media`) < 6 then 'basico' when avg(`h2`.`media`) between 6 and 8 then 'intermediario' else 'avancado' end AS `alvo_dificuldade` from `historico_escolar` `h2` group by `h2`.`aluno_id`) `ad` join `conteudo` `c` on(`c`.`dificuldade` = `ad`.`alvo_dificuldade`)) join `fonte` `f` on(`f`.`idFonte` = `c`.`fonte_id`)) ORDER BY `ad`.`aluno_id` ASC ;
-
--- --------------------------------------------------------
-
---
--- Estrutura para view `vw_fonte_conteudo`
---
-DROP TABLE IF EXISTS `vw_fonte_conteudo`;
-
-CREATE ALGORITHM=UNDEFINED DEFINER=`root`@`localhost` SQL SECURITY DEFINER VIEW `vw_fonte_conteudo`  AS SELECT `c`.`idConteudo` AS `idConteudo`, `c`.`titulo` AS `titulo`, `f`.`nome_fonte` AS `fonte`, `c`.`categoria` AS `categoria`, `c`.`dificuldade` AS `dificuldade`, `c`.`link` AS `link` FROM (`conteudo` `c` join `fonte` `f` on(`f`.`idFonte` = `c`.`fonte_id`)) ;
-
--- --------------------------------------------------------
-
---
--- Estrutura para view `vw_relatorios_trilhas`
---
-DROP TABLE IF EXISTS `vw_relatorios_trilhas`;
-
-CREATE ALGORITHM=UNDEFINED DEFINER=`root`@`localhost` SQL SECURITY DEFINER VIEW `vw_relatorios_trilhas`  AS SELECT `r`.`idRelatorio` AS `idRelatorio`, `a`.`nome` AS `aluno`, `t`.`titulo` AS `trilha`, `r`.`data_ref` AS `data_ref`, `r`.`desempenho_score` AS `desempenho_score`, `r`.`recomendacoes` AS `recomendacoes` FROM ((`relatorio` `r` join `trilha_estudo` `t` on(`r`.`trilha_id` = `t`.`idTrilha_estudo`)) join `aluno` `a` on(`r`.`aluno_id` = `a`.`idAluno`)) ;
-
--- --------------------------------------------------------
-
---
--- Estrutura para view `vw_trilhas_personalizadas`
---
-DROP TABLE IF EXISTS `vw_trilhas_personalizadas`;
-
-CREATE ALGORITHM=UNDEFINED DEFINER=`root`@`localhost` SQL SECURITY DEFINER VIEW `vw_trilhas_personalizadas`  AS SELECT `t`.`idTrilha_estudo` AS `idTrilha_estudo`, `a`.`nome` AS `aluno`, `t`.`titulo` AS `trilha`, `t`.`descricao` AS `descricao`, `t`.`status` AS `status` FROM (`trilha_estudo` `t` join `aluno` `a` on(`a`.`idAluno` = `t`.`aluno_id`)) ;
-
---
--- Índices para tabelas despejadas
---
-
---
--- Índices de tabela `aluno`
---
-ALTER TABLE `aluno`
-  ADD PRIMARY KEY (`idAluno`),
-  ADD UNIQUE KEY `email` (`email`);
-
---
--- Índices de tabela `area_interesse`
---
-ALTER TABLE `area_interesse`
-  ADD PRIMARY KEY (`idArea_interesse`);
-
---
--- Índices de tabela `conteudo`
---
-ALTER TABLE `conteudo`
-  ADD PRIMARY KEY (`idConteudo`),
-  ADD KEY `idFonte_idx` (`fonte_id`);
-
---
--- Índices de tabela `fonte`
---
-ALTER TABLE `fonte`
-  ADD PRIMARY KEY (`idFonte`);
-
---
--- Índices de tabela `historico_escolar`
---
-ALTER TABLE `historico_escolar`
-  ADD PRIMARY KEY (`idHistorico_escolar`),
-  ADD KEY `idAluno_idx` (`aluno_id`);
-
---
--- Índices de tabela `preferencia_aluno`
---
-ALTER TABLE `preferencia_aluno`
-  ADD PRIMARY KEY (`idPreferencia_aluno`),
-  ADD KEY `idaluno_idx` (`aluno_id`),
-  ADD KEY `idarea_interesse_idx` (`areaInteresse_id`);
-
---
--- Índices de tabela `progresso_trilha`
---
-ALTER TABLE `progresso_trilha`
-  ADD PRIMARY KEY (`idProgresso_conteudo`),
-  ADD KEY `idaluno_idx` (`aluno_id`),
-  ADD KEY `idtrilha_conteudo_idx` (`trilhaConteudo_id`);
-
---
--- Índices de tabela `relatorio`
---
-ALTER TABLE `relatorio`
-  ADD PRIMARY KEY (`idRelatorio`),
-  ADD KEY `idaluno_idx` (`aluno_id`),
-  ADD KEY `idtrilha_estudo_idx` (`trilha_id`);
-
---
--- Índices de tabela `sugestao_conteudo`
---
-ALTER TABLE `sugestao_conteudo`
-  ADD PRIMARY KEY (`idSugestao_conteudo`),
-  ADD KEY `idtrilha_conteudo_idx` (`trilhaConteudo_id`),
-  ADD KEY `idaluno_idx` (`aluno_id`);
-
---
--- Índices de tabela `trilha_conteudo`
---
-ALTER TABLE `trilha_conteudo`
-  ADD PRIMARY KEY (`idTrilha_conteudo`),
-  ADD KEY `idtrilha_estudo_idx` (`trilha_id`),
-  ADD KEY `idconteudo_idx` (`conteudo_id`);
-
---
--- Índices de tabela `trilha_estudo`
---
-ALTER TABLE `trilha_estudo`
-  ADD PRIMARY KEY (`idTrilha_estudo`),
-  ADD KEY `idaluno_idx` (`aluno_id`);
-
---
--- AUTO_INCREMENT para tabelas despejadas
---
-
---
--- AUTO_INCREMENT de tabela `aluno`
---
-ALTER TABLE `aluno`
-  MODIFY `idAluno` int(11) NOT NULL AUTO_INCREMENT;
-
---
--- AUTO_INCREMENT de tabela `area_interesse`
---
-ALTER TABLE `area_interesse`
-  MODIFY `idArea_interesse` int(11) NOT NULL AUTO_INCREMENT;
-
---
--- AUTO_INCREMENT de tabela `conteudo`
---
-ALTER TABLE `conteudo`
-  MODIFY `idConteudo` int(11) NOT NULL AUTO_INCREMENT;
-
---
--- AUTO_INCREMENT de tabela `fonte`
---
-ALTER TABLE `fonte`
-  MODIFY `idFonte` int(11) NOT NULL AUTO_INCREMENT;
-
---
--- AUTO_INCREMENT de tabela `historico_escolar`
---
-ALTER TABLE `historico_escolar`
-  MODIFY `idHistorico_escolar` int(11) NOT NULL AUTO_INCREMENT;
-
---
--- AUTO_INCREMENT de tabela `preferencia_aluno`
---
-ALTER TABLE `preferencia_aluno`
-  MODIFY `idPreferencia_aluno` int(11) NOT NULL AUTO_INCREMENT;
-
---
--- AUTO_INCREMENT de tabela `progresso_trilha`
---
-ALTER TABLE `progresso_trilha`
-  MODIFY `idProgresso_conteudo` int(11) NOT NULL AUTO_INCREMENT;
-
---
--- AUTO_INCREMENT de tabela `relatorio`
---
-ALTER TABLE `relatorio`
-  MODIFY `idRelatorio` int(11) NOT NULL AUTO_INCREMENT;
-
---
--- AUTO_INCREMENT de tabela `sugestao_conteudo`
---
-ALTER TABLE `sugestao_conteudo`
-  MODIFY `idSugestao_conteudo` int(11) NOT NULL AUTO_INCREMENT;
-
---
--- AUTO_INCREMENT de tabela `trilha_conteudo`
---
-ALTER TABLE `trilha_conteudo`
-  MODIFY `idTrilha_conteudo` int(11) NOT NULL AUTO_INCREMENT;
-
---
--- AUTO_INCREMENT de tabela `trilha_estudo`
---
-ALTER TABLE `trilha_estudo`
-  MODIFY `idTrilha_estudo` int(11) NOT NULL AUTO_INCREMENT;
-
---
--- Restrições para tabelas despejadas
---
-
---
--- Restrições para tabelas `conteudo`
---
-ALTER TABLE `conteudo`
-  ADD CONSTRAINT `fk_Fonte` FOREIGN KEY (`fonte_id`) REFERENCES `fonte` (`idFonte`) ON DELETE CASCADE ON UPDATE CASCADE;
-
---
--- Restrições para tabelas `historico_escolar`
---
-ALTER TABLE `historico_escolar`
-  ADD CONSTRAINT `fk_historico_aluno` FOREIGN KEY (`aluno_id`) REFERENCES `aluno` (`idAluno`) ON DELETE CASCADE ON UPDATE CASCADE;
-
---
--- Restrições para tabelas `preferencia_aluno`
---
-ALTER TABLE `preferencia_aluno`
-  ADD CONSTRAINT `fk_area_interesse` FOREIGN KEY (`areaInteresse_id`) REFERENCES `area_interesse` (`idArea_interesse`) ON DELETE CASCADE ON UPDATE CASCADE,
-  ADD CONSTRAINT `fk_pref_aluno` FOREIGN KEY (`aluno_id`) REFERENCES `aluno` (`idAluno`) ON DELETE CASCADE ON UPDATE CASCADE;
-
---
--- Restrições para tabelas `progresso_trilha`
---
-ALTER TABLE `progresso_trilha`
-  ADD CONSTRAINT `fk_progre_trilha_aluno` FOREIGN KEY (`aluno_id`) REFERENCES `aluno` (`idAluno`) ON DELETE CASCADE ON UPDATE CASCADE,
-  ADD CONSTRAINT `fk_progre_trilha_tConteudo` FOREIGN KEY (`trilhaConteudo_id`) REFERENCES `trilha_conteudo` (`idTrilha_conteudo`) ON DELETE CASCADE ON UPDATE CASCADE;
-
---
--- Restrições para tabelas `relatorio`
---
-ALTER TABLE `relatorio`
-  ADD CONSTRAINT `fk_relatorio_aluno` FOREIGN KEY (`aluno_id`) REFERENCES `aluno` (`idAluno`) ON DELETE CASCADE ON UPDATE CASCADE,
-  ADD CONSTRAINT `fk_relatorio_trilha_estudo` FOREIGN KEY (`trilha_id`) REFERENCES `trilha_estudo` (`idTrilha_estudo`) ON DELETE SET NULL ON UPDATE CASCADE;
-
---
--- Restrições para tabelas `sugestao_conteudo`
---
-ALTER TABLE `sugestao_conteudo`
-  ADD CONSTRAINT `fk_suge_conteudo_aluno` FOREIGN KEY (`aluno_id`) REFERENCES `aluno` (`idAluno`) ON DELETE CASCADE ON UPDATE CASCADE,
-  ADD CONSTRAINT `fk_suge_conteudo_tConteudo` FOREIGN KEY (`trilhaConteudo_id`) REFERENCES `trilha_conteudo` (`idTrilha_conteudo`) ON DELETE CASCADE ON UPDATE CASCADE;
-
---
--- Restrições para tabelas `trilha_conteudo`
---
-ALTER TABLE `trilha_conteudo`
-  ADD CONSTRAINT `fk_conteudo` FOREIGN KEY (`conteudo_id`) REFERENCES `conteudo` (`idConteudo`) ON DELETE CASCADE ON UPDATE CASCADE,
-  ADD CONSTRAINT `fk_trilha_conteudo_tEstudo` FOREIGN KEY (`trilha_id`) REFERENCES `trilha_estudo` (`idTrilha_estudo`) ON DELETE CASCADE ON UPDATE CASCADE;
-
---
--- Restrições para tabelas `trilha_estudo`
---
-ALTER TABLE `trilha_estudo`
-  ADD CONSTRAINT `fk_trilha_estudo_aluno` FOREIGN KEY (`aluno_id`) REFERENCES `aluno` (`idAluno`) ON DELETE CASCADE ON UPDATE CASCADE;
-COMMIT;
-
-/*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
-/*!40101 SET CHARACTER_SET_RESULTS=@OLD_CHARACTER_SET_RESULTS */;
-/*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
