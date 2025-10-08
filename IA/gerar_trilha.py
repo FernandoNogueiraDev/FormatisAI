@@ -1,12 +1,13 @@
-from openai import OpenAI
+import google.generativeai as genai
 from dotenv import load_dotenv
 import os
-import json
+import json, re
 import requests
 
 #carregando a chave de acesso
 load_dotenv()
-client = OpenAI(api_key= os.getenv("openai_key"))
+genai.configure(api_key=os.getenv("gemini_key"))
+
 
 #perfil ficticio de aluno
 perfil_aluno = {
@@ -27,29 +28,26 @@ Perfil do aluno: {perfil_aluno}
 - De 5 a 10 conteúdos.
 - Para cada item, forneça: titulo, breve descrição, tipo de conteúdo (vídeo, texto, artigo e etc.),
  link de referência (forneça links reais, de fontes confiaveis e gratuitas), fonte (origem do link),
-   duração total da trilha (tempo para consumir todo o conteúdo).
-- Retorne apenas links gratuitos, acessíveis publicamente (ex: YouTube, blogs, artigos gratuitos).
+   duração (tempo para consumir o conteúdo).
+- duração total da trilha (tempo para consumir todo o conteúdo).
+- verificar se o conteúdo do link ainda exista, se não estiver disponível pode excluir o link.
 - NÃO inclua links de plataformas pagas ou que exijam login.
-- Retorne em formato JSON
+- Retorne apenas o JSON, sem explicações, sem formatação Markdown e sem texto adicional.
 """
 
-#gerando trilha com o GPT
-response_trilha = client.chat.completions.create(
-    model="gpt-4o-mini",
-    messages=[
-        {"role": "system", "content": "Você é um especialista em educação personalizada."},
-        {"role": "user", "content": prompt_trilha}
-    ],
-    temperature=0.5,
-    response_format={"type": "json_object"}
-)
+
+#gerando trilha com gemini API
+model = genai.GenerativeModel("models/gemini-2.5-flash")
+response_trilha = model.generate_content(prompt_trilha)
 
 
 try:
     #trilha no formato JSON
-    trilha_json = response_trilha.choices[0].message.content
+    trilha_json = response_trilha.text
+    #Remove blocos de markdown
+    json_limpo = re.sub(r"^```json|```$", "", trilha_json.strip(), flags=re.MULTILINE).strip()
     #carregando a trilha em dicionário
-    trilha = json.loads(trilha_json)
+    trilha = json.loads(json_limpo)
 except json.JSONDecodeError as erro_json:
     print("Erro ao converter JSON:", erro_json)
 
@@ -64,13 +62,13 @@ def link_ativo(url: str) -> bool:
 
 #testando link
 for conteudo in trilha["trilha_estudos"]:
-    link = conteudo["link"]
-    if link_ativo(link):
-        print(f"Link válido: {link}")
-    else:
+    link = conteudo["link_referencia"]
+    try:
+        link_ativo(link)
+    except:
         print(f"Link inválido: {link}")
 
-"""
+
 #exibir trilha
 print("----------------------------------------------")
 print(f"Olá {perfil_aluno['nome']}, Bem vinda a Formatis AI :)\nEstá é sua Trilha Personalizada. Bom Estudo!!")
@@ -80,9 +78,8 @@ print(f"Trilha para {perfil_aluno['objetivo_carreira']} de nível {perfil_aluno[
 
 for conteudo in trilha["trilha_estudos"]:
     print(f"Título: {conteudo['titulo']}")
-    print(f"Descrição: {conteudo['descricao']}\n")
-    print(f"    Link: {conteudo['link']}")
+    print(f"Descrição: {conteudo['breve_descricao']}\n")
+    print(f"    Link: {conteudo['link_referencia']}")
     print(f"    Fonte: {conteudo['fonte']}")
     print(f"Duração: {conteudo['duracao']}\n")
-print(f"Duração Total da Trilha: {trilha['duracao_total']}")
-"""
+print(f"Duração Total da Trilha: {trilha['duracao_total_trilha']}")
