@@ -9,9 +9,9 @@ genai.configure(api_key=os.getenv("gemini_key"))
 google_search_key = os.getenv("google_search_key")
 search_engine_id = os.getenv("search_engine_id")
 
-
-#perfil ficticio de aluno
-perfil_aluno = {
+#perfil fictício de aluno
+aluno_autodidata_teste = {
+    "tipo_aluno": "Autodidata",
     "nome": "Joana",
     "idade": 23,
     "interesse": "Tecnologia",
@@ -19,6 +19,50 @@ perfil_aluno = {
     "nivel": "Iniciante",
     "tipo_conteudo": ["vídeo", "artigo"]
 }
+
+aluno_escola_teste = {
+    "tipo_aluno": "Escola",
+    "nome": "Paulo",
+    "idade": 14,
+    "disciplinas": {
+       "matemática": 6.0,
+       "biologia": 5.2,
+       "física": 4.5
+    },
+    "ano_letivo": "8º ano",
+    "tipo_conteudo": ["vídeo"]
+}
+
+#montar um perfil de aluno
+def montar_perfil(aluno):
+  tipo_aluno = aluno.get("tipo_aluno")
+
+  if tipo_aluno.lower() == "autodidata":
+    perfil = {
+        "nome": aluno['nome'],
+        "idade": aluno['idade'],
+        "interesse": aluno['interesse'],
+        "objetivo_carreira": aluno['objetivo_carreira'],
+        "nivel": aluno['nivel'],
+        "tipo_conteudo": aluno['tipo_conteudo']
+    }
+
+  elif tipo_aluno.lower() == "escola":
+    disc_dificuldade = [disc for disc, media in aluno["disciplinas"].items() if media < 6.0]
+    perfil = {
+        "nome": aluno['nome'],
+        "idade": aluno['idade'],
+        "disciplinas": disc_dificuldade,
+        "nivel": aluno['ano_letivo'],
+        "tipo_conteudo": aluno['tipo_conteudo']
+    }
+  else:
+     raise ValueError("tipo de perfil inválido.")
+  
+  return perfil
+
+perfil_aluno = montar_perfil(aluno_autodidata_teste)
+
 
 #criação do prompt
 prompt_trilha = f"""
@@ -29,26 +73,24 @@ Perfil do aluno: {perfil_aluno}
 - De 5 a 10 conteúdos.
 - Para cada item, forneça: titulo, breve descrição, tipo_conteúdo (vídeo, texto, artigo e etc.),
  link_referência (forneça links reais, de fontes confiaveis e gratuitas), fonte (origem do link),
-   duração (tempo para consumir o conteúdo).
+ duração (tempo para consumir o conteúdo).
 - duração total da trilha (tempo para consumir todo o conteúdo).
 - Retorne apenas o JSON puro no formato a seguir:
-""" + """
-
-{
-  "trilha_estudos": {
-    "duracao_total_trilha": "",
-    "conteudo": [
-      {
-        "titulo": "",
-        "descricao": "",
-        "link_referencia": "",
-        "fonte": "",
-        "duracao": ""
-      }
-    ]
+"""+"""
+  {
+    "trilha_estudos": {
+      "duracao_total_trilha": "",
+      "conteudo": [
+        {
+          "titulo": "",
+          "descricao": "",
+          "link_referencia": "",
+          "fonte": "",
+          "duracao": ""
+        }
+      ]
+    }
   }
-}
-
 """
 
 
@@ -62,21 +104,20 @@ try:
     trilha_json = response_trilha.text
     #Remove blocos de markdown
     json_limpo = re.sub(r"^```json|```$", "", trilha_json.strip(), flags=re.MULTILINE).strip()
-    print(json_limpo)
     #carregando a trilha em dicionário
     trilha = json.loads(json_limpo)
 except json.JSONDecodeError as erro_json:
     print("Erro ao converter JSON:", erro_json)
 
 
-# Função de busca na WEB
+#busca na WEB
 def buscar_link(busca: str, tipo_conteudo: str, fonte: str):
     try:
         url = f"https://www.googleapis.com/customsearch/v1?"
         params = {
             "key": google_search_key,
             "cx": search_engine_id,
-            "q": f"{busca} site:youtube.com" if tipo_conteudo == "vídeo"
+            "q": f"{busca} site:youtube.com/watch" if tipo_conteudo == "vídeo"
               else f"{busca} Java tutorial {fonte}",
             "num": 5,
             "safe": "active",  # segurança na busca
@@ -100,9 +141,7 @@ def buscar_link(busca: str, tipo_conteudo: str, fonte: str):
         return {"link": "Erro", "fonte": "Erro"}
     
 
-# Substituir links fictícios pelos reais
-
-
+#substituir links fictícios pelos reais
 trilha_estudos = trilha.get("trilha_estudos")
 
 for conteudo in trilha_estudos["conteudo"]:
@@ -116,9 +155,8 @@ for conteudo in trilha_estudos["conteudo"]:
 
 #exibir trilha
 print("----------------------------------------------")
-print(f"Olá {perfil_aluno['nome']}, Bem vinda a Formatis AI :)\nEstá é sua Trilha Personalizada. Bom Estudo!!")
+print(f"Olá {perfil_aluno['nome']}, Bem vinda(o) a Formatis AI :)\nEstá é sua Trilha Personalizada. Bom Estudo!!")
 print("----------------------------------------------\n")
-print(f"Trilha para {perfil_aluno['objetivo_carreira']} de nível {perfil_aluno['nivel']}:\n")
 
 
 for conteudo in trilha_estudos["conteudo"]:
@@ -127,5 +165,4 @@ for conteudo in trilha_estudos["conteudo"]:
     print(f"    Link: {conteudo['link_referencia']}")
     print(f"    Fonte: {conteudo['fonte']}")
     print(f"Duração: {conteudo['duracao']}\n")
-print(f"Duração Total da Trilha: {trilha['duracao_total_trilha']}")
-
+print(f"Duração Total da Trilha: {trilha.get('duracao_total_trilha')}")
