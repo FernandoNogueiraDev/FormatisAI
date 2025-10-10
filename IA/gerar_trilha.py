@@ -31,7 +31,24 @@ Perfil do aluno: {perfil_aluno}
  link_referência (forneça links reais, de fontes confiaveis e gratuitas), fonte (origem do link),
    duração (tempo para consumir o conteúdo).
 - duração total da trilha (tempo para consumir todo o conteúdo).
-- Retorne apenas o JSON puro.
+- Retorne apenas o JSON puro no formato a seguir:
+""" + """
+
+{
+  "trilha_estudos": {
+    "duracao_total_trilha": "",
+    "conteudo": [
+      {
+        "titulo": "",
+        "descricao": "",
+        "link_referencia": "",
+        "fonte": "",
+        "duracao": ""
+      }
+    ]
+  }
+}
+
 """
 
 
@@ -84,7 +101,11 @@ def buscar_link(busca: str, tipo_conteudo: str, fonte: str):
     
 
 # Substituir links fictícios pelos reais
-for conteudo in trilha["trilha_estudos"]:
+
+
+trilha_estudos = trilha.get("trilha_estudos")
+
+for conteudo in trilha_estudos["conteudo"]:
     titulo = conteudo["titulo"]
     tipo = conteudo["tipo_conteudo"]
     fonte = conteudo["fonte"]
@@ -100,7 +121,7 @@ print("----------------------------------------------\n")
 print(f"Trilha para {perfil_aluno['objetivo_carreira']} de nível {perfil_aluno['nivel']}:\n")
 
 
-for conteudo in trilha["trilha_estudos"]:
+for conteudo in trilha_estudos["conteudo"]:
     print(f"Título: {conteudo['titulo']}")
     print(f"Descrição: {conteudo['descricao']}\n")
     print(f"    Link: {conteudo['link_referencia']}")
