@@ -165,6 +165,75 @@
   transition: opacity 0.5s ease;
   opacity: 0;
 }
+
+/* Dropdown Menu */
+    .dropdown { position: relative; }
+    .dropdown-toggle {
+      display: flex;
+      align-items: center;
+      gap: 4px;
+      cursor: pointer;
+    }
+    .dropdown-toggle::after {
+      content: "▼";
+      font-size: 10px;
+      transition: transform 0.3s ease;
+      margin-left: 2px;
+    }
+    .dropdown:hover .dropdown-toggle::after {
+      transform: rotate(180deg);
+    }
+    .dropdown-menu {
+      list-style: none;
+      padding: 8px 0;
+      margin: 0;
+      position: absolute;
+      top: 100%;
+      left: 0;
+      background-color: #fff;
+      min-width: 200px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+      border-radius: 8px;
+      z-index: 1000;
+      border: 1px solid #eee;
+      opacity: 0;
+      visibility: hidden;
+      transform: translateY(-10px);
+      transition: all 0.3s ease;
+    }
+    .dropdown:hover .dropdown-menu {
+      opacity: 1;
+      visibility: visible;
+      transform: translateY(0);
+    }
+    .dropdown-menu li { border-bottom: 1px solid #f0f0f0; }
+    .dropdown-menu li:last-child { border-bottom: none; }
+    .dropdown-menu li a {
+      display: block;
+      padding: 10px 16px;
+      color: var(--primary-color);
+      font-weight: 600;
+      text-decoration: none;
+      transition: all 0.2s ease;
+      position: relative;
+    }
+    .dropdown-menu li a::after {
+      content: '';
+      position: absolute;
+      width: 0;
+      height: 2px;
+      bottom: 0;
+      left: 16px;
+      right: 16px;
+      background-color: var(--secondary-color);
+      transition: width 0.2s ease;
+    }
+    .dropdown-menu li a:hover {
+      color: var(--secondary-color);
+    }
+    .dropdown-menu li a:hover::after {
+      width: calc(100% - 32px);
+    }
 </style>  
 </head>
 <body>
@@ -177,7 +246,15 @@
       <li><a href="minhastrilhas.html">Minhas trilhas</a></li>
       <li><a href="telacursos.html">Cursos</a></li>
       <li><a href="quemsomos.html">Quem Somos</a></li>
-      <li><a href="#ajuda">Ajuda</a></li>
+      <!-- Menu suspenso Área do Aluno -->
+      <li class="dropdown">
+        <a href="#" class="dropdown-toggle">Área do Aluno</a>
+        <ul class="dropdown-menu">
+          <li><a href="alterarsenha.html">Alterar senha</a></li>
+          <li><a href="atualizarcadastro.html">Atualizar cadastro</a></li>
+          <li><a href="areadoaluno.html">Acessar área do aluno</a></li>
+        </ul>
+      </li>
     </ul>
     <div class="search-box">
   <button class="search-toggle">
