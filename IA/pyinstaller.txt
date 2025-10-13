@@ -1,0 +1,7 @@
+Linux:
+pyinstaller --onefile --hidden-import=appdirs --collect-submodules venv/lib/python3.9/site-packages --paths venv/lib/python3.9/site-packages/ gerar_trilha.py
+
+Windows:
+.\.venv\Scripts\activate
+pyinstaller --onefile --hidden-import=appdirs --collect-submodules .venv/Lib/site-packages --paths .venv/Lib/site-packages gerar_trilha.py
+copy .\dist\gerar_trilha.exe C:\xampp\htdocs\IA\

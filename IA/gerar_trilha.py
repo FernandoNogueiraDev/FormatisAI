@@ -5,9 +5,9 @@ import os, json, re, requests
 #carregando as chaves de acesso
 load_dotenv()
 
-genai.configure(api_key=os.getenv("gemini_key"))
-google_search_key = os.getenv("google_search_key")
-search_engine_id = os.getenv("search_engine_id")
+genai.configure(api_key="AIzaSyCZqBRiwVfZKZU6tZJVfeukcSQJ0--TgEk")
+google_search_key = "AIzaSyDYrEeCgxktVjYP4SuMFoIBTaD5DADsU4E"
+search_engine_id = "82412ce23bed240c3"
 
 #perfil fictício de aluno
 aluno_autodidata_teste = {
@@ -104,6 +104,7 @@ try:
     trilha_json = response_trilha.text
     #Remove blocos de markdown
     json_limpo = re.sub(r"^```json|```$", "", trilha_json.strip(), flags=re.MULTILINE).strip()
+    print(json_limpo)
     #carregando a trilha em dicionário
     trilha = json.loads(json_limpo)
 except json.JSONDecodeError as erro_json:
@@ -153,16 +154,17 @@ for conteudo in trilha_estudos["conteudo"]:
     conteudo["fonte"] = resultado["fonte"]
 
 
+
 #exibir trilha
-print("----------------------------------------------")
-print(f"Olá {perfil_aluno['nome']}, Bem vinda(o) a Formatis AI :)\nEstá é sua Trilha Personalizada. Bom Estudo!!")
-print("----------------------------------------------\n")
+#print("----------------------------------------------")
+#print(f"Olá {perfil_aluno['nome']}, Bem vinda(o) a Formatis AI :)\nEstá é sua Trilha Personalizada. Bom Estudo!!")
+#print("----------------------------------------------\n")
 
 
-for conteudo in trilha_estudos["conteudo"]:
-    print(f"Título: {conteudo['titulo']}")
-    print(f"Descrição: {conteudo['descricao']}\n")
-    print(f"    Link: {conteudo['link_referencia']}")
-    print(f"    Fonte: {conteudo['fonte']}")
-    print(f"Duração: {conteudo['duracao']}\n")
-print(f"Duração Total da Trilha: {trilha.get('duracao_total_trilha')}")
+#for conteudo in trilha_estudos["conteudo"]:
+#    print(f"Título: {conteudo['titulo']}")
+#    print(f"Descrição: {conteudo['descricao']}\n")
+#    print(f"    Link: {conteudo['link_referencia']}")
+#    print(f"    Fonte: {conteudo['fonte']}")
+#    print(f"Duração: {conteudo['duracao']}\n")
+#print(f"Duração Total da Trilha: {trilha.get('duracao_total_trilha')}")
