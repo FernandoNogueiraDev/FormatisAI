@@ -18,12 +18,13 @@
       display: flex;
       justify-content: center;
       align-items: center;
-      height: 100vh;
+      min-height: 100vh;
+      padding: 20px;
     }
 
     .container {
       background: rgba(0, 0, 0, 0.4);
-      padding: 40px;
+      padding: 50px;
       border-radius: 12px;
       box-shadow: 0 8px 16px rgba(0,0,0,0.3);
       width: 100%;
@@ -39,6 +40,7 @@
       text-align: center;
       color: #fff;
       font-size: 2rem;
+      margin-bottom: 20px;
     }
 
     label {
@@ -46,6 +48,8 @@
       margin-top: 15px;
       font-weight: bold;
       color: #fff;
+      text-align: left;
+      width: 100%;
     }
 
     input[type="text"],
@@ -57,6 +61,7 @@
       border: 1px solid #ccc;
       border-radius: 4px;
       box-sizing: border-box;
+      font-family: 'Segoe UI', sans-serif;
     }
 
     button {
@@ -81,13 +86,137 @@
       text-align: center;
       font-size: 0.95rem;
     }
+
+    .tipo-aluno-container {
+      width: 100%;
+      margin-bottom: 20px;
+    }
+
+    .tipo-aluno-label {
+      text-align: center;
+      margin-bottom: 10px;
+      font-weight: bold;
+      color: #fff;
+    }
+
+    .toggle-switch {
+      position: relative;
+      display: inline-block;
+      width: 200px;
+      height: 40px;
+      background-color: rgba(255, 255, 255, 0.2);
+      border-radius: 20px;
+      cursor: pointer;
+      overflow: hidden;
+      box-shadow: inset 0 0 5px rgba(0, 0, 0, 0.2);
+    }
+
+    .toggle-option {
+      position: absolute;
+      width: 50%;
+      height: 100%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: bold;
+      transition: all 0.3s ease;
+      z-index: 1;
+    }
+
+    .toggle-option:first-child {
+      left: 0;
+    }
+
+    .toggle-option:last-child {
+      right: 0;
+    }
+
+    .toggle-slider {
+      position: absolute;
+      width: 50%;
+      height: 100%;
+      background-color: #00c9ff;
+      border-radius: 20px;
+      transition: all 0.3s ease;
+      left: 0;
+    }
+
+    .toggle-switch.active .toggle-slider {
+      left: 50%;
+    }
+
+    .upload-container {
+      width: 100%;
+      max-height: 0;
+      overflow: hidden;
+      transition: max-height 0.5s ease, margin-top 0.3s ease;
+    }
+
+    .upload-container.visible {
+      max-height: 300px;
+      margin-top: px;
+    }
+
+    .upload-area {
+      border: 2px dashed #00c9ff;
+      border-radius: 8px;
+      padding: 20px;
+      text-align: center;
+      cursor: pointer;
+      transition: background-color 0.3s;
+      margin-top: 5px;
+    }
+
+    .upload-area:hover {
+      background-color: rgba(0, 201, 255, 0.1);
+    }
+
+    .upload-icon {
+      font-size: 40px;
+      color: #00c9ff;
+      margin-bottom: 10px;
+    }
+
+    .upload-text {
+      margin-bottom: 10px;
+    }
+
+    .upload-button {
+      background-color: #00c9ff;
+      color: white;
+      border: none;
+      padding: 8px 16px;
+      border-radius: 4px;
+      cursor: pointer;
+      font-size: 14px;
+      transition: background-color 0.3s;
+    }
+
+    .upload-button:hover {
+      background-color: #007acc;
+    }
+
+    .file-name {
+      margin-top: 10px;
+      font-size: 14px;
+      color: #ccc;
+    }
+
+    input[type="file"] {
+      display: none;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; }
+      to { opacity: 1; }
+    }
   </style>
 </head>
 <body>
 
   <div class="wrapper">
     <div class="container">
-      <h2>Cadastro Formatis ia</h2>
+      <h2>Cadastro Formatis IA</h2>
       <form id="cadastroForm">
         <label for="nome">Nome completo</label>
         <input type="text" id="nome" name="nome" required>
@@ -98,6 +227,28 @@
         <label for="senha">Senha</label>
         <input type="password" id="senha" name="senha" required>
 
+        <!-- Seletor de tipo de aluno -->
+        <div class="tipo-aluno-container">
+          <div class="tipo-aluno-label">Tipo de aluno</div>
+          <div class="toggle-switch" id="tipoAlunoToggle">
+            <div class="toggle-slider"></div>
+            <div class="toggle-option" data-value="autodidata">Autodidata</div>
+            <div class="toggle-option" data-value="escolar">Escolar</div>
+          </div>
+        </div>
+
+        <!-- Área de upload de histórico escolar (inicialmente oculta) -->
+        <div class="upload-container" id="uploadContainer">
+          <label for="historicoUpload">Histórico escolar</label>
+          <div class="upload-area" id="uploadArea">
+            <div class="upload-icon">📁</div>
+            <div class="upload-text">Arraste ou clique para fazer upload</div>
+            <button type="button" class="upload-button">Selecionar arquivo</button>
+            <div class="file-name" id="fileName">Nenhum arquivo selecionado</div>
+          </div>
+          <input type="file" id="historicoUpload" accept=".pdf,.doc,.docx,.jpg,.jpeg,.png">
+        </div>
+
         <button type="submit">Cadastrar</button>
         <div class="mensagem" id="mensagem"></div>
       </form>
@@ -105,6 +256,71 @@
   </div>
 
   <script>
+    // Controle do seletor de tipo de aluno
+    const toggleSwitch = document.getElementById('tipoAlunoToggle');
+    const uploadContainer = document.getElementById('uploadContainer');
+    const uploadArea = document.getElementById('uploadArea');
+    const fileInput = document.getElementById('historicoUpload');
+    const fileName = document.getElementById('fileName');
+    let tipoAluno = 'autodidata'; // Valor padrão
+    let arquivoSelecionado = null;
+
+    toggleSwitch.addEventListener('click', function() {
+      this.classList.toggle('active');
+      
+      // Alterna entre as opções
+      tipoAluno = this.classList.contains('active') ? 'escolar' : 'autodidata';
+      
+      // Mostra ou esconde a área de upload
+      if (tipoAluno === 'escolar') {
+        uploadContainer.classList.add('visible');
+      } else {
+        uploadContainer.classList.remove('visible');
+        // Limpa o arquivo selecionado quando esconder a área
+        fileInput.value = '';
+        fileName.textContent = 'Nenhum arquivo selecionado';
+        arquivoSelecionado = null;
+      }
+    });
+
+    // Controle da área de upload
+    uploadArea.addEventListener('click', function() {
+      fileInput.click();
+    });
+
+    fileInput.addEventListener('change', function(e) {
+      if (this.files.length > 0) {
+        arquivoSelecionado = this.files[0];
+        fileName.textContent = arquivoSelecionado.name;
+      } else {
+        arquivoSelecionado = null;
+        fileName.textContent = 'Nenhum arquivo selecionado';
+      }
+    });
+
+    // Permitir arrastar e soltar arquivos
+    uploadArea.addEventListener('dragover', function(e) {
+      e.preventDefault();
+      this.style.backgroundColor = 'rgba(0, 201, 255, 0.2)';
+    });
+
+    uploadArea.addEventListener('dragleave', function(e) {
+      e.preventDefault();
+      this.style.backgroundColor = '';
+    });
+
+    uploadArea.addEventListener('drop', function(e) {
+      e.preventDefault();
+      this.style.backgroundColor = '';
+      
+      if (e.dataTransfer.files.length > 0) {
+        fileInput.files = e.dataTransfer.files;
+        arquivoSelecionado = e.dataTransfer.files[0];
+        fileName.textContent = arquivoSelecionado.name;
+      }
+    });
+
+    // Controle do formulário de cadastro
     document.getElementById('cadastroForm').addEventListener('submit', function(event) {
       event.preventDefault();
 
@@ -114,7 +330,14 @@
       const mensagem = document.getElementById('mensagem');
 
       if (!nome || !email || !senha) {
-        mensagem.textContent = 'Preencha todos os campos.';
+        mensagem.textContent = 'Preencha todos os campos obrigatórios.';
+        mensagem.style.color = 'red';
+        return;
+      }
+
+      // Validação adicional para arquivo se o tipo for escolar
+      if (tipoAluno === 'escolar' && !arquivoSelecionado) {
+        mensagem.textContent = 'Para alunos escolares, o histórico escolar é obrigatório.';
         mensagem.style.color = 'red';
         return;
       }
@@ -125,7 +348,15 @@
         return;
       }
 
-      const usuario = { nome, email, senha };
+      // Em uma aplicação real, aqui você enviaria o arquivo para o servidor
+      const usuario = { 
+        nome, 
+        email, 
+        senha, 
+        tipoAluno,
+        historicoArquivo: tipoAluno === 'escolar' ? arquivoSelecionado?.name : null
+      };
+      
       localStorage.setItem(email, JSON.stringify(usuario));
       mensagem.textContent = 'Cadastro realizado com sucesso! Redirecionando...';
       mensagem.style.color = 'lightgreen';
@@ -138,4 +369,3 @@
 
 </body>
 </html>
-
