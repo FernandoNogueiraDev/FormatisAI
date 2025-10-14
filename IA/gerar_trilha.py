@@ -44,7 +44,11 @@ def montar_perfil(aluno):
         "interesse": aluno['interesse'],
         "objetivo_carreira": aluno['objetivo_carreira'],
         "nivel": aluno['nivel'],
-        "tipo_conteudo": aluno['tipo_conteudo']
+        "tipo_conteudo": aluno['tipo_conteudo'],
+        "contexto_aprendizagem": (
+                "Aluno autodidata que aprende de forma independente e flexível, "
+                "buscando conteúdos práticos, gratuitos e de rápida aplicação. "
+            )
     }
 
   elif tipo_aluno.lower() == "escola":
@@ -54,7 +58,12 @@ def montar_perfil(aluno):
         "idade": aluno['idade'],
         "disciplinas": disc_dificuldade,
         "nivel": aluno['ano_letivo'],
-        "tipo_conteudo": aluno['tipo_conteudo']
+        "tipo_conteudo": aluno['tipo_conteudo'],
+        "contexto_aprendizagem": (
+                "Aluno de escola com dificuldades em algumas disciplinas. "
+                "O objetivo é reforçar os conteúdos de forma didática, com explicações passo a passo, "
+                "exercícios práticos e materiais de apoio para revisão antes das provas."
+            )
     }
   else:
      raise ValueError("tipo de perfil inválido.")
@@ -104,7 +113,6 @@ try:
     trilha_json = response_trilha.text
     #Remove blocos de markdown
     json_limpo = re.sub(r"^```json|```$", "", trilha_json.strip(), flags=re.MULTILINE).strip()
-    print(json_limpo)
     #carregando a trilha em dicionário
     trilha = json.loads(json_limpo)
 except json.JSONDecodeError as erro_json:
@@ -153,7 +161,8 @@ for conteudo in trilha_estudos["conteudo"]:
     conteudo["link_referencia"] = resultado["link"]
     conteudo["fonte"] = resultado["fonte"]
 
-
+trilha_final_json = json.dumps(trilha_estudos)
+print(trilha_final_json)
 
 #exibir trilha
 #print("----------------------------------------------")
