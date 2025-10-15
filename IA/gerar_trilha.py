@@ -122,6 +122,8 @@ def substituir_links_reais(trilha: dict) -> None:
         conteudo["link_referencia"] = resultado["link"]
         conteudo["fonte"] = resultado["fonte"]
 
+    trilha["trilha_estudos"]["conteudo"] = conteudos
+    return trilha
 
 def imprimir_trilha(trilha: dict) -> None:
     print(json.dumps(trilha, ensure_ascii=False, indent=2))
@@ -150,10 +152,9 @@ def main(json_data:dict):
         return
 
     # 5) Substitui links por resultados reais de busca
-    # substituir_links_reais(trilha)
+    substituir_links_reais(trilha)
 
     imprimir_trilha(trilha)
-
 
 if __name__ == "__main__":
     aluno_autodidata_teste = {
