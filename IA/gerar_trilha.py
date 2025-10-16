@@ -17,7 +17,11 @@ def montar_perfil(aluno: dict) -> dict:
             "interesse": aluno['interesse'],
             "objetivo_carreira": aluno['objetivo_carreira'],
             "nivel": aluno['nivel'],
-            "tipo_conteudo": aluno['tipo_conteudo']
+            "tipo_conteudo": aluno['tipo_conteudo'],
+            "contexto_aprendizagem": (
+                "Aluno autodidata que aprende de forma independente e flexível, "
+                "buscando conteúdos práticos, gratuitos e de rápida aplicação. "
+            )
         }
     elif tipo_aluno == "escola":
         disc_dificuldade = [disc for disc, media in aluno["disciplinas"].items() if media < 6.0]
@@ -26,7 +30,11 @@ def montar_perfil(aluno: dict) -> dict:
             "idade": aluno['idade'],
             "disciplinas": disc_dificuldade,
             "nivel": aluno['ano_letivo'],
-            "tipo_conteudo": aluno['tipo_conteudo']
+            "contexto_aprendizagem": (
+                "Aluno de escola com dificuldades em algumas disciplinas. "
+                "O objetivo é reforçar os conteúdos de forma didática, com explicações passo a passo, "
+                "exercícios práticos e materiais de apoio para revisão antes das provas."
+            )
         }
     else:
         raise ValueError("tipo de perfil inválido.")
