@@ -149,6 +149,10 @@ class Conteudo
         $stmt->bindParam(7, $duracao_min);
         
         $stmt->execute();
+        $id = $banco->conexao()->lastInsertId();
+        $conteudo->setIdConteudo();
+        
+        return $conteudo;
     }
 
     public static function update($conteudo)

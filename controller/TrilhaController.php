@@ -7,6 +7,7 @@ use model\Fonte;
 require_once ($_SERVER['DOCUMENT_ROOT'] . '/IA/testeIA.php');
 require_once ($_SERVER['DOCUMENT_ROOT'] . '/model/Conteudo.php');
 require_once ($_SERVER['DOCUMENT_ROOT'] . '/model/Fonte.php');
+require_once ($_SERVER['DOCUMENT_ROOT'] . '/model/TrilhaConteudo.php');
 
 // Execute the Python script and capture its output
 // $output = shell_exec("python ./IA/teste.py");
@@ -34,6 +35,10 @@ require_once ($_SERVER['DOCUMENT_ROOT'] . '/model/Fonte.php');
  * }
  * }";
  */
+
+$idAluno = $POST["idAluno"];
+$TituloTrilha = $POST["TituloTrilha"];
+
 $json_ia = testeIA::montaTrilha("");
 
 echo "<br>";
@@ -84,15 +89,17 @@ try {
     echo "<br><br>";
     echo "<br><br>";
 
-    $trilha_estudos = $json_decodificado['trilha_estudos'];
+    $trilha_estudos_ia = $json_decodificado['trilha_estudos'];
 
     echo "<br><br>JSON decodificado: <br>";
 
     echo "Trilha estudos:<br>";
 
-    echo "<br>duracao_total_trilha: " . $trilha_estudos['duracao_total_trilha'];
+    echo "<br>duracao_total_trilha: " . $trilha_estudos_ia['duracao_total_trilha'];
 
-    foreach ($trilha_estudos['conteudo'] as $conteudo_trilha) {
+    $listaConteudosTrilha[];
+
+    foreach ($trilha_estudos_ia['conteudo'] as $conteudo_trilha) {
 
         echo "<br><br>";
 
@@ -125,8 +132,39 @@ try {
             $conteudo->setfonte_id($fonteNova->getIdFonte());
         }
 
-        Conteudo::create($conteudo);
+        $conteudo = Conteudo::create($conteudo);
+
+        array_push($listaConteudosTrilha, $conteudo);
     }
+
+    $trilhaEstudo = new TrilhaEstudo();
+
+    $trilhaEstudo->setAluno_id($idAluno);
+    $trilhaEstudo->setTitulo($TituloTrilha);
+    $trilhaEstudo->setDescricao("decricaoTrilha");
+    $trilhaEstudo->setStatus("pausada");
+
+    $trilhaEstudo = TrilhaEstudo::create();
+
+    $indice = 1;
+    $codTrilhaConteudo;
+    foreach ($listaConteudo['conteudo'] as $itemConteudo) {
+        $trilhaConteudoItem = new TrilhaConteudo();
+
+        $trilhaConteudoItem->setTrilha_id($trilhaEstudo->getIdTrilha_estudo());
+        $trilhaConteudoItem->setConteudo_id($itemConteudo->getIdConteudo());
+        $trilhaConteudoItem->setOrdem($indice);
+        $trilhaConteudoItem->setObrigatorio(0);
+        $trilhaConteudoItem->setEstimativa_min($itemConteudo->getDuracao_min());
+
+        $trilhaConteudoItem = TrilhaConteudo::create($trilhaConteudoItem);
+        $indice += 1;
+    }
+    
+    $codTrilhaConteudo = $trilhaConteudoItem->getIdTrilha_conteudo();
+    
+    
+    
 } catch (Throwable $e) {
     echo "Um Erro Aconteceu!: <br>";
     echo $e->getMessage();
