@@ -1,0 +1,695 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Cadastro - Formatis</title>
+  <link rel="icon" href="imgs/favicon1.png" type="image/png">
+  <style>
+    /* ====== VARIÁVEIS CSS ====== */
+    :root {
+      --primary-color: #3d4ff7;
+      --secondary-color: #ffca28;
+      --light-color: #eef2ff;
+      --dark-color: #333;
+      --gray-color: #f5f5f5;
+      --white: #fff;
+      --error-color: #e74c3c;
+      --success-color: #2ecc71;
+      --border-radius: 12px;
+      --transition: all 0.3s ease;
+      --shadow: 0 4px 15px rgba(0,0,0,0.1);
+      --shadow-hover: 0 8px 25px rgba(0,0,0,0.15);
+    }
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      line-height: 1.6;
+      background: linear-gradient(135deg, var(--primary-color), #00bcd4);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      min-height: 100vh;
+      color: var(--white);
+      padding: 20px;
+      position: relative;
+      overflow-x: hidden;
+    }
+
+    body::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 1000"><polygon fill="rgba(255,255,255,0.05)" points="0,1000 1000,0 1000,1000"/></svg>');
+      background-size: cover;
+      z-index: 1;
+    }
+
+    .register-container {
+      background: rgba(255, 255, 255, 0.95);
+      backdrop-filter: blur(10px);
+      padding: 30px 40px;
+      border-radius: var(--border-radius);
+      box-shadow: var(--shadow-hover);
+      width: 100%;
+      max-width: 800px;
+      text-align: center;
+      position: relative;
+      z-index: 2;
+      animation: fadeInUp 0.8s ease-out;
+      border: 1px solid rgba(255, 255, 255, 0.2);
+      overflow: visible;
+      max-height: none;
+    }
+
+    @keyframes fadeInUp {
+      from { opacity: 0; transform: translateY(30px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    .logo {
+      margin-bottom: 20px;
+    }
+
+    .logo img {
+      height: 50px;
+      width: auto;
+    }
+
+    h2 {
+      color: var(--primary-color);
+      margin-bottom: 8px;
+      font-size: 1.8rem;
+      font-weight: 700;
+    }
+
+    .subtitle {
+      color: #666;
+      margin-bottom: 25px;
+      font-size: 1rem;
+    }
+
+    .form-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 25px;
+      align-items: start;
+    }
+
+    .form-column {
+      display: flex;
+      flex-direction: column;
+    }
+
+    .form-group {
+      margin-bottom: 18px;
+      text-align: left;
+    }
+
+    label {
+      display: block;
+      margin-bottom: 6px;
+      color: var(--dark-color);
+      font-weight: 600;
+      font-size: 0.9rem;
+    }
+
+    .input-with-icon {
+      position: relative;
+    }
+
+     .input-icon {
+      position: absolute;
+      left: 12px;
+      top: 50%;
+      transform: translateY(-50%);
+      color: #999;
+      font-size: 1rem;
+      z-index: 3; /* Fica acima do input */
+      pointer-events: none; /* Não interfere com cliques */
+      transition: var(--transition);
+    }
+
+    input:focus + .input-icon {
+      color: var(--primary-color);
+      transform: translateY(-50%) scale(1.1);
+    }
+
+     input {
+      width: 100%;
+      padding: 12px 12px 12px 40px;
+      border: 2px solid #e0e0e0;
+      border-radius: var(--border-radius);
+      font-size: 0.95rem;
+      transition: var(--transition);
+      background-color: var(--white);
+      color: var(--dark-color);
+      position: relative;
+      z-index: 2; /* Fica abaixo do ícone */
+    }
+
+    input:focus {
+      outline: none;
+      border-color: var(--primary-color);
+      box-shadow: 0 0 0 3px rgba(61, 79, 247, 0.1);
+      transform: translateY(-2px);
+    }
+
+    .toggle-container {
+      margin: 20px 0;
+      padding: 18px;
+      background-color: rgba(61, 79, 247, 0.05);
+      border-radius: var(--border-radius);
+      grid-column: 1 / -1;
+    }
+    
+
+    .toggle-label {
+      display: block;
+      margin-bottom: 12px;
+      color: var(--primary-color);
+      font-weight: 600;
+      font-size: 0.95rem;
+    }
+
+    .toggle-switch {
+      position: relative;
+      display: inline-block;
+      width: 220px;
+      height: 45px;
+      background-color: rgba(255, 255, 255, 0.8);
+      border-radius: 25px;
+      cursor: pointer;
+      overflow: hidden;
+      box-shadow: var(--shadow);
+      border: 2px solid #e0e0e0;
+    }
+
+    .toggle-option {
+      position: absolute;
+      width: 50%;
+      height: 100%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 600;
+      font-size: 0.9rem;
+      transition: all 0.3s ease;
+      z-index: 1;
+      color: var(--dark-color);
+    }
+
+    .toggle-option:first-child { left: 0; }
+    .toggle-option:last-child { right: 0; }
+
+    .toggle-slider {
+      position: absolute;
+      width: 50%;
+      height: 100%;
+      background: linear-gradient(135deg, var(--primary-color), #2a3bd4);
+      border-radius: 25px;
+      transition: all 0.3s ease;
+      left: 0;
+    }
+
+    .toggle-switch.active .toggle-slider { left: 50%; }
+
+    .upload-container {
+      width: 100%;
+      max-height: 0;
+      overflow: hidden;
+      transition: max-height 0.5s ease, margin-top 0.3s ease;
+      grid-column: 1 / -1;
+    }
+
+    .upload-container.visible {
+      max-height: 200px;
+      margin-top: 15px;
+    }
+
+    .upload-area {
+      border: 2px dashed var(--primary-color);
+      border-radius: var(--border-radius);
+      padding: 20px;
+      text-align: center;
+      cursor: pointer;
+      transition: var(--transition);
+      background-color: rgba(61, 79, 247, 0.05);
+    }
+
+    .upload-area:hover {
+      background-color: rgba(61, 79, 247, 0.1);
+      transform: translateY(-3px);
+    }
+
+    .upload-icon {
+      font-size: 40px;
+      color: var(--primary-color);
+      margin-bottom: 12px;
+    }
+
+    .upload-text {
+      margin-bottom: 12px;
+      color: var(--dark-color);
+      font-weight: 500;
+      font-size: 0.9rem;
+    }
+
+    .upload-button {
+      background: linear-gradient(135deg, var(--primary-color), #2a3bd4);
+      color: white;
+      border: none;
+      padding: 8px 16px;
+      border-radius: 8px;
+      cursor: pointer;
+      font-size: 13px;
+      font-weight: 600;
+      transition: var(--transition);
+    }
+
+    .file-name {
+      margin-top: 12px;
+      font-size: 13px;
+      color: #666;
+      font-weight: 500;
+    }
+
+    input[type="file"] { display: none; }
+
+    .button-group {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      width: 100%;
+      margin-top: 20px;
+      grid-column: 1 / -1;
+    }
+
+    .btn {
+      width: 100%;
+      padding: 12px;
+      border: none;
+      border-radius: var(--border-radius);
+      font-size: 0.95rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: var(--transition);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+    }
+
+    .btn-primary {
+      background: linear-gradient(135deg, var(--primary-color), #2a3bd4);
+      color: var(--white);
+    }
+
+    .btn-primary:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 8px 20px rgba(61, 79, 247, 0.3);
+    }
+
+    .btn-secondary {
+      background: transparent;
+      color: var(--primary-color);
+      border: 2px solid var(--primary-color);
+    }
+
+    .btn-secondary:hover {
+      background: var(--primary-color);
+      color: var(--white);
+      transform: translateY(-3px);
+    }
+
+    .btn-loading {
+      position: relative;
+      pointer-events: none;
+    }
+
+    .btn-loading::after {
+      content: '';
+      position: absolute;
+      width: 16px;
+      height: 16px;
+      border: 2px solid transparent;
+      border-top: 2px solid currentColor;
+      border-radius: 50%;
+      animation: spin 1s linear infinite;
+    }
+
+    @keyframes spin {
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(360deg); }
+    }
+
+    .message {
+      margin-top: 18px;
+      padding: 10px;
+      border-radius: 8px;
+      text-align: left;
+      font-size: 0.85rem;
+      font-weight: 500;
+      animation: fadeIn 0.5s ease;
+      grid-column: 1 / -1;
+    }
+
+    .error {
+      color: var(--error-color);
+      background-color: rgba(231, 76, 60, 0.1);
+      border-left: 4px solid var(--error-color);
+    }
+
+    .success {
+      color: var(--success-color);
+      background-color: rgba(46, 204, 113, 0.1);
+      border-left: 4px solid var(--success-color);
+    }
+
+    .login-link {
+      margin-top: 20px;
+      font-size: 0.9rem;
+      color: #666;
+      grid-column: 1 / -1;
+    }
+
+    .login-link a {
+      color: var(--primary-color);
+      text-decoration: none;
+      font-weight: 600;
+    }
+
+    @media (max-width: 768px) {
+      body { padding: 15px; }
+      .register-container { 
+        padding: 25px 20px; 
+        max-width: 100%;
+      }
+      .form-grid {
+        grid-template-columns: 1fr;
+        gap: 15px;
+      }
+      h2 { font-size: 1.6rem; }
+      .logo img { height: 45px; }
+      .toggle-switch { width: 200px; height: 40px; }
+    }
+
+    @media (max-width: 480px) {
+      .register-container { 
+        padding: 20px 15px; 
+      }
+      h2 { font-size: 1.5rem; }
+      .subtitle { font-size: 0.9rem; }
+      input, .btn { padding: 10px; }
+      .toggle-switch { width: 180px; height: 38px; }
+      .upload-area { padding: 15px; }
+    }
+
+      /* ⬇️⬇️⬇️ ADICIONE AQUI ⬇️⬇️⬇️ */
+    /* ====== CORREÇÃO DOS PLACEHOLDERS ====== */
+    input::placeholder {
+      color: #999 !important;
+      opacity: 1 !important;
+      transition: all 0.3s ease !important;
+    }
+
+    input:focus::placeholder {
+      color: #999 !important;
+      opacity: 0.8 !important;
+    }
+
+    input::-webkit-input-placeholder { color: #999 !important; opacity: 1 !important; }
+    input::-moz-placeholder { color: #999 !important; opacity: 1 !important; }
+    input:-ms-input-placeholder { color: #999 !important; opacity: 1 !important; }
+    input::-ms-input-placeholder { color: #999 !important; opacity: 1 !important; }
+  </style>
+</head>
+<body>
+
+<div class="register-container">
+  <div class="logo">
+    <img src="imgs/logo.png" alt="Formatis">
+  </div>
+  
+  <h2>Junte-se à Formatis</h2>
+  <p class="subtitle">Crie sua conta e comece sua jornada de aprendizado personalizado</p>
+  
+  <form id="registerForm">
+    <div class="form-grid">
+      <div class="form-column">
+        <div class="form-group">
+          <label for="nome">Nome completo</label>
+          <div class="input-with-icon">
+            <span class="input-icon">👤</span>
+            <input type="text" id="nome" placeholder="Seu nome completo" autocomplete="name" required>
+          </div>
+        </div>
+        
+        <div class="form-group">
+          <label for="email">E-mail</label>
+          <div class="input-with-icon">
+            <span class="input-icon">📧</span>
+            <input type="email" id="email" placeholder="seu@email.com" autocomplete="email" required>
+          </div>
+        </div>
+      </div>
+      
+      <div class="form-column">
+        <div class="form-group">
+          <label for="senha">Senha</label>
+          <div class="input-with-icon">
+            <span class="input-icon">🔒</span>
+            <input type="password" id="senha" placeholder="Crie uma senha segura" autocomplete="new-password" required>
+          </div>
+        </div>
+      </div>
+      
+      <div class="toggle-container">
+        <div class="toggle-label">Tipo de aluno</div>
+        <div class="toggle-switch" id="tipoAlunoToggle">
+          <div class="toggle-slider"></div>
+          <div class="toggle-option" data-value="autodidata">👨‍🎓 Autodidata</div>
+          <div class="toggle-option" data-value="escolar">🏫 Escolar</div>
+        </div>
+      </div>
+      
+      <div class="upload-container" id="uploadContainer">
+        <label for="historicoUpload">Histórico escolar (opcional)</label>
+        <div class="upload-area" id="uploadArea">
+          <div class="upload-icon">📁</div>
+          <div class="upload-text">Arraste ou clique para fazer upload</div>
+          <button type="button" class="upload-button">Selecionar arquivo</button>
+          <div class="file-name" id="fileName">Nenhum arquivo selecionado</div>
+        </div>
+        <input type="file" id="historicoUpload" accept=".pdf,.doc,.docx,.jpg,.jpeg,.png">
+      </div>
+      
+      <div class="button-group">
+        <button type="submit" class="btn btn-primary" id="registerBtn">
+          <span>🚀 Criar Minha Conta</span>
+        </button>
+        <button type="button" class="btn btn-secondary" onclick="voltarParaLogin()">
+          <span>↩️ Voltar para o Login</span>
+        </button>
+      </div>
+      
+      <div id="message" class="message" style="display: none;"></div>
+      
+      <div class="login-link">
+        Já tem uma conta? <a href="telalogin.html">Faça login aqui</a>
+      </div>
+    </div>
+  </form>
+</div>
+
+<script>
+  let isLoading = false;
+  let tipoAluno = 'autodidata';
+  let arquivoSelecionado = null;
+
+  // Elementos DOM
+  const toggleSwitch = document.getElementById('tipoAlunoToggle');
+  const uploadContainer = document.getElementById('uploadContainer');
+  const uploadArea = document.getElementById('uploadArea');
+  const fileInput = document.getElementById('historicoUpload');
+  const fileName = document.getElementById('fileName');
+  const registerBtn = document.getElementById('registerBtn');
+  const messageDiv = document.getElementById('message');
+  const form = document.getElementById('registerForm');
+
+  // Configuração do toggle switch
+  toggleSwitch.addEventListener('click', function() {
+    this.classList.toggle('active');
+    tipoAluno = this.classList.contains('active') ? 'escolar' : 'autodidata';
+    
+    if (tipoAluno === 'escolar') {
+      uploadContainer.classList.add('visible');
+    } else {
+      uploadContainer.classList.remove('visible');
+      fileInput.value = '';
+      fileName.textContent = 'Nenhum arquivo selecionado';
+      arquivoSelecionado = null;
+    }
+  });
+
+  // Upload de arquivo
+  uploadArea.addEventListener('click', () => fileInput.click());
+  
+  fileInput.addEventListener('change', e => {
+    if (fileInput.files.length > 0) {
+      arquivoSelecionado = fileInput.files[0];
+      fileName.textContent = arquivoSelecionado.name;
+    } else {
+      arquivoSelecionado = null;
+      fileName.textContent = 'Nenhum arquivo selecionado';
+    }
+  });
+
+  // Drag & Drop
+  uploadArea.addEventListener('dragover', e => {
+    e.preventDefault();
+    uploadArea.classList.add('dragover');
+  });
+  
+  uploadArea.addEventListener('dragleave', e => {
+    e.preventDefault();
+    uploadArea.classList.remove('dragover');
+  });
+  
+  uploadArea.addEventListener('drop', e => {
+    e.preventDefault();
+    uploadArea.classList.remove('dragover');
+    
+    if (e.dataTransfer.files.length > 0) {
+      fileInput.files = e.dataTransfer.files;
+      arquivoSelecionado = e.dataTransfer.files[0];
+      fileName.textContent = arquivoSelecionado.name;
+    }
+  });
+
+  // Função para mostrar mensagens
+  function showMessage(message, type = 'error') {
+    messageDiv.textContent = message;
+    messageDiv.className = `message ${type}`;
+    messageDiv.style.display = 'block';
+    
+    if (type === 'success') {
+      setTimeout(() => {
+        messageDiv.style.display = 'none';
+      }, 5000);
+    }
+  }
+
+  // Função para definir estado de carregamento
+  function setLoading(state) {
+    isLoading = state;
+    
+    if (state) {
+      registerBtn.innerHTML = '<span class="loading-dots">Criando conta</span>';
+      registerBtn.classList.add('btn-loading');
+      registerBtn.disabled = true;
+      messageDiv.style.display = 'none';
+    } else {
+      registerBtn.innerHTML = '<span>🚀 Criar Minha Conta</span>';
+      registerBtn.classList.remove('btn-loading');
+      registerBtn.disabled = false;
+    }
+  }
+
+  // Validação do formulário
+  function validarFormulario() {
+    const nome = document.getElementById('nome').value.trim();
+    const email = document.getElementById('email').value.trim();
+    const senha = document.getElementById('senha').value.trim();
+    
+    if (!nome || !email || !senha) {
+      showMessage('Por favor, preencha todos os campos obrigatórios.');
+      return false;
+    }
+    
+    if (!email.includes('@') || !email.includes('.')) {
+      showMessage('Por favor, insira um e-mail válido.');
+      return false;
+    }
+    
+    if (senha.length < 6) {
+      showMessage('A senha deve ter pelo menos 6 caracteres.');
+      return false;
+    }
+    
+    return true;
+  }
+
+  // Envio do formulário
+  form.addEventListener('submit', async function(event) {
+    event.preventDefault();
+    
+    if (isLoading) return;
+    
+    if (!validarFormulario()) return;
+    
+    setLoading(true);
+    
+    const nome = document.getElementById('nome').value.trim();
+    const email = document.getElementById('email').value.trim();
+    const senha = document.getElementById('senha').value.trim();
+    
+    const formData = new FormData();
+    formData.append('nome', nome);
+    formData.append('email', email);
+    formData.append('senha', senha);
+    
+    if (arquivoSelecionado) {
+      formData.append('historico', arquivoSelecionado);
+    }
+    
+    try {
+      const resposta = await fetch('cadastrar.php', {
+        method: 'POST',
+        body: formData
+      });
+      
+      const resultado = await resposta.text();
+      console.log('Resposta do servidor:', resultado);
+      
+      if (resultado === 'success') {
+        showMessage('Cadastro realizado com sucesso! Redirecionando...', 'success');
+        setTimeout(() => {
+          window.location.href = 'telalogin.html';
+        }, 2000);
+      } else if (resultado === 'email_existente') {
+        showMessage('Este e-mail já está cadastrado. Tente fazer login ou use outro e-mail.');
+      } else {
+        showMessage('Erro: ' + resultado);
+      }
+    } catch (error) {
+      console.error('Erro:', error);
+      showMessage('Erro de conexão. Tente novamente.');
+    } finally {
+      setLoading(false);
+    }
+  });
+
+  // Função para voltar ao login
+  function voltarParaLogin() {
+    if (isLoading) return;
+    window.location.href = 'telalogin.html';
+  }
+
+  // Inicialização
+  document.addEventListener('DOMContentLoaded', function() {
+    document.getElementById('nome').focus();
+  });
+</script>
+
+</body>
+</html>
