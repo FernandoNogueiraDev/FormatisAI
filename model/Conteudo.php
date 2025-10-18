@@ -13,8 +13,6 @@ class Conteudo
 
     private $titulo;
 
-    private $descricao;
-
     private $categoria;
 
     private $dificuldade;
@@ -23,12 +21,11 @@ class Conteudo
 
     private $duracao_min;
 
-    function __construct($idConteudo, $fonte_id, $titulo, $descricao, $categoria, $dificuldade, $link, $duracao_min)
+    function __construct($idConteudo, $fonte_id, $titulo, $categoria, $dificuldade, $link, $duracao_min)
     {
         $this->idConteudo = $idConteudo;
         $this->fonte_id = $fonte_id;
         $this->titulo = $titulo;
-        $this->descricao = $descricao;
         $this->categoria = $categoria;
         $this->dificuldade = $dificuldade;
         $this->link = $link;
@@ -38,7 +35,7 @@ class Conteudo
     }
     
     public static function constroiVazio(){
-        return new self(null, null, null, null, null, null, null, null);
+        return new self(null, null, null, null, null, null, null);
     }
 
     public function getIdConteudo()
@@ -71,21 +68,6 @@ class Conteudo
         $this->titulo = $titulo;
     }
     
-    /**
-     * @return mixed
-     */
-    public function getDescricao()
-    {
-        return $this->descricao;
-    }
-    
-    /**
-     * @param mixed $descricao
-     */
-    public function setDescricao($descricao)
-    {
-        $this->descricao = $descricao;
-    }
 
     public function getCategoria()
     {
@@ -127,54 +109,51 @@ class Conteudo
         $this->duracao_min = $duracao_min;
     }
 
-    public static function create($conteudo)
+    public static function create($conteudo, $banco)
     {
-        $sql = 'INSERT INTO conteudo (fonte_id, titulo, descricao, categoria, dificuldade, link, duracao_min) VALUES (?, ?, ?, ?, ?, ?, ?)';
-        $banco = new Banco();
+        $sql = 'INSERT INTO conteudo (fonte_id, titulo, categoria, dificuldade, link, duracao_min) VALUES (?, ?, ?, ?, ?, ?)';
         $stmt = $banco->conexao()->prepare($sql);
         
         $fonteId = $conteudo->getfonte_id();
         $titulo = $conteudo->getTitulo();
-        $descricao = $conteudo->getDescricao();
         $categoria = $conteudo->getCategoria();
         $dificuldade = $conteudo->getDificuldade();
         $link = $conteudo->getLink();
         $duracao_min = $conteudo->getDuracao_min();
         $stmt->bindParam(1, $fonteId);
         $stmt->bindParam(2, $titulo);
-        $stmt->bindParam(3, $descricao);
-        $stmt->bindParam(4, $categoria);
-        $stmt->bindParam(5, $dificuldade);
-        $stmt->bindParam(6, $link);
-        $stmt->bindParam(7, $duracao_min);
+        $stmt->bindParam(3, $categoria);
+        $stmt->bindParam(4, $dificuldade);
+        $stmt->bindParam(5, $link);
+        $stmt->bindParam(6, $duracao_min);
         
         $stmt->execute();
         $id = $banco->conexao()->lastInsertId();
-        $conteudo->setIdConteudo();
+        $conteudo->setIdConteudo($id);
         
         return $conteudo;
     }
 
     public static function update($conteudo)
     {
-        $sql = 'UPDATE conteudo SET fonte_id = ?, titulo = ?, descricao = ?, categoria = ?, dificuldade = ?, link = ?, duracao_min = ? WHERE idConteudo = ?';
+        $sql = 'UPDATE conteudo SET fonte_id = ?, titulo = ?, categoria = ?, dificuldade = ?, link = ?, duracao_min = ? WHERE idConteudo = ?';
         $banco = new Banco();
         $stmt = $banco->conexao()->prepare($sql);
-        $stmt->bindParam($conteudo->getfonte_id(), $conteudo->getTitulo(), $conteudo->getDescricao(), $conteudo->getDificuldade(),
+        $stmt->bindParam($conteudo->getfonte_id(), $conteudo->getTitulo(), $conteudo->getDificuldade(),
             $conteudo->getLink(), $conteudo->getDuracao_min(), $conteudo->getIdConteudo());
         $stmt->execute();
     }
 
     public static function selectTodos()
     {
-        $sql = 'SELECT idConteudo, fonte_id, titulo, descricao, categoria, dificuldade, link, duracao_min FROM conteudo';
+        $sql = 'SELECT idConteudo, fonte_id, titulo, categoria, dificuldade, link, duracao_min FROM conteudo';
         $banco = new Banco();
         $resultSet = $banco->conexao()->query($sql);
         $listaRS = $resultSet->fetchAll();
 
         $listaconteudos = [];
         foreach ($listaRS as $item) {
-            $listaconteudos[] = new Conteudo($item['idConteudo'], $item['fonte_id'], $item['titulo'], $item['descricao'], $item['categoria'], $item['dificuldade'], $item['dificuldade'], $item['link'], $item['duracao_min']);
+            $listaconteudos[] = new Conteudo($item['idConteudo'], $item['fonte_id'], $item['titulo'], $item['categoria'], $item['dificuldade'], $item['dificuldade'], $item['link'], $item['duracao_min']);
         }
 
         return $listaconteudos;
@@ -188,7 +167,7 @@ class Conteudo
         $stmt = $banco->conexao()->prepare($sql);
         $stmt->bindParam(':id', $id);
         $item = $stmt->fetch();
-        $conteudo = new Conteudo($item['idConteudo'], $item['fonte_id'], $item['titulo'], $item['descricao'], $item['categoria'], $item['dificuldade'], $item['dificuldade'], $item['link'], $item['duracao_min']);
+        $conteudo = new Conteudo($item['idConteudo'], $item['fonte_id'], $item['titulo'], $item['categoria'], $item['dificuldade'], $item['dificuldade'], $item['link'], $item['duracao_min']);
         return $conteudo;
     }
 }

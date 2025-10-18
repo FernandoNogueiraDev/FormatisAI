@@ -89,6 +89,17 @@ class Aluno
     {
         $this->criacao_em = $criacaoEm;
     }
+    
+    public function calculaIdade(){
+        
+        $tz  = new DateTimeZone('America/Sao_Paulo');
+        $idade = DateTime::createFromFormat('d/m/Y', self->getDataNascimento(), $tz)
+        ->diff(new DateTime('now', $tz))
+        ->y;
+        
+        return $idade;
+    }
+    
 
     public static function create($Aluno)
     {

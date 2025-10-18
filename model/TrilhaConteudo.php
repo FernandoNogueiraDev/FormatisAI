@@ -44,9 +44,9 @@ class TrilhaConteudo
      *
      * @return mixed
      */
-    public function getFonte_id()
+    public function getConteudo_id()
     {
-        return $this->fonte_id;
+        return $this->conteudo_id;
     }
 
     /**
@@ -98,9 +98,9 @@ class TrilhaConteudo
      *
      * @param mixed $fonte_id
      */
-    public function setFonte_id($fonte_id)
+    public function setConteudo_id($conteudo_id)
     {
-        $this->fonte_id = $fonte_id;
+        $this->conteudo_id = $conteudo_id;
     }
 
     /**
@@ -132,10 +132,9 @@ class TrilhaConteudo
 
     
 
-    public static function create($TrilhaConteudo)
+    public static function create($TrilhaConteudo, $banco)
     {
         $sql = 'INSERT INTO trilha_conteudo (trilha_id, conteudo_id, ordem, obrigatorio, estimativa_min) VALUES (?, ?, ?, ?, ?)';
-        $banco = new Banco();
         $stmt = $banco->conexao()->prepare($sql);
         
         $trilhaId = $TrilhaConteudo->getTrilha_id();
@@ -151,7 +150,7 @@ class TrilhaConteudo
         
         $stmt->execute();
         $id = $banco->conexao()->lastInsertId();
-        $TrilhaConteudo->setIdConteudo();
+        $TrilhaConteudo->setIdTrilha_conteudo($id);
         
         return $TrilhaConteudo;
         

@@ -3,7 +3,7 @@ namespace model;
 
 use model\Banco;
 
-class TrilhaConteudo
+class TrilhaEstudo
 {
 
     private $idTrilha_estudo;
@@ -97,10 +97,9 @@ class TrilhaConteudo
         $this->status = $status;
     }
 
-    public static function create($TrilhaEstudo)
+    public static function create($TrilhaEstudo, $banco)
     {
         $sql = 'INSERT INTO trilha_estudo (aluno_id, titulo, descricao, status) VALUES (?, ?, ?, ?)';
-        $banco = new Banco();
         $stmt = $banco->conexao()->prepare($sql);
 
         $alunoId = $TrilhaEstudo->getAluno_id();
@@ -114,7 +113,7 @@ class TrilhaConteudo
 
         $stmt->execute();
         $id = $banco->conexao()->lastInsertId();
-        $TrilhaEstudo->setIdTrilha_estudo();
+        $TrilhaEstudo->setIdTrilha_estudo($id);
 
         return $TrilhaEstudo;
     }
