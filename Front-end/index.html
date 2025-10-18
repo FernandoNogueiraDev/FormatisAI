@@ -262,7 +262,24 @@
 
   <!-- Saudação -->
   <section style="padding: 40px; text-align: center; background-color: #eef2ff;">
-    <h1 style="color: #3d4ff7;">Bem-vindo à Formatis, Gustavo!</h1>
+      <?php
+    session_start();
+    require 'conexao.php'; // Certifique-se de que o caminho está correto
+    $usuario_nome = "Visitante";
+
+    if (isset($_SESSION['usuario_email'])) {
+        $email = $_SESSION['usuario_email'];
+        $stmt = $conn->prepare("SELECT nome FROM usuarios WHERE email = ?");
+        $stmt->bind_param("s", $email);
+        $stmt->execute();
+        $stmt->bind_result($nomeCompleto);
+        if ($stmt->fetch()) {
+            $usuario_nome = explode(" ", $nomeCompleto)[0]; // pega apenas o primeiro nome
+        }
+        $stmt->close();
+    }
+  ?>
+    <h1 style="color: #3d4ff7;">Bem-vindo à Formatis, <?php echo htmlspecialchars($usuario_nome); ?></h1>
     <p style="font-size: 18px; color: #333;">Explore trilhas personalizadas, cursos recomendados e conteúdos gerados por IA especialmente para você.</p>
     <a href="#meus-cursos" style="display: inline-block; margin-top: 20px; padding: 12px 24px; background-color: #3d4ff7; color: white; border-radius: 8px; text-decoration: none; font-weight: bold;">Ver meus cursos</a>
   </section>
