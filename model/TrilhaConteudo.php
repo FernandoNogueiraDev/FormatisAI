@@ -1,7 +1,7 @@
 <?php
 namespace model;
-use model\Banco;
 
+use model\Banco;
 
 class TrilhaConteudo
 {
@@ -17,6 +17,10 @@ class TrilhaConteudo
     private $obrigatorio;
 
     private $estimativa_min;
+    
+    
+    
+    
 
     /**
      *
@@ -94,9 +98,9 @@ class TrilhaConteudo
      *
      * @param mixed $fonte_id
      */
-    public function setConteudo_id($fonte_id)
+    public function setConteudo_id($conteudo_id)
     {
-        $this->conteudo_id = $fonte_id;
+        $this->conteudo_id = $conteudo_id;
     }
 
     /**
@@ -126,20 +130,30 @@ class TrilhaConteudo
         $this->estimativa_min = $estimativa_min;
     }
 
-    function __construct($idFonte, $nome_fonte)
-    {
-        $this->idFonte = $idFonte;
-        $this->idFonte = $nome_fonte;
+    
 
-        return $this;
-    }
-
-    public static function create($fonte)
+    public static function create($TrilhaConteudo, $banco)
     {
-        $sql = 'INSERT INTO conteudo (idFonte, titulo, categoria) VALUES (?,?,?)';
-        $banco = new Banco();
+        $sql = 'INSERT INTO trilha_conteudo (trilha_id, conteudo_id, ordem, obrigatorio, estimativa_min) VALUES (?, ?, ?, ?, ?)';
         $stmt = $banco->conexao()->prepare($sql);
-        $stmt->bindParam($fonte->getidFonte(), $fonte->gettitulo(), $fonte->getCategoria());
+        
+        $trilhaId = $TrilhaConteudo->getTrilha_id();
+        $conteudo_id = $TrilhaConteudo->getConteudo_id();
+        $ordem = $TrilhaConteudo->getOrdem();
+        $obrigatorio = $TrilhaConteudo->getObrigatorio();
+        $estimativa_min = $TrilhaConteudo->getEstimativa_min();
+        $stmt->bindParam(1, $trilhaId);
+        $stmt->bindParam(2, $conteudo_id);
+        $stmt->bindParam(3, $ordem);
+        $stmt->bindParam(4, $obrigatorio);
+        $stmt->bindParam(5, $estimativa_min);
+        
+        $stmt->execute();
+        $id = $banco->conexao()->lastInsertId();
+        $TrilhaConteudo->setIdTrilha_conteudo($id);
+        
+        return $TrilhaConteudo;
+        
     }
 
     public static function update($fonte)

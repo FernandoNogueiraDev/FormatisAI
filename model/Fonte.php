@@ -59,10 +59,9 @@ class Fonte
         $this->nome_fonte = $nome_fonte;
     }
 
-    public static function create($fonte)
+    public static function create($fonte, $banco)
     {
         $sql = 'INSERT INTO fonte (nome_fonte) VALUES (:nome)';
-        $banco = new Banco();
         $stmt = $banco->conexao()->prepare($sql);
         $nome_fonte = $fonte->getNome_fonte();
         $stmt->bindParam(':nome', $nome_fonte);
