@@ -1,355 +1,1058 @@
 <!DOCTYPE html>
 <html lang="pt-br">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Minhas trilhas - Fomatis</title>
-  <link rel="icon" href="imgs/favicon.jpg" type="image/png">
-  <style>
-    body { margin: 0; font-family: Arial, sans-serif; }
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Minhas trilhas - Fomatis</title>
+<link rel="icon" href="imgs/favicon1.png" type="image/png">
+<style>
+:root {
+  --primary-color: #3d4ff7;
+  --secondary-color: #ffca28;
+  --light-color: #eef2ff;
+  --dark-color: #333;
+  --gray-color: #f5f5f5;
+  --success-color: #4CAF50;
+  --border-radius: 12px;
+  --transition: all 0.3s ease;
+}
 
-    .navbar {
-      display: flex; justify-content: space-around; align-items: center;
-      margin: auto;
-    }
-    .logo img { height: 55px; width: auto; }
-    .nav-links { display: flex; list-style: none; margin: 0; padding: 0; }
-    .nav-links li { margin: 0 15px; }
-    .nav-links a { text-decoration: none; color: #3d4ff7; font-weight: bold; transition: color 0.3s; }
-    .nav-links a:hover { color: #ffca28; }
-   
-    .search-box {
-  position: relative;
-  display: flex;
+* { box-sizing: border-box; }
+
+body { 
+  margin: 0; 
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  background-color: #f9f9f9;
+  color: #333;
+  line-height: 1.6;
+}
+
+/* Navbar */
+.navbar {
+  display: flex; 
+  justify-content: space-between; 
+  align-items: center;
+  margin: auto; 
+  padding: 10px 5%;
+  background-color: var(--gray-color);
+  box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+  position: sticky;
+  top: 0;
+  z-index: 100;
+}
+.logo img { height: 55px; width: auto; }
+.nav-links { 
+  display: flex; 
+  list-style: none; 
+  margin: 0; 
+  padding: 0; 
   align-items: center;
 }
+.nav-links li { 
+  margin: 0 15px; 
+  position: relative;
+}
+.nav-links a { 
+  text-decoration: none; 
+  color: var(--primary-color); 
+  font-weight: 600; 
+  transition: var(--transition); 
+  padding: 8px 0; 
+  position: relative;
+  display: inline-block;
+}
+.nav-links a:hover { color: var(--secondary-color); }
+.nav-links a::after { 
+  content: ''; 
+  position: absolute; 
+  width: 0; 
+  height: 2px; 
+  bottom: 0; 
+  left: 0; 
+  background-color: var(--secondary-color); 
+  transition: var(--transition); 
+}
+.nav-links a:hover::after { width: 100%; }
 
-.search-toggle {
-  background: none;
-  border: none;
-  font-size: 20px;
+/* Dropdown Menu Corrigido */
+.dropdown { 
+  position: relative; 
+}
+.dropdown-toggle { 
+  display: flex; 
+  align-items: center; 
+  gap: 4px;
   cursor: pointer;
-  color: white;
-  padding: 6px;
 }
-
-.search-input {
-  width: 0;
-  opacity: 0;
-  padding: 6px;
-  border: none;
-  border-radius: 4px;
-  outline: none;
-  transition: width 0.3s ease, opacity 0.3s ease;
-  margin-left: 10px;
+.dropdown-toggle::after { 
+  content: "▼"; 
+  font-size: 10px; 
+  transition: transform 0.3s ease;
+  margin-left: 2px;
 }
-
-.search-box.active .search-input {
-  width: 200px;
-  opacity: 1;
+.dropdown:hover .dropdown-toggle::after {
+  transform: rotate(180deg);
 }
-
-    .container-curso {
-      background: grey; padding: 12px; border-radius: 12px; width: 100%; max-width: 250px;
-      text-align: center; display: flex; flex-direction: column; align-items: center; color: white;
-    }
-    .curso-wrapper { display: flex; flex-wrap: wrap; justify-content: center; gap: 20px; padding: 40px; }
-    .curso-wrapper h2 { width: 100%; text-align: center; color: #3d4ff7; margin-bottom: 30px; }
-    button {
-      margin-top: 10px; padding: 8px 16px; border: none; border-radius: 8px;
-      background-color: #3d4ff7; color: white; font-weight: bold; cursor: pointer; transition: background-color 0.3s;
-    }
-    button:hover { background-color: #00bcd4; }
-
-    .btn-group { display: flex; justify-content: center; gap: 10px; flex-wrap: wrap; margin-top: 10px; }
-    .btn {
-      padding: 10px 20px; border: 2px solid transparent; border-radius: 8px;
-      background: #f0f0f0; color: #222; cursor: pointer;
-      transition: transform 0.2s ease, box-shadow 0.3s ease; font-weight: bold;
-    }
-    .btn:hover { transform: scale(1.05); box-shadow: 0 0 10px rgba(255,255,255,0.3); }
-    .btn.selected { color: #000; background: #fff; animation: rainbow-glow 2.5s linear infinite; }
-    @keyframes rainbow-glow {
-      0% { box-shadow: 0 0 16px rgba(255, 0, 0, 0.8); }
-      25% { box-shadow: 0 0 16px rgba(255, 165, 0, 0.8); }
-      50% { box-shadow: 0 0 16px rgba(0, 255, 0, 0.8); }
-      75% { box-shadow: 0 0 16px rgba(0, 0, 255, 0.8); }
-      100% { box-shadow: 0 0 16px rgba(238, 130, 238, 0.8); }
-    }
-    .hidden { display: none; }
-    .submit-btn { margin-top: 30px; display: flex; justify-content: center; }
-    #enviarBtn { background: transparent; color: white; border: 2px solid white; }
-
-    /* Modal */
-    #modalCurso {
-      display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-      background: rgba(0,0,0,0.6); z-index: 9999; justify-content: center; align-items: center;
-    }
-    #modalCurso .container {
-      background: #fff; color: #333; padding: 30px; border-radius: 16px;
-      max-width: 800px; width: 90%; box-shadow: 0 0 20px rgba(0,0,0,0.3);
-      position: relative; animation: fadeIn 0.5s ease;
-    }
-    @keyframes fadeIn {
-      from { opacity: 0; transform: scale(0.95); }
-      to { opacity: 1; transform: scale(1); }
-    }
-
-    .input-box {
-  display: block;
-  margin: 20px auto;
-  width: 95%;
-  max-width: 700px;
-  padding: 14px 18px;
-  font-size: 18px;
+.dropdown-menu {
+  list-style: none;
+  padding: 8px 0;
+  margin: 0;
+  position: absolute;
+  top: 100%;
+  left: 0;
+  background-color: #fff;
+  min-width: 200px;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.1);
   border-radius: 8px;
-  border: 2px solid #ccc;
-  outline: none;
-  transition: border-color 0.3s;
-  box-sizing: border-box;
+  z-index: 1000;
+  border: 1px solid #eee;
+  opacity: 0;
+  visibility: hidden;
+  transform: translateY(-10px);
+  transition: all 0.3s ease;
 }
-.input-box:focus {
-  border-color: #3d4ff7;
-  box-shadow: 0 0 0 2px rgba(61, 79, 247, 0.2);
+.dropdown:hover .dropdown-menu {
+  opacity: 1;
+  visibility: visible;
+  transform: translateY(0);
 }
-.main-content {
-  max-width: 1200px;
+.dropdown-menu li { 
+  border-bottom: 1px solid #f0f0f0; 
+}
+.dropdown-menu li:last-child { 
+  border-bottom: none; 
+}
+.dropdown-menu li a {
+  display: block;
+  padding: 10px 16px;
+  color: var(--primary-color);
+  font-weight: 600;
+  text-decoration: none;
+  transition: all 0.2s ease;
+  position: relative;
+}
+.dropdown-menu li a::after {
+  content: '';
+  position: absolute;
+  width: 0;
+  height: 100%;
+  top: 0;
+  left: 0;
+  background-color: var(--light-color);
+  transition: width 0.2s ease;
+  z-index: -1;
+}
+.dropdown-menu li a:hover {
+  color: var(--secondary-color);
+}
+.dropdown-menu li a:hover::after {
+  width: 100%;
+}
+
+.search-box { position: relative; display: flex; align-items: center; }
+.search-toggle { background: none; border: none; font-size: 20px; cursor: pointer; color: var(--primary-color); padding: 8px; border-radius: 50%; transition: var(--transition); }
+.search-toggle:hover { background-color: rgba(61, 79, 247, 0.1); }
+.search-input { width: 0; opacity: 0; padding: 10px 15px; border: 1px solid #ddd; border-radius: 30px; outline: none; transition: var(--transition); margin-left: 10px; font-size: 14px; }
+.search-box.active .search-input { width: 250px; opacity: 1; }
+
+/* Trilha */
+.trilha-section { padding: 40px 5%; text-align: center; background-color: var(--light-color); min-height: calc(100vh - 160px); }
+.trilha-section h1 { color: var(--primary-color); margin-bottom: 10px; font-size: 2.2rem; }
+.trilha-section p { font-size: 18px; color: var(--dark-color); max-width: 800px; margin: 0 auto 30px; }
+
+/* Número de etapa */
+#progressoTexto { margin: 0 0 10px; color: var(--dark-color); font-weight: 600; }
+
+/* Video e tabela lado a lado */
+.video-tabela { display: flex; justify-content: space-between; flex-wrap: wrap; margin: 30px auto 0; gap: 30px; max-width: 1200px; }
+.video-container { flex: 1; min-width: 300px; position: relative; height: 360px; }
+#youtubePlayer { width: 100%; height: 100%; border-radius: var(--border-radius); box-shadow: 0 4px 15px rgba(0,0,0,0.1); background-color: #000; border: none; }
+.video-loading { display: flex; justify-content: center; align-items: center; color: white; font-size: 18px; height: 100%; background: #000; border-radius: var(--border-radius); position: absolute; top: 0; left: 0; right: 0; bottom: 0; z-index: 2; }
+.video-loading.hidden { display: none; }
+
+/* Tabela */
+.tabela-wrapper { background-color: #fff; padding: 20px; border-radius: var(--border-radius); box-shadow: 0 4px 15px rgba(0,0,0,0.1); min-width: 300px; max-width: 500px; flex: 1; height: 360px; overflow: hidden; }
+.tabela-wrapper h2 { color: var(--primary-color); margin-top: 0; padding-bottom: 15px; border-bottom: 1px solid #eee; }
+table { border-collapse: collapse; width: 100%; table-layout: fixed; }
+table th, table td { border: 1px solid var(--primary-color); padding: 10px 12px; text-align: left; word-wrap: break-word; overflow-wrap: break-word; white-space: normal; }
+table th { background-color: var(--primary-color); color: white; }
+table tr.completed td:first-child::after { content: '✓'; position: absolute; right: 10px; color: var(--success-color); font-weight: bold; }
+
+/* Define largura fixa para as colunas e evita overflow */
+#tabelaAulas th:first-child, #tabelaAulas td:first-child { width: 35%; max-width: 35%; }
+#tabelaAulas th:last-child, #tabelaAulas td:last-child { width: 65%; max-width: 65%; }
+
+/* Botões */
+.btn-group-navegacao { display: flex; justify-content: center; gap: 15px; margin-top: 30px; }
+.btn { padding: 12px 25px; border: none; border-radius: 8px; background-color: var(--primary-color); color: white; font-weight: bold; cursor: pointer; display: flex; align-items: center; gap: 8px; transition: var(--transition); }
+.btn:hover { background-color: #2a3bd4; transform: translateY(-2px); box-shadow: 0 4px 8px rgba(0,0,0,0.1); }
+.btn:active { transform: translateY(0); }
+.btn.hidden { display: none; }
+.btn-secondary { background-color: #6c757d; }
+.btn-secondary:hover { background-color: #5a6268; }
+
+/* Estilos para os resultados da pesquisa */
+.curso-card {
+  background: white;
+  padding: 20px;
+  border-radius: 12px;
+  box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+  width: 300px;
+  text-align: left;
+  margin: 10px;
+}
+
+.categoria-tag {
+  background: var(--light-color);
+  padding: 5px 10px;
+  border-radius: 20px;
+  display: inline-block;
+  font-size: 0.8rem;
+  color: var(--primary-color);
+  margin-bottom: 10px;
+}
+
+/* Tela de Conclusão */
+.tela-conclusao {
+  display: none;
+  padding: 40px 5%;
+  text-align: center;
+  background: linear-gradient(135deg, var(--light-color) 0%, #ffffff 100%);
+  min-height: calc(100vh - 160px);
+}
+
+.conclusao-container {
+  max-width: 900px;
   margin: 0 auto;
-  padding: 0 20px;
+  background: white;
+  border-radius: 20px;
+  padding: 40px;
+  box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+  position: relative;
+  overflow: hidden;
 }
 
-#gerarBtn {
-  background-color: #0056d2; /* azul mais forte */
-  color: white;
-  font-size: 18px;
-  padding: 14px 28px;
-  border: none;
-  border-radius: 10px;
+.conclusao-container::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 8px;
+  background: linear-gradient(90deg, var(--primary-color), var(--secondary-color));
+}
+
+.conclusao-titulo {
+  color: var(--primary-color);
+  font-size: 2.5rem;
+  margin-bottom: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 15px;
+}
+
+.conclusao-subtitulo {
+  color: var(--dark-color);
+  font-size: 1.2rem;
+  margin-bottom: 30px;
+}
+
+.conclusao-info {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 20px;
+  justify-content: center;
+  margin: 30px 0;
+}
+
+.info-card {
+  background: var(--light-color);
+  padding: 20px;
+  border-radius: 12px;
+  min-width: 200px;
+  flex: 1;
+  box-shadow: 0 4px 10px rgba(0,0,0,0.05);
+}
+
+.info-card h3 {
+  color: var(--primary-color);
+  margin-top: 0;
+  font-size: 1.1rem;
+}
+
+.info-card p {
+  font-size: 1.8rem;
   font-weight: bold;
-  cursor: pointer;
-  transition: background-color 0.3s ease;
+  margin: 10px 0;
+  color: var(--dark-color);
 }
 
-#gerarBtn:hover {
-  background-color: #003ea1;
+/* Conquistas */
+.conquistas-container {
+  margin: 40px 0;
+  padding: 30px;
+  background: linear-gradient(135deg, #f8f9ff 0%, #ffffff 100%);
+  border-radius: 15px;
+  border: 2px dashed var(--primary-color);
+  position: relative;
 }
 
-#mensagemStatus {
+.conquistas-titulo {
+  color: var(--primary-color);
+  font-size: 1.8rem;
+  margin-bottom: 25px;
+}
+
+.conquistas-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: 20px;
+  margin-top: 20px;
+}
+
+.conquista-card {
+  background: white;
+  padding: 20px;
+  border-radius: 12px;
+  box-shadow: 0 4px 10px rgba(0,0,0,0.08);
+  text-align: center;
+  transition: var(--transition);
+  border: 2px solid transparent;
+}
+
+.conquista-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 8px 20px rgba(0,0,0,0.12);
+  border-color: var(--secondary-color);
+}
+
+.conquista-icone {
+  font-size: 2.5rem;
+  margin-bottom: 15px;
+  display: block;
+}
+
+.conquista-card h4 {
+  color: var(--primary-color);
+  margin: 0 0 10px 0;
+  font-size: 1.2rem;
+}
+
+.conquista-card p {
+  color: #666;
+  margin: 0;
+  font-size: 0.95rem;
+}
+
+.proximos-passos {
+  margin-top: 40px;
+  text-align: left;
+  max-width: 700px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.proximos-passos h3 {
+  color: var(--primary-color);
+  text-align: center;
+  margin-bottom: 20px;
+}
+
+.passo-card {
+  background: white;
+  padding: 20px;
+  border-radius: 10px;
+  margin-bottom: 15px;
+  box-shadow: 0 3px 10px rgba(0,0,0,0.05);
+  border-left: 4px solid var(--secondary-color);
+  display: flex;
+  align-items: center;
+  gap: 15px;
+  transition: var(--transition);
+}
+
+.passo-card:hover {
+  transform: translateX(5px);
+  box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+}
+
+.passo-card i {
+  font-size: 1.5rem;
+  color: var(--primary-color);
+  min-width: 30px;
+}
+
+.passo-card h4 {
+  margin: 0 0 5px 0;
+  color: var(--dark-color);
+}
+
+.passo-card p {
+  margin: 0;
+  color: #666;
+  font-size: 0.95rem;
+}
+
+.conclusao-botoes {
   display: flex;
   justify-content: center;
-  align-items: center;
-  text-align: center;
-  margin: 20px auto;
-  font-weight: bold;
-  font-size: 16px;
-  padding: 12px 20px;
+  gap: 15px;
+  margin-top: 30px;
+  flex-wrap: wrap;
+}
+
+.btn-compartilhar {
+  background: linear-gradient(135deg, #25D366, #128C7E);
+  color: white;
+  padding: 12px 25px;
+  border: none;
   border-radius: 8px;
-  max-width: 500px;
-  min-height: 40px;
-  transition: opacity 1s ease-out;
+  font-weight: bold;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  transition: var(--transition);
 }
 
-#mensagemStatus.fade-out {
-  opacity: 0;
+.btn-compartilhar:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 5px 15px rgba(37, 211, 102, 0.3);
 }
 
-.fade-out {
-  transition: opacity 0.5s ease;
-  opacity: 0;
+.btn-nova-trilha {
+  background: linear-gradient(135deg, var(--secondary-color), #ffb300);
+  color: white;
+  padding: 12px 25px;
+  border: none;
+  border-radius: 8px;
+  font-weight: bold;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  transition: var(--transition);
 }
 
-/* Dropdown Menu */
-    .dropdown { position: relative; }
-    .dropdown-toggle {
-      display: flex;
-      align-items: center;
-      gap: 4px;
-      cursor: pointer;
-    }
-    .dropdown-toggle::after {
-      content: "▼";
-      font-size: 10px;
-      transition: transform 0.3s ease;
-      margin-left: 2px;
-    }
-    .dropdown:hover .dropdown-toggle::after {
-      transform: rotate(180deg);
-    }
-    .dropdown-menu {
-      list-style: none;
-      padding: 8px 0;
-      margin: 0;
-      position: absolute;
-      top: 100%;
-      left: 0;
-      background-color: #fff;
-      min-width: 200px;
-      box-shadow: 0 4px 12px rgba(0,0,0,0.1);
-      border-radius: 8px;
-      z-index: 1000;
-      border: 1px solid #eee;
-      opacity: 0;
-      visibility: hidden;
-      transform: translateY(-10px);
-      transition: all 0.3s ease;
-    }
-    .dropdown:hover .dropdown-menu {
-      opacity: 1;
-      visibility: visible;
-      transform: translateY(0);
-    }
-    .dropdown-menu li { border-bottom: 1px solid #f0f0f0; }
-    .dropdown-menu li:last-child { border-bottom: none; }
-    .dropdown-menu li a {
-      display: block;
-      padding: 10px 16px;
-      color: var(--primary-color);
-      font-weight: 600;
-      text-decoration: none;
-      transition: all 0.2s ease;
-      position: relative;
-    }
-    .dropdown-menu li a::after {
-      content: '';
-      position: absolute;
-      width: 0;
-      height: 2px;
-      bottom: 0;
-      left: 16px;
-      right: 16px;
-      background-color: var(--secondary-color);
-      transition: width 0.2s ease;
-    }
-    .dropdown-menu li a:hover {
-      color: var(--secondary-color);
-    }
-    .dropdown-menu li a:hover::after {
-      width: calc(100% - 32px);
-    }
-  </style>
+.btn-nova-trilha:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 5px 15px rgba(255, 202, 40, 0.3);
+}
+
+.btn-voltar-inicio {
+  background: linear-gradient(135deg, #6c757d, #5a6268);
+  color: white;
+  padding: 12px 25px;
+  border: none;
+  border-radius: 8px;
+  font-weight: bold;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  transition: var(--transition);
+}
+
+.btn-voltar-inicio:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 5px 15px rgba(108, 117, 125, 0.3);
+}
+
+/* Confetti */
+.confetti {
+  position: fixed;
+  width: 10px;
+  height: 10px;
+  background-color: var(--primary-color);
+  top: -10px;
+  z-index: 1000;
+}
+
+footer { background-color: var(--gray-color); color: var(--primary-color); text-align: center; padding: 25px; }
+footer a { color: var(--primary-color); text-decoration: none; margin: 0 15px; font-weight: 600; transition: var(--transition); }
+footer a:hover { color: var(--secondary-color); }
+
+@media (max-width: 768px) {
+  .navbar { flex-direction: column; padding: 15px; }
+  .nav-links { margin: 15px 0; }
+  .nav-links li { margin: 0 10px; }
+  .dropdown-menu { 
+    position: static; 
+    box-shadow: none; 
+    border: none;
+    opacity: 1;
+    visibility: visible;
+    transform: none;
+    display: none;
+  }
+  .dropdown:hover .dropdown-menu {
+    display: block;
+  }
+  .video-tabela { flex-direction: column; }
+  .tabela-wrapper, .video-container { max-width: 100%; height: auto; }
+  .video-container { height: 300px; }
+  .search-box.active .search-input { width: 200px; }
+  .curso-card { width: 100%; margin: 10px 0; }
+  
+  .conclusao-titulo {
+    font-size: 2rem;
+    flex-direction: column;
+    gap: 10px;
+  }
+  
+  .conclusao-info {
+    flex-direction: column;
+  }
+  
+  .conquistas-grid {
+    grid-template-columns: 1fr;
+  }
+  
+  .conclusao-botoes {
+    flex-direction: column;
+    align-items: center;
+  }
+  
+  .conclusao-botoes .btn {
+    width: 100%;
+    max-width: 300px;
+    justify-content: center;
+  }
+}
+</style>
 </head>
 <body>
-    <div class="page">
-        <!-- NAVBAR -->
-        <nav class="navbar">
-            <div class="logo">
-                <a href="index.html"><img src="imgs/logo.jpg" alt="Infinity Cursos"></a>
-                </div>
-                <ul class="nav-links">
-                <li><a href="minhastrilhas.html">Minhas trilhas</a></li>
-                <li><a href="telacursos.html">Cursos</a></li>
-                <li><a href="quemsomos.html">Quem Somos</a></li>
-                <!-- Menu suspenso Área do Aluno -->
-                <li class="dropdown">
-                  <a href="#" class="dropdown-toggle">Área do Aluno</a>
-                  <ul class="dropdown-menu">
-                    <li><a href="alterarsenha.html">Alterar senha</a></li>
-                    <li><a href="atualizarcadastro.html">Atualizar cadastro</a></li>
-                    <li><a href="areadoaluno.html">Acessar área do aluno</a></li>
-                  </ul>
-                </li>
-                </ul>
-                <div class="search-box">
-                    <button class="search-toggle">🔍</button>
-                    <input type="text" class="search-input" placeholder="Procurar cursos...">
-                </div>
-            </div>
-        </nav>
 
-    <!-- Trilha -->
-    <section style="padding: 40px; text-align: center; background-color: #eef2ff;">
-        <h1 style="color: #3d4ff7;">Trilha: Introdução à Programação</h1>
-        <p style="font-size: 18px; color: #333;">Desenvolver o raciocínio lógico e compreender os fundamentos da programação, preparando o aluno para escolher sua linguagem preferida e avançar em projetos reais.</p>
-        <br/><br/>
-        <div style="text-align: left; color: darkgrey; display: flex; align-items: center;">
-            <p style="margin: 0px 10px; white-space: nowrap;">Progresso: 54%</p>
-            <span style="display:block; border: 1px solid #3d4ff7; height: 0px; width: 100%;"></span>
-        </div>
-        <div style="text-align: left;">
-            <h2 style="text-align: center; color: #3d4ff7;">Etapa 1 — Fundamentos da Lógica</h2>
-            <p><span style="font-weight: bold;">Objetivo:</span> entender como a lógica é usada para resolver problemas.</p>
-            <br/>
-            <div style="display: flex; justify-content: space-around;">
-                <ul>
-                    <li>O que é algoritmo</li>
-                    <li>Variáveis e operadores</li>
-                    <li>Estruturas condicionais</li>
-                    <li>Repetições e tomadas de decisão</li>
-                </ul>
-                <iframe width="550" height="300" src="https://www.youtube.com/watch?v=0hN7_TTuR2M&t=3s" frameborder="0" allowfullscreen></iframe>
-            </div>
-            <h4 style="color: #3d4ff7;">Próximos passos:</h4>
-            <p style="color: #333;">Resolver desafios simples de lógica (ex: algoritmos de soma, média, e comparações).</p>
-            <button style="display: flex; align-self: center;">Próxima etapa</button>
-            <span></span>
-        </div>
-    </section>
+<nav class="navbar" role="navigation" aria-label="Navegação principal">
+  <div class="logo"><a href="telainicial.php" aria-label="Página inicial"><img src="imgs/logo.png" alt="logo"></a></div>
+  <ul class="nav-links">
+    <li><a href="telameuscursos.html">Minhas trilhas</a></li>
+    <li><a href="telacursos.html">Cursos</a></li>
+    <li><a href="quemsomos.html">Quem Somos</a></li>
+    <li><a href="#ajuda">Ajuda</a></li>
+    
+    <!-- Menu dropdown corrigido e alinhado -->
+    <li class="dropdown">
+      <a href="#" class="dropdown-toggle">Área do Aluno</a>
+      <ul class="dropdown-menu">
+        <li><a href="atualizarsenha.html">Atualizar senha</a></li>
+        <li><a href="alterarcadastro.html">Alterar cadastro</a></li>
+        <li><a href="areadoaluno.php">Acessar área do aluno</a></li>
+      </ul>
+    </li>
+  </ul>
+  <div class="search-box">
+    <button class="search-toggle" aria-label="Abrir busca">🔍</button>
+    <input type="text" class="search-input" placeholder="Procurar cursos..." aria-label="Campo de busca" id="searchInput">
+  </div>
+</nav>
 
- <script>
-    document.querySelector('.search-toggle').addEventListener('click', () => {
-    document.querySelector('.search-box').classList.toggle('active');
+<main class="trilha-section" id="mainContent">
+  <h1>Trilha: Introdução à Programação</h1>
+  <p>Desenvolver o raciocínio lógico e compreender os fundamentos da programação.</p>
+
+  <div id="progressoTexto">Etapa <span id="etapaAtualNumero">1</span> de <span id="totalEtapas">2</span></div>
+
+  <div class="video-tabela">
+    <div class="tabela-wrapper">
+      <h2 id="nomeEtapa">Etapa 1 — Fundamentos da Lógica</h2>
+      <table id="tabelaAulas">
+        <thead><tr><th>Aula</th><th>Objetivo</th></tr></thead>
+        <tbody></tbody>
+      </table>
+    </div>
+
+    <div class="video-container">
+      <div class="video-loading" id="loadingMessage">Carregando vídeo...</div>
+      <div id="youtubePlayer"></div>
+    </div>
+  </div>
+
+  <div class="btn-group-navegacao">
+    <button id="voltarBtn" class="btn btn-secondary hidden">← Voltar</button>
+    <button id="proximaEtapaBtn" class="btn">Próxima etapa →</button>
+  </div>
+</main>
+
+<!-- Nova tela de conclusão -->
+<section class="tela-conclusao" id="telaConclusao">
+  <div class="conclusao-container">
+    <h1 class="conclusao-titulo">
+      <span>🎉 Parabéns!</span>
+    </h1>
+    <p class="conclusao-subtitulo">Você concluiu com sucesso a trilha <strong>Introdução à Programação</strong></p>
+    
+    <div class="conclusao-info">
+      <div class="info-card">
+        <h3>Dias de Estudo</h3>
+        <p id="diasEstudo">7</p>
+        <span>Dedicados ao aprendizado</span>
+      </div>
+      <div class="info-card">
+        <h3>Aulas Concluídas</h3>
+        <p id="aulasConcluidas">10</p>
+        <span>Conhecimento adquirido</span>
+      </div>
+      <div class="info-card">
+        <h3>Nível Alcançado</h3>
+        <p>Iniciante</p>
+        <span>Em Programação</span>
+      </div>
+    </div>
+    
+    <div class="conquistas-container">
+      <h2 class="conquistas-titulo">Conquistas Destacadas</h2>
+      <div class="conquistas-grid">
+        <div class="conquista-card">
+          <div class="conquista-icone">🧠</div>
+          <h4>Pensamento Lógico</h4>
+          <p>Você desenvolveu habilidades fundamentais de raciocínio lógico e resolução de problemas.</p>
+        </div>
+        
+        <div class="conquista-card">
+          <div class="conquista-icone">⚡</div>
+          <h4>Fundamentos Sólidos</h4>
+          <p>Domina os conceitos essenciais que formam a base de qualquer linguagem de programação.</p>
+        </div>
+        
+        <div class="conquista-card">
+          <div class="conquista-icone">🚀</div>
+          <h4>Pronto para Avançar</h4>
+          <p>Adquiriu conhecimentos suficientes para seguir para tópicos mais avançados em programação.</p>
+        </div>
+      </div>
+    </div>
+    
+    <div class="proximos-passos">
+      <h3>Próximos Passos na Sua Jornada</h3>
+      
+      <div class="passo-card">
+        <div>📚</div>
+        <div>
+          <h4>Explore Nossas Outras Trilhas</h4>
+          <p>Continue aprendendo com nossos cursos de JavaScript, Python e desenvolvimento web.</p>
+        </div>
+      </div>
+      
+      <div class="passo-card">
+        <div>👥</div>
+        <div>
+          <h4>Participe da Comunidade</h4>
+          <p>Conecte-se com outros alunos, tire dúvidas e compartilhe conhecimento.</p>
+        </div>
+      </div>
+      
+      <div class="passo-card">
+        <div>💼</div>
+        <div>
+          <h4>Aplique Seu Conhecimento</h4>
+          <p>Crie seus primeiros projetos práticos para consolidar o aprendizado.</p>
+        </div>
+      </div>
+    </div>
+    
+    <div class="conclusao-botoes">
+      <button class="btn-compartilhar" id="btnCompartilhar">
+        📢 Compartilhar Conquista
+      </button>
+      <button class="btn-nova-trilha" id="btnNovaTrilha">
+        🚀 Iniciar Nova Trilha
+      </button>
+      <button class="btn-voltar-inicio" id="btnVoltarInicio">
+        🏠 Voltar ao Início
+      </button>
+    </div>
+  </div>
+</section>
+
+<footer role="contentinfo">
+  <p>&copy; 2025 Fomatis. Todos os direitos reservados.</p>
+  <p><a href="#ajuda">Ajuda</a> | <a href="quemsomos.html">Quem Somos</a> | <a href="#termos">Termos de Uso</a> | <a href="#privacidade">Política de Privacidade</a></p>
+</footer>
+
+<script>
+// Base de dados de cursos
+const cursosDisponiveis = [
+  { 
+    nome: "JavaScript Básico", 
+    categoria: "Programação", 
+    descricao: "Aprenda os fundamentos do JavaScript desde variáveis até funções.",
+    duracao: "8 horas",
+    nivel: "Iniciante"
+  },
+  { 
+    nome: "Python para Iniciantes", 
+    categoria: "Programação", 
+    descricao: "Introdução à programação com Python, ideal para quem está começando.",
+    duracao: "10 horas",
+    nivel: "Iniciante"
+  },
+  { 
+    nome: "HTML e CSS Moderno", 
+    categoria: "Web Design", 
+    descricao: "Crie sites responsivos e modernos com HTML5 e CSS3.",
+    duracao: "12 horas",
+    nivel: "Iniciante"
+  },
+  { 
+    nome: "React do Zero", 
+    categoria: "Programação", 
+    descricao: "Desenvolva aplicações web modernas com React e Hooks.",
+    duracao: "15 horas",
+    nivel: "Intermediário"
+  },
+  { 
+    nome: "Design de Interfaces", 
+    categoria: "Design", 
+    descricao: "Princípios de UI/UX Design para criar interfaces intuitivas.",
+    duracao: "6 horas",
+    nivel: "Intermediário"
+  },
+  { 
+    nome: "Banco de Dados SQL", 
+    categoria: "Banco de Dados", 
+    descricao: "Fundamentos de SQL e bancos de dados relacionais.",
+    duracao: "9 horas",
+    nivel: "Intermediário"
+  },
+  { 
+    nome: "Node.js Avançado", 
+    categoria: "Programação", 
+    descricao: "Desenvolvimento backend com Node.js, Express e MongoDB.",
+    duracao: "18 horas",
+    nivel: "Avançado"
+  },
+  { 
+    nome: "Machine Learning", 
+    categoria: "Data Science", 
+    descricao: "Introdução aos conceitos e algoritmos de Machine Learning.",
+    duracao: "20 horas",
+    nivel: "Avançado"
+  }
+];
+
+const etapas = [
+  { nome: "Fundamentos da Lógica", video: "0hN7_TTuR2M",
+    aulas: [
+      { titulo: "O que é algoritmo", objetivo: "Entender como a lógica resolve problemas." },
+      { titulo: "Variáveis e operadores", objetivo: "Compreender dados e operações básicas." },
+      { titulo: "Estruturas condicionais", objetivo: "Aprender a tomar decisões em programas." },
+      { titulo: "Repetições (loops)", objetivo: "Executar ações repetitivas eficientemente." },
+      { titulo: "Funções", objetivo: "Organizar código em blocos reutilizáveis." }
+    ]
+  },
+  { nome: "Avançando em Lógica", video: "Ohi-MGlBEws",
+    aulas: [
+      { titulo: "Algoritmos de ordenação", objetivo: "Métodos para organizar dados." },
+      { titulo: "Algoritmos de busca", objetivo: "Técnicas para encontrar elementos." },
+      { titulo: "Complexidade algorítmica", objetivo: "Medir eficiência de algoritmos." },
+      { titulo: "Recursividade", objetivo: "Funções que chamam a si mesmas." },
+      { titulo: "Manipulação de strings", objetivo: "Operações avançadas com texto." }
+    ]
+  }
+];
+
+let etapaAtual = 0;
+
+document.addEventListener('DOMContentLoaded', function() {
+  document.getElementById('totalEtapas').textContent = etapas.length;
+
+  // Configuração da pesquisa
+  const searchToggle = document.querySelector('.search-toggle');
+  const searchBox = document.querySelector('.search-box');
+  const searchInput = document.getElementById('searchInput');
+  
+  // Abrir/fechar caixa de pesquisa
+  searchToggle.addEventListener('click', function(e) {
+    e.stopPropagation();
+    searchBox.classList.toggle('active');
+    if(searchBox.classList.contains('active')) {
+      searchInput.focus();
+    }
   });
 
-  document.getElementById("gerarBtn").addEventListener("click", function () {
-    const tema = document.querySelector(".input-box").value.trim();
-    const tipoSelecionado = document.querySelector("#tipoConteudo .btn.selected");
-    const nivelSelecionado = document.querySelector("#nivelBtns .btn.selected");
-    const duracaoSelecionada = document.querySelector("#duracaoBtns .btn.selected");
-    const mensagemStatus = document.getElementById("mensagemStatus");
-
-    const tipoValor = tipoSelecionado ? tipoSelecionado.getAttribute("data-value") : "";
-    const duracaoObrigatoria = (tipoValor === "video" || tipoValor === "ambos");
-
-    let erro = "";
-
-    if (!tema) {
-      erro = " Digite o tema do curso.";
-    } else if (!tipoSelecionado) {
-      erro = " Selecione o tipo de conteúdo.";
-    } else if (!nivelSelecionado) {
-      erro = " Selecione o nível de conhecimento.";
-    } else if (duracaoObrigatoria && !duracaoSelecionada) {
-      erro = " Selecione a duração do vídeo.";
-    }
-
-    if (erro) {
-      mensagemStatus.style.color = "red";
-      mensagemStatus.textContent = erro;
-      mensagemStatus.classList.remove("fade-out");
-      mensagemStatus.style.opacity = '1';
-
-      setTimeout(() => {
-        mensagemStatus.classList.add("fade-out");
-        setTimeout(() => {
-          mensagemStatus.textContent = '';
-          mensagemStatus.classList.remove("fade-out");
-          mensagemStatus.style.opacity = '1';
-        }, 500);
-      }, 1000);
-
-      return;
+  // Pesquisa ao pressionar Enter
+  searchInput.addEventListener('keypress', function(e) {
+    if(e.key === 'Enter') {
+      realizarPesquisa();
     }
   });
 
-  // Adiciona seleção visual aos botões
-  document.querySelectorAll(".btn-group .btn").forEach(btn => {
-    btn.addEventListener("click", () => {
-      const grupo = btn.parentElement;
-      grupo.querySelectorAll(".btn").forEach(b => b.classList.remove("selected"));
-      btn.classList.add("selected");
+  // Fechar pesquisa ao clicar fora
+  document.addEventListener('click', function(e) {
+    if(!searchBox.contains(e.target)) {
+      searchBox.classList.remove('active');
+    }
+  });
 
-      // Mostrar duração se tipo for vídeo ou ambos
-      if (grupo.id === "tipoConteudo") {
-        const valor = btn.getAttribute("data-value");
-        const duracao = document.getElementById("duracaoSection");
-        if (valor === "video" || valor === "ambos") {
-          duracao.classList.remove("hidden");
-        } else {
-          duracao.classList.add("hidden");
-        }
+  // Botões da trilha
+  document.getElementById('proximaEtapaBtn').addEventListener('click', function() {
+    if(etapaAtual === etapas.length-1) {
+      mostrarTelaConclusao();
+    } else { 
+      etapaAtual++; 
+      carregarEtapa(); 
+    }
+  });
+
+  document.getElementById('voltarBtn').addEventListener('click', function() {
+    if(etapaAtual > 0) { 
+      etapaAtual--; 
+      carregarEtapa(); 
+    }
+  });
+
+  // Botões da tela de conclusão
+  document.getElementById('btnCompartilhar').addEventListener('click', compartilharConquista);
+  document.getElementById('btnNovaTrilha').addEventListener('click', iniciarNovaTrilha);
+  document.getElementById('btnVoltarInicio').addEventListener('click', voltarAoInicio);
+
+  carregarEtapa();
+});
+
+function mostrarTelaConclusao() {
+  // Esconde a tela principal
+  document.getElementById('mainContent').style.display = 'none';
+  
+  // Mostra a tela de conclusão
+  document.getElementById('telaConclusao').style.display = 'block';
+  
+  // Atualiza estatísticas
+  atualizarEstatisticas();
+  
+  // Dispara confetti
+  dispararConfetti();
+}
+
+function atualizarEstatisticas() {
+  // Calcula aulas concluídas
+  let aulasConcluidas = 0;
+  for (let i = 0; i < etapas.length; i++) {
+    for (let j = 0; j < etapas[i].aulas.length; j++) {
+      if (localStorage.getItem('aula_' + i + '_' + j) === 'true') {
+        aulasConcluidas++;
       }
+    }
+  }
+  
+  // Define dias de estudo (simulação)
+  const diasEstudo = Math.max(1, Math.floor(aulasConcluidas / 2));
+  
+  // Atualiza elementos
+  document.getElementById('diasEstudo').textContent = diasEstudo;
+  document.getElementById('aulasConcluidas').textContent = aulasConcluidas;
+}
+
+function dispararConfetti() {
+  const colors = ['#3d4ff7', '#ffca28', '#4CAF50', '#e91e63', '#9c27b0'];
+  
+  for (let i = 0; i < 100; i++) {
+    const confetti = document.createElement('div');
+    confetti.className = 'confetti';
+    confetti.style.backgroundColor = colors[Math.floor(Math.random() * colors.length)];
+    confetti.style.left = Math.random() * 100 + 'vw';
+    confetti.style.width = Math.random() * 10 + 5 + 'px';
+    confetti.style.height = Math.random() * 10 + 5 + 'px';
+    confetti.style.opacity = Math.random() * 0.5 + 0.5;
+    
+    document.body.appendChild(confetti);
+    
+    // Animação
+    const animation = confetti.animate([
+      { transform: 'translateY(0) rotate(0deg)', opacity: 1 },
+      { transform: `translateY(${window.innerHeight}px) rotate(${Math.random() * 360}deg)`, opacity: 0 }
+    ], {
+      duration: Math.random() * 3000 + 2000,
+      easing: 'cubic-bezier(0.1, 0.8, 0.2, 1)'
     });
+    
+    animation.onfinish = () => {
+      confetti.remove();
+    };
+  }
+}
+
+function compartilharConquista() {
+  if (navigator.share) {
+    navigator.share({
+      title: 'Concluí a Trilha de Introdução à Programação!',
+      text: 'Acabei de concluir a trilha de Introdução à Programação na Infinity Cursos! 🎓',
+      url: window.location.href
+    })
+    .then(() => console.log('Conteúdo compartilhado com sucesso'))
+    .catch((error) => console.log('Erro ao compartilhar:', error));
+  } else {
+    alert('📢 Compartilhe sua conquista nas redes sociais!\n\n"Concluí a trilha de Introdução à Programação na Infinity Cursos! 🎓 #Aprendizado #Programação"');
+  }
+}
+
+function iniciarNovaTrilha() {
+  alert('🚀 Em um sistema real, você seria redirecionado para a página de trilhas disponíveis.');
+  // Em um sistema real: window.location.href = 'telacursos.html';
+}
+
+function voltarAoInicio() {
+  // Esconde a tela de conclusão
+  document.getElementById('telaConclusao').style.display = 'none';
+  
+  // Mostra a tela principal novamente
+  document.getElementById('mainContent').style.display = 'block';
+  
+  // Reinicia a trilha
+  etapaAtual = 0;
+  carregarEtapa();
+}
+
+function realizarPesquisa() {
+  const termo = document.getElementById('searchInput').value.trim();
+  
+  if(termo === '') {
+    alert('Por favor, digite um termo para pesquisar.');
+    return;
+  }
+  
+  // Fecha a caixa de pesquisa
+  document.querySelector('.search-box').classList.remove('active');
+  
+  // Mostra os resultados da pesquisa
+  mostrarResultadosPesquisa(termo);
+}
+
+function mostrarResultadosPesquisa(termo) {
+  // Filtra cursos baseado no termo de pesquisa
+  const resultados = cursosDisponiveis.filter(curso => 
+    curso.nome.toLowerCase().includes(termo.toLowerCase()) ||
+    curso.categoria.toLowerCase().includes(termo.toLowerCase()) ||
+    curso.descricao.toLowerCase().includes(termo.toLowerCase()) ||
+    curso.nivel.toLowerCase().includes(termo.toLowerCase())
+  );
+  
+  // Atualiza o conteúdo principal com os resultados
+  const mainContent = document.getElementById('mainContent');
+  mainContent.innerHTML = `
+    <h1>Resultados da Pesquisa</h1>
+    <p>Encontramos ${resultados.length} curso(s) para: "<strong>${termo}</strong>"</p>
+    
+    <div style="display: flex; flex-wrap: wrap; gap: 20px; justify-content: center; margin-top: 30px;">
+      ${resultados.length > 0 ? 
+        resultados.map(curso => `
+          <div class="curso-card">
+            <h3 style="color: var(--primary-color); margin-top: 0;">${curso.nome}</h3>
+            <div class="categoria-tag">${curso.categoria}</div>
+            <p><strong>Nível:</strong> ${curso.nivel}</p>
+            <p><strong>Duração:</strong> ${curso.duracao}</p>
+            <p>${curso.descricao}</p>
+            <button class="btn" style="margin-top: 15px;" onclick="acessarCurso('${curso.nome}')">Acessar Curso</button>
+          </div>
+        `).join('') 
+        : 
+        `<div style="text-align: center; padding: 40px;">
+          <p style="font-size: 18px; color: #666;">Nenhum curso encontrado para "${termo}"</p>
+          <p>Tente pesquisar por: programação, design, javascript, python, etc.</p>
+          <button class="btn" onclick="voltarParaTrilha()" style="margin-top: 20px;">Voltar para a Trilha</button>
+        </div>`
+      }
+    </div>
+    
+    ${resultados.length > 0 ? 
+      `<button class="btn" onclick="voltarParaTrilha()" style="margin-top: 30px;">← Voltar para a Trilha</button>` 
+      : ''}
+  `;
+}
+
+function acessarCurso(nomeCurso) {
+  alert(`Redirecionando para o curso: ${nomeCurso}\n\nEm um sistema real, você seria redirecionado para a página do curso.`);
+  // Em um sistema real: window.location.href = `curso.html?nome=${encodeURIComponent(nomeCurso)}`;
+}
+
+function voltarParaTrilha() {
+  // Restaura o conteúdo original da trilha
+  const mainContent = document.getElementById('mainContent');
+  mainContent.innerHTML = `
+    <h1>Trilha: Introdução à Programação</h1>
+    <p>Desenvolver o raciocínio lógico e compreender os fundamentos da programação.</p>
+
+    <div id="progressoTexto">Etapa <span id="etapaAtualNumero">1</span> de <span id="totalEtapas">2</span></div>
+
+    <div class="video-tabela">
+      <div class="tabela-wrapper">
+        <h2 id="nomeEtapa">Etapa 1 — Fundamentos da Lógica</h2>
+        <table id="tabelaAulas">
+          <thead><tr><th>Aula</th><th>Objetivo</th></tr></thead>
+          <tbody></tbody>
+        </table>
+      </div>
+
+      <div class="video-container">
+        <div class="video-loading" id="loadingMessage">Carregando vídeo...</div>
+        <div id="youtubePlayer"></div>
+      </div>
+    </div>
+
+    <div class="btn-group-navegacao">
+      <button id="voltarBtn" class="btn btn-secondary hidden">← Voltar</button>
+      <button id="proximaEtapaBtn" class="btn">Próxima etapa →</button>
+    </div>
+  `;
+  
+  // Reconfigura os event listeners
+  document.getElementById('proximaEtapaBtn').addEventListener('click', function() {
+    if(etapaAtual === etapas.length-1) {
+      mostrarTelaConclusao();
+    } else { 
+      etapaAtual++; 
+      carregarEtapa(); 
+    }
   });
+
+  document.getElementById('voltarBtn').addEventListener('click', function() {
+    if(etapaAtual > 0) { 
+      etapaAtual--; 
+      carregarEtapa(); 
+    }
+  });
+  
+  carregarEtapa();
+}
+
+function carregarEtapa() {
+  document.getElementById('etapaAtualNumero').textContent = etapaAtual + 1;
+  document.getElementById('nomeEtapa').textContent = 'Etapa ' + (etapaAtual + 1) + ' — ' + etapas[etapaAtual].nome;
+  document.getElementById('voltarBtn').classList.toggle('hidden', etapaAtual === 0);
+  document.getElementById('proximaEtapaBtn').textContent = etapaAtual === etapas.length - 1 ? 'Finalizar trilha' : 'Próxima etapa →';
+
+  const tbody = document.getElementById('tabelaAulas').querySelector('tbody');
+  tbody.innerHTML = '';
+  etapas[etapaAtual].aulas.forEach((aula, i) => {
+    const tr = document.createElement('tr');
+    if(localStorage.getItem('aula_' + etapaAtual + '_' + i) === 'true') tr.classList.add('completed');
+    const tdAula = document.createElement('td'); 
+    tdAula.textContent = (i + 1) + '. ' + aula.titulo;
+    const tdObjetivo = document.createElement('td'); 
+    tdObjetivo.textContent = aula.objetivo;
+    tr.appendChild(tdAula); 
+    tr.appendChild(tdObjetivo);
+    tr.addEventListener('click', () => {
+      tr.classList.toggle('completed');
+      localStorage.setItem('aula_' + etapaAtual + '_' + i, tr.classList.contains('completed').toString());
+    });
+    tbody.appendChild(tr);
+  });
+
+  // Carrega vídeo
+  const videoId = etapas[etapaAtual].video;
+  const container = document.getElementById('youtubePlayer');
+  const loading = document.getElementById('loadingMessage');
+  loading.classList.remove('hidden'); 
+  loading.textContent = 'Carregando vídeo...';
+  const tempoSalvo = localStorage.getItem('video_tempo_' + videoId) || 0;
+  container.innerHTML = `<iframe width="100%" height="360" src="https://www.youtube.com/embed/${videoId}?rel=0&modestbranding=1&start=${tempoSalvo}" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen title="Vídeo da aula"></iframe>`;
+  const iframe = container.querySelector('iframe');
+  iframe.onload = () => loading.classList.add('hidden');
+  setTimeout(() => loading.classList.add('hidden'), 5000);
+}
 </script>
+
 </body>
 </html>
