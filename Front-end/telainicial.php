@@ -1,27 +1,28 @@
-  <?php
-  session_start();
-  require 'conexao.php';
+<?php
+session_start();
+require 'conexao.php';
 
-  $usuario_nome = "Visitante";
+$usuario_nome = "Visitante";
 
-  if(isset($_SESSION['usuario_email'])){
-      $email = $_SESSION['usuario_email'];
+// Apenas busca o nome se estiver logado, sem redirecionamentos
+if(isset($_SESSION['usuario_email'])){
+    $email = $_SESSION['usuario_email'];
 
-      // Busca o nome do aluno pelo email
-      $query = $conn->prepare("SELECT nome FROM Aluno WHERE email = ? LIMIT 1");
-      $query->bind_param("s", $email);
-      $query->execute();
-      $query->bind_result($nomeCompleto);
-      
-      if($query->fetch()){
-          // Pega apenas o primeiro nome e coloca a primeira letra maiúscula
-          $primeiroNome = explode(" ", $nomeCompleto)[0];
-          $usuario_nome = ucfirst(strtolower($primeiroNome));
-      }
+    // Busca o nome do aluno pelo email
+    $query = $conn->prepare("SELECT nome FROM Aluno WHERE email = ? LIMIT 1");
+    $query->bind_param("s", $email);
+    $query->execute();
+    $query->bind_result($nomeCompleto);
+    
+    if($query->fetch()){
+        // Pega apenas o primeiro nome e coloca a primeira letra maiúscula
+        $primeiroNome = explode(" ", $nomeCompleto)[0];
+        $usuario_nome = ucfirst(strtolower($primeiroNome));
+    }
 
-      $query->close();
-  }
-  ?>
+    $query->close();
+}
+?>
 
   <!DOCTYPE html>
   <html lang="pt-br">
@@ -828,34 +829,6 @@
               <a href="#" class="btn-acessar">Assistir</a>
             </div>
           </div>
-
-          <div class="card-curso">
-            <div class="card-imagem">
-              <img src="imgs/career.png" alt="Carreira" onerror="this.src='https://via.placeholder.com/100/3d4ff7/ffffff?text=🚀'">
-            </div>
-            <div class="card-conteudo">
-              <h3>Plano de Carreira em Tech</h3>
-              <p>Guia personalizado para planejar sua carreira na área de tecnologia nos próximos 5 anos.</p>
-              <div class="card-info">
-                <span>🕒 25 min</span>
-                <span>📊 Guia</span>
-              </div>
-              <a href="#" class="btn-acessar">Explorar</a>
-            </div>
-          </div>
-
-          <div class="card-curso">
-            <div class="card-imagem">
-              <img src="imgs/skills.png" alt="Habilidades" onerror="this.src='https://via.placeholder.com/100/3d4ff7/ffffff?text=⚡'">
-            </div>
-            <div class="card-conteudo">
-              <h3>Habilidades do Futuro</h3>
-              <p>Descubra as 10 habilidades mais requisitadas para 2024 e como desenvolvê-las.</p>
-              <div class="card-info">
-                <span>🕒 20 min</span>
-                <span>📈 Relatório</span>
-              </div>
-              <a href="#" class="btn-acessar">Ver Mais</a>
             </div>
           </div>
         </div>

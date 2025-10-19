@@ -541,12 +541,7 @@ $mostrar_dados_exemplo = !$tabela_trilhas_existe || !$tabela_aluno_trilhas_exist
         <?php endif; ?>
       </section>
 
-      <?php if ($mostrar_dados_exemplo): ?>
-        <div class="aviso-configuracao">
-          <h4>⚙️ Configuração do Sistema</h4>
-          <p>As tabelas de trilhas ainda não estão configuradas. Aqui estão algumas trilhas de exemplo:</p>
-        </div>
-      <?php endif; ?>
+
 
       <section id="minhasTrilhas" class="trilha-wrapper">
         <?php if (count($trilhas_do_usuario) > 0 || $mostrar_dados_exemplo): ?>
