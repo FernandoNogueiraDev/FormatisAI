@@ -30,6 +30,7 @@ CREATE TABLE `aluno` (
   `email` varchar(100) NOT NULL,
   `senha` varchar(100) NOT NULL,
   `data_nascimento` date NOT NULL,
+  `tipo_aluno` varchar(100) NOT NULL,
   `criacao_em` timestamp NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp(),
   PRIMARY KEY (`idAluno`)
 ) ENGINE=InnoDB AUTO_INCREMENT=10 DEFAULT CHARSET=utf8 COLLATE=utf8_general_ci;
