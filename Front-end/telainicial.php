@@ -563,7 +563,7 @@
         transform: translateY(-2px);
       }
 
-      /* ====== MENSAGEM DE STATUS ====== */
+     
       #mensagemStatus {
         display: flex;
         justify-content: center;
@@ -693,7 +693,7 @@
           <li><a href="telameuscursos.php">Minhas trilhas</a></li>
           <li><a href="telacursos.html">Cursos</a></li>
           <li><a href="quemsomos.html">Quem Somos</a></li>
-          <li><a href="ajuda.php">Ajuda</a></li>
+          <li><a href="ajuda.html">Ajuda</a></li>
           
           <li class="dropdown">
             <a href="#" class="dropdown-toggle">Área do Aluno</a>

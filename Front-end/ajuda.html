@@ -1,0 +1,803 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Central de Ajuda - Formatis</title>
+  <link rel="icon" href="imgs/favicon1.png" type="image/png">
+  <style>
+    /* ====== VARIÁVEIS CSS ====== */
+    :root {
+      --primary-color: #3d4ff7;
+      --secondary-color: #ffca28;
+      --light-color: #eef2ff;
+      --dark-color: #333;
+      --gray-color: #f5f5f5;
+      --white: #fff;
+      --success-color: #4CAF50;
+      --border-radius: 12px;
+      --transition: all 0.3s ease;
+    }
+
+    /* ====== BASE ====== */
+    body {
+      margin: 0;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background-color: #f9f9f9;
+      color: var(--dark-color);
+      line-height: 1.6;
+    }
+
+    /* ====== NAVBAR (mantida da referência) ====== */
+    .navbar {
+      display: flex; 
+      justify-content: space-between; 
+      align-items: center;
+      margin: auto; 
+      padding: 10px 5%;
+      background-color: var(--gray-color);
+      box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+      position: sticky;
+      top: 0;
+      z-index: 100;
+    }
+    .logo img { height: 55px; width: auto; }
+    .nav-links { 
+      display: flex; 
+      list-style: none; 
+      margin: 0; 
+      padding: 0; 
+      align-items: center;
+    }
+    .nav-links li { 
+      margin: 0 15px; 
+      position: relative;
+    }
+    .nav-links a { 
+      text-decoration: none; 
+      color: var(--primary-color); 
+      font-weight: 600; 
+      transition: var(--transition); 
+      padding: 8px 0; 
+      position: relative;
+      display: inline-block;
+    }
+    .nav-links a:hover { color: var(--secondary-color); }
+    .nav-links a::after { 
+      content: ''; 
+      position: absolute; 
+      width: 0; 
+      height: 2px; 
+      bottom: 0; 
+      left: 0; 
+      background-color: var(--secondary-color); 
+      transition: var(--transition); 
+    }
+    .nav-links a:hover::after { width: 100%; }
+
+    /* Dropdown Menu */
+    .dropdown { 
+      position: relative; 
+    }
+    .dropdown-toggle { 
+      display: flex; 
+      align-items: center; 
+      gap: 4px;
+      cursor: pointer;
+    }
+    .dropdown-toggle::after { 
+      content: "▼"; 
+      font-size: 10px; 
+      transition: transform 0.3s ease;
+      margin-left: 2px;
+    }
+    .dropdown:hover .dropdown-toggle::after {
+      transform: rotate(180deg);
+    }
+    .dropdown-menu {
+      list-style: none;
+      padding: 8px 0;
+      margin: 0;
+      position: absolute;
+      top: 100%;
+      left: 0;
+      background-color: var(--white);
+      min-width: 200px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+      border-radius: 8px;
+      z-index: 1000;
+      border: 1px solid #eee;
+      opacity: 0;
+      visibility: hidden;
+      transform: translateY(-10px);
+      transition: all 0.3s ease;
+    }
+    .dropdown:hover .dropdown-menu {
+      opacity: 1;
+      visibility: visible;
+      transform: translateY(0);
+    }
+    .dropdown-menu li { 
+      border-bottom: 1px solid #f0f0f0; 
+    }
+    .dropdown-menu li:last-child { 
+      border-bottom: none; 
+    }
+    .dropdown-menu li a {
+      display: block;
+      padding: 10px 16px;
+      color: var(--primary-color);
+      font-weight: 600;
+      text-decoration: none;
+      transition: all 0.2s ease;
+      position: relative;
+    }
+    .dropdown-menu li a::after {
+      content: '';
+      position: absolute;
+      width: 0;
+      height: 100%;
+      top: 0;
+      left: 0;
+      background-color: var(--light-color);
+      transition: width 0.2s ease;
+      z-index: -1;
+    }
+    .dropdown-menu li a:hover {
+      color: var(--secondary-color);
+    }
+    .dropdown-menu li a:hover::after {
+      width: 100%;
+    }
+
+    /* ====== PESQUISA ====== */
+    .search-box { position: relative; display: flex; align-items: center; }
+    .search-toggle { background: none; border: none; font-size: 20px; cursor: pointer; color: var(--primary-color); padding: 8px; border-radius: 50%; transition: var(--transition); }
+    .search-toggle:hover { background-color: rgba(61, 79, 247, 0.1); }
+    .search-input { width: 0; opacity: 0; padding: 10px 15px; border: 1px solid #ddd; border-radius: 30px; outline: none; transition: var(--transition); margin-left: 10px; font-size: 14px; }
+    .search-box.active .search-input { width: 250px; opacity: 1; }
+
+    /* ====== CONTEÚDO PRINCIPAL ====== */
+    .main-content {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 0 20px;
+    }
+
+    /* Hero Section */
+    .hero-ajuda {
+      text-align: center;
+      padding: 60px 20px 40px;
+      background: linear-gradient(135deg, var(--primary-color), #00bcd4);
+      color: white;
+      border-radius: 0 0 20px 20px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+      margin-bottom: 30px;
+    }
+
+    .hero-ajuda h1 {
+      font-size: 2.5rem;
+      margin-bottom: 10px;
+    }
+
+    .hero-ajuda p {
+      font-size: 1.1rem;
+      max-width: 700px;
+      margin: 0 auto;
+      line-height: 1.5;
+    }
+
+    /* Saudação do usuário */
+    .user-greeting {
+      text-align: center;
+      margin-bottom: 20px;
+      font-size: 1.2rem;
+      color: var(--primary-color);
+      font-weight: 600;
+    }
+
+    /* ====== SEÇÃO DE AJUDA ====== */
+    .ajuda-container {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 30px;
+      margin-bottom: 50px;
+    }
+
+    .categorias-ajuda {
+      flex: 1;
+      min-width: 300px;
+      background: white;
+      border-radius: var(--border-radius);
+      padding: 25px;
+      box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+    }
+
+    .conteudo-ajuda {
+      flex: 2;
+      min-width: 300px;
+      background: white;
+      border-radius: var(--border-radius);
+      padding: 25px;
+      box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+    }
+
+    .categoria-item {
+      padding: 15px;
+      margin-bottom: 10px;
+      border-radius: 8px;
+      cursor: pointer;
+      transition: var(--transition);
+      border-left: 4px solid transparent;
+    }
+
+    .categoria-item:hover {
+      background-color: var(--light-color);
+    }
+
+    .categoria-item.ativo {
+      background-color: var(--light-color);
+      border-left-color: var(--primary-color);
+      font-weight: 600;
+    }
+
+    .categoria-item h3 {
+      margin: 0;
+      font-size: 1.1rem;
+      color: var(--primary-color);
+    }
+
+    .categoria-item p {
+      margin: 5px 0 0;
+      font-size: 0.9rem;
+      color: #666;
+    }
+
+    .topico-ajuda {
+      margin-bottom: 25px;
+      border-bottom: 1px solid #eee;
+      padding-bottom: 20px;
+    }
+
+    .topico-ajuda:last-child {
+      border-bottom: none;
+    }
+
+    .topico-ajuda h3 {
+      color: var(--primary-color);
+      margin-bottom: 10px;
+      font-size: 1.3rem;
+    }
+
+    .topico-ajuda p {
+      color: #666;
+      line-height: 1.6;
+    }
+
+    /* FAQ */
+    .faq-item {
+      margin-bottom: 15px;
+      border: 1px solid #eee;
+      border-radius: 8px;
+      overflow: hidden;
+    }
+
+    .faq-pergunta {
+      padding: 15px;
+      background-color: var(--light-color);
+      cursor: pointer;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-weight: 600;
+      transition: var(--transition);
+    }
+
+    .faq-pergunta:hover {
+      background-color: #e2e7ff;
+    }
+
+    .faq-pergunta::after {
+      content: "▼";
+      font-size: 12px;
+      transition: transform 0.3s ease;
+    }
+
+    .faq-item.ativo .faq-pergunta::after {
+      transform: rotate(180deg);
+    }
+
+    .faq-resposta {
+      padding: 0 15px;
+      max-height: 0;
+      overflow: hidden;
+      transition: max-height 0.3s ease, padding 0.3s ease;
+    }
+
+    .faq-item.ativo .faq-resposta {
+      padding: 15px;
+      max-height: 500px;
+    }
+
+    /* Formulário de Contato */
+    .form-contato {
+      background-color: var(--light-color);
+      padding: 25px;
+      border-radius: var(--border-radius);
+      margin-top: 30px;
+    }
+
+    .form-group {
+      margin-bottom: 20px;
+    }
+
+    .form-group label {
+      display: block;
+      margin-bottom: 8px;
+      font-weight: 600;
+      color: var(--primary-color);
+    }
+
+    .form-group input,
+    .form-group select,
+    .form-group textarea {
+      width: 100%;
+      padding: 12px;
+      border: 1px solid #ddd;
+      border-radius: 8px;
+      font-family: inherit;
+      font-size: 14px;
+      box-sizing: border-box;
+    }
+
+    .form-group textarea {
+      min-height: 120px;
+      resize: vertical;
+    }
+
+    /* Informações da plataforma */
+    .info-plataforma {
+      background-color: var(--light-color);
+      padding: 20px;
+      border-radius: var(--border-radius);
+      margin-bottom: 20px;
+      text-align: center;
+    }
+
+    .info-plataforma h3 {
+      color: var(--primary-color);
+      margin-top: 0;
+    }
+
+    .destaque-gratuito {
+      background: linear-gradient(135deg, var(--secondary-color), #ff9800);
+      color: white;
+      padding: 10px 20px;
+      border-radius: 20px;
+      font-weight: bold;
+      display: inline-block;
+      margin: 10px 0;
+    }
+
+    /* Botões */
+    .btn {
+      background-color: var(--primary-color);
+      color: white;
+      border: none;
+      padding: 12px 24px;
+      border-radius: 8px;
+      font-weight: bold;
+      cursor: pointer;
+      transition: var(--transition);
+      display: inline-block;
+      text-decoration: none;
+      font-size: 14px;
+    }
+
+    .btn:hover {
+      background-color: #2a3bd4;
+      transform: translateY(-2px);
+    }
+
+    .btn-success {
+      background-color: var(--success-color);
+    }
+
+    .btn-success:hover {
+      background-color: #45a049;
+    }
+
+    /* ====== RESPONSIVIDADE ====== */
+    @media (max-width: 768px) {
+      .navbar { flex-direction: column; padding: 15px; }
+      .nav-links { margin: 15px 0; }
+      .nav-links li { margin: 0 10px; }
+      .dropdown-menu { 
+        position: static; 
+        box-shadow: none; 
+        border: none;
+        opacity: 1;
+        visibility: visible;
+        transform: none;
+        display: none;
+      }
+      .dropdown:hover .dropdown-menu {
+        display: block;
+      }
+      .search-box.active .search-input { width: 200px; }
+      
+      .hero-ajuda h1 {
+        font-size: 2rem;
+      }
+      
+      .hero-ajuda {
+        padding: 40px 20px 30px;
+      }
+      
+      .ajuda-container {
+        flex-direction: column;
+      }
+    }
+
+    @media (max-width: 480px) {
+      .nav-links {
+        flex-direction: column;
+        gap: 10px;
+      }
+      
+      .hero-ajuda h1 {
+        font-size: 1.8rem;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <div class="page">
+    <!-- NAVBAR (mantida da referência) -->
+    <nav class="navbar" role="navigation" aria-label="Navegação principal">
+      <div class="logo"><a href="telainicial.php" aria-label="Página inicial"><img src="imgs/logo.png" alt="Formatis"></a></div>
+      <ul class="nav-links">
+        <li><a href="telameuscursos.php">Minhas trilhas</a></li>
+        <li><a href="telacursos.html">Cursos</a></li>
+        <li><a href="quemsomos.html">Quem Somos</a></li>
+        <li><a href="ajuda.php" style="color: var(--secondary-color);">Ajuda</a></li>
+        
+        <!-- Menu dropdown corrigido e alinhado -->
+        <li class="dropdown">
+          <a href="#" class="dropdown-toggle">Área do Aluno</a>
+          <ul class="dropdown-menu">
+            <li><a href="atualizarsenha.html">Atualizar senha</a></li>
+            <li><a href="alterarcadastro.html">Alterar cadastro</a></li>
+            <li><a href="areadoaluno.php">Acessar área do aluno</a></li>
+          </ul>
+        </li>
+      </ul>
+      <div class="search-box">
+        <button class="search-toggle" aria-label="Abrir busca">🔍</button>
+        <input type="text" class="search-input" placeholder="Procurar na ajuda..." aria-label="Campo de busca" id="searchInput">
+      </div>
+    </nav>
+
+    <!-- CONTEÚDO PRINCIPAL -->
+    <main class="main-content">
+      <section class="hero-ajuda">
+        <h1>Central de Ajuda</h1>
+        <p>Encontre respostas para suas dúvidas ou entre em contato conosco</p>
+        <div class="user-greeting">Como podemos ajudar?</div>
+      </section>
+
+      <div class="ajuda-container">
+        <!-- Categorias de Ajuda -->
+        <div class="categorias-ajuda">
+          <h2 style="color: var(--primary-color); margin-top: 0;">Categorias</h2>
+          
+          <div class="categoria-item ativo" data-categoria="conta">
+            <h3>📝 Conta e Cadastro</h3>
+            <p>Problemas com login, senha e dados cadastrais</p>
+          </div>
+          
+          <div class="categoria-item" data-categoria="trilhas">
+            <h3>🎯 Trilhas e Cursos</h3>
+            <p>Dúvidas sobre acesso, progresso e conteúdo</p>
+          </div>
+          
+          <div class="categoria-item" data-categoria="tecnico">
+            <h3>🔧 Problemas Técnicos</h3>
+            <p>Erros, lentidão e dificuldades de navegação</p>
+          </div>
+          
+          <div class="categoria-item" data-categoria="plataforma">
+            <h3>🚀 Sobre a Plataforma</h3>
+            <p>Informações gerais sobre a Formatis</p>
+          </div>
+        </div>
+
+        <!-- Conteúdo da Ajuda -->
+        <div class="conteudo-ajuda">
+          <!-- Informações da plataforma -->
+          <div class="info-plataforma">
+            <h3>✨ Formatis - Educação Gratuita para Todos</h3>
+            <div class="destaque-gratuito">100% GRATUITO</div>
+            <p>Nossa missão é democratizar o acesso à educação de qualidade através de trilhas de aprendizado gratuitas.</p>
+          </div>
+
+          <h2 style="color: var(--primary-color); margin-top: 0;">Perguntas Frequentes</h2>
+          
+          <!-- Conteúdo para Conta e Cadastro -->
+          <div id="conta-conteudo" class="categoria-conteudo">
+            <div class="topico-ajuda">
+              <h3>Como criar uma conta?</h3>
+              <p>Clique em "Cadastrar" na página inicial e preencha seus dados. É rápido, simples e totalmente gratuito!</p>
+            </div>
+            
+            <div class="topico-ajuda">
+              <h3>Como recuperar minha senha?</h3>
+              <p>Se você esqueceu sua senha, clique em "Esqueci minha senha" na página de login. Você receberá um e-mail com instruções para redefinir sua senha.</p>
+            </div>
+            
+            <div class="topico-ajuda">
+              <h3>Como alterar meus dados cadastrais?</h3>
+              <p>Acesse a "Área do Aluno" no menu superior e selecione "Alterar cadastro". Lá você pode atualizar suas informações pessoais.</p>
+            </div>
+            
+            <div class="faq-item">
+              <div class="faq-pergunta">Por que não consigo fazer login?</div>
+              <div class="faq-resposta">
+                <p>Verifique se você está usando o e-mail e senha corretos. Se o problema persistir, tente recuperar sua senha ou entre em contato conosco.</p>
+              </div>
+            </div>
+          </div>
+          
+          <!-- Conteúdo para Trilhas e Cursos (inicialmente oculto) -->
+          <div id="trilhas-conteudo" class="categoria-conteudo" style="display: none;">
+            <div class="topico-ajuda">
+              <h3>Como acessar minhas trilhas?</h3>
+              <p>Após fazer login, clique em "Minhas trilhas" no menu superior para ver todas as trilhas em que você está inscrito.</p>
+            </div>
+            
+            <div class="topico-ajuda">
+              <h3>O progresso da minha trilha não está sendo salvo. O que fazer?</h3>
+              <p>Verifique sua conexão com a internet. Se o problema persistir, tente atualizar a página ou entre em contato com nosso suporte técnico.</p>
+            </div>
+            
+            <div class="faq-item">
+              <div class="faq-pergunta">Posso pausar uma trilha e retomar depois?</div>
+              <div class="faq-resposta">
+                <p>Sim! Você pode pausar a qualquer momento e retomar de onde parou. Seu progresso é salvo automaticamente.</p>
+              </div>
+            </div>
+            
+            <div class="faq-item">
+              <div class="faq-pergunta">A plataforma é realmente gratuita?</div>
+              <div class="faq-resposta">
+                <p>Sim! Todas as trilhas e cursos na Formatis são completamente gratuitos. Nosso objetivo é democratizar o acesso à educação de qualidade.</p>
+              </div>
+            </div>
+          </div>
+          
+          <!-- Conteúdo para Problemas Técnicos (inicialmente oculto) -->
+          <div id="tecnico-conteudo" class="categoria-conteudo" style="display: none;">
+            <div class="topico-ajuda">
+              <h3>A plataforma está lenta. O que posso fazer?</h3>
+              <p>Tente atualizar a página, limpar o cache do navegador ou verificar sua conexão com a internet. Se o problema persistir, entre em contato.</p>
+            </div>
+            
+            <div class="topico-ajuda">
+              <h3>Os vídeos não estão carregando. Como resolver?</h3>
+              <p>Verifique sua conexão com a internet e certifique-se de que seu navegador está atualizado. Tente também desativar extensões que possam interferir.</p>
+            </div>
+            
+            <div class="faq-item">
+              <div class="faq-pergunta">Não consigo acessar a plataforma no meu celular</div>
+              <div class="faq-resposta">
+                <p>Nossa plataforma é totalmente responsiva. Se estiver com problemas, verifique se seu navegador está atualizado ou tente usar outro navegador.</p>
+              </div>
+            </div>
+          </div>
+          
+          <!-- Conteúdo para Sobre a Plataforma (inicialmente oculto) -->
+          <div id="plataforma-conteudo" class="categoria-conteudo" style="display: none;">
+            <div class="topico-ajuda">
+              <h3>O que é a Formatis?</h3>
+              <p>A Formatis é uma plataforma de educação gratuita que oferece trilhas de aprendizado em diversas áreas do conhecimento.</p>
+            </div>
+            
+            <div class="topico-ajuda">
+              <h3>Como a Formatis se mantém sendo gratuita?</h3>
+              <p>Acreditamos que a educação deve ser acessível a todos. Nossa plataforma é mantida através de parcerias e do apoio da comunidade.</p>
+            </div>
+            
+            <div class="topico-ajuda">
+              <h3>Como sugerir novos cursos ou trilhas?</h3>
+              <p>Adoramos sugestões! Entre em contato conosco através do formulário abaixo e nos conte sua ideia.</p>
+            </div>
+            
+            <div class="faq-item">
+              <div class="faq-pergunta">A Formatis emite certificados?</div>
+              <div class="faq-resposta">
+                <p>Atualmente, focamos em fornecer conteúdo educativo de qualidade de forma gratuita. Não emitimos certificados oficiais.</p>
+              </div>
+            </div>
+          </div>
+          
+          <!-- Formulário de Contato -->
+          <div class="form-contato">
+            <h3 style="color: var(--primary-color); margin-top: 0;">Não encontrou o que procura?</h3>
+            <p>Entre em contato conosco e responderemos em até 24 horas.</p>
+            
+            <form id="formContato">
+              <div class="form-group">
+                <label for="nome">Nome completo</label>
+                <input type="text" id="nome" name="nome" required>
+              </div>
+              
+              <div class="form-group">
+                <label for="email">E-mail</label>
+                <input type="email" id="email" name="email" required>
+              </div>
+              
+              <div class="form-group">
+                <label for="categoria">Categoria</label>
+                <select id="categoria" name="categoria" required>
+                  <option value="">Selecione uma categoria</option>
+                  <option value="conta">Conta e Cadastro</option>
+                  <option value="trilhas">Trilhas e Cursos</option>
+                  <option value="tecnico">Problemas Técnicos</option>
+                  <option value="plataforma">Sobre a Plataforma</option>
+                </select>
+              </div>
+              
+              <div class="form-group">
+                <label for="mensagem">Mensagem</label>
+                <textarea id="mensagem" name="mensagem" placeholder="Descreva sua dúvida ou problema..." required></textarea>
+              </div>
+              
+              <button type="submit" class="btn">Enviar Mensagem</button>
+            </form>
+          </div>
+        </div>
+      </div>
+    </main>
+  </div>
+
+  <script>
+    // Função para alternar entre categorias de ajuda
+    function configurarCategoriasAjuda() {
+      const categorias = document.querySelectorAll('.categoria-item');
+      const conteudos = document.querySelectorAll('.categoria-conteudo');
+      
+      categorias.forEach(categoria => {
+        categoria.addEventListener('click', function() {
+          // Remove a classe ativa de todas as categorias
+          categorias.forEach(cat => cat.classList.remove('ativo'));
+          
+          // Adiciona a classe ativa à categoria clicada
+          this.classList.add('ativo');
+          
+          // Oculta todos os conteúdos
+          conteudos.forEach(conteudo => conteudo.style.display = 'none');
+          
+          // Mostra o conteúdo correspondente
+          const categoriaId = this.getAttribute('data-categoria');
+          document.getElementById(`${categoriaId}-conteudo`).style.display = 'block';
+        });
+      });
+    }
+
+    // Função para o FAQ
+    function configurarFAQ() {
+      const faqItems = document.querySelectorAll('.faq-item');
+      
+      faqItems.forEach(item => {
+        const pergunta = item.querySelector('.faq-pergunta');
+        
+        pergunta.addEventListener('click', function() {
+          // Fecha todas as outras respostas
+          faqItems.forEach(otherItem => {
+            if (otherItem !== item) {
+              otherItem.classList.remove('ativo');
+            }
+          });
+          
+          // Alterna o estado do item clicado
+          item.classList.toggle('ativo');
+        });
+      });
+    }
+
+    // Função para o formulário de contato
+    function configurarFormularioContato() {
+      const form = document.getElementById('formContato');
+      
+      form.addEventListener('submit', function(e) {
+        e.preventDefault();
+        
+        // Simula o envio do formulário
+        alert('Mensagem enviada com sucesso! Entraremos em contato em breve.');
+        form.reset();
+      });
+    }
+
+    // Configuração da pesquisa da navbar
+    function configurarPesquisa() {
+      const searchToggle = document.querySelector('.search-toggle');
+      const searchBox = document.querySelector('.search-box');
+      const searchInput = document.getElementById('searchInput');
+      
+      // Abrir/fechar caixa de pesquisa
+      searchToggle.addEventListener('click', function(e) {
+        e.stopPropagation();
+        searchBox.classList.toggle('active');
+        if(searchBox.classList.contains('active')) {
+          searchInput.focus();
+        }
+      });
+
+      // Pesquisa ao pressionar Enter
+      searchInput.addEventListener('keypress', function(e) {
+        if(e.key === 'Enter') {
+          realizarPesquisaAjuda();
+        }
+      });
+
+      // Fechar pesquisa ao clicar fora
+      document.addEventListener('click', function(e) {
+        if(!searchBox.contains(e.target)) {
+          searchBox.classList.remove('active');
+        }
+      });
+    }
+
+    function realizarPesquisaAjuda() {
+      const termo = document.getElementById('searchInput').value.trim();
+      
+      if(termo === '') {
+        alert('Por favor, digite um termo para pesquisar.');
+        return;
+      }
+      
+      // Fecha a caixa de pesquisa
+      document.querySelector('.search-box').classList.remove('active');
+      
+      // Busca local nas perguntas frequentes
+      const faqPerguntas = document.querySelectorAll('.faq-pergunta');
+      const topicos = document.querySelectorAll('.topico-ajuda h3');
+      
+      let encontrouResultado = false;
+      
+      // Procura nas perguntas do FAQ
+      faqPerguntas.forEach(pergunta => {
+        const texto = pergunta.textContent.toLowerCase();
+        if(texto.includes(termo.toLowerCase())) {
+          pergunta.scrollIntoView({ behavior: 'smooth', block: 'center' });
+          pergunta.parentElement.classList.add('ativo');
+          encontrouResultado = true;
+        }
+      });
+      
+      // Procura nos tópicos
+      topicos.forEach(topico => {
+        const texto = topico.textContent.toLowerCase();
+        if(texto.includes(termo.toLowerCase())) {
+          topico.scrollIntoView({ behavior: 'smooth', block: 'center' });
+          encontrouResultado = true;
+        }
+      });
+      
+      if(!encontrouResultado) {
+        alert(`Nenhum resultado encontrado para: "${termo}". Tente outros termos.`);
+      }
+    }
+
+    // Inicialização quando o DOM estiver carregado
+    document.addEventListener('DOMContentLoaded', function() {
+      configurarCategoriasAjuda();
+      configurarFAQ();
+      configurarFormularioContato();
+      configurarPesquisa();
+    });
+  </script>
+
+</body>
+</html>

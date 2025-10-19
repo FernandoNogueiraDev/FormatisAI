@@ -4,7 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Quem somos - Fomatis</title>
-  <link rel="icon" href="imgs/favicon.jpg" type="image/png">
+  <link rel="icon" href="imgs/favicon1.png" type="image/png">
   <style>
     :root {
       --primary-color: #3d4ff7;
@@ -26,7 +26,7 @@
       line-height: 1.6;
     }
 
-    /* Navbar */
+    /* Navbar Atualizada */
     .navbar {
       display: flex; 
       justify-content: space-between; 
@@ -73,6 +73,82 @@
     }
     .nav-links a:hover::after { width: 100%; }
 
+    /* Dropdown Menu */
+    .dropdown { 
+      position: relative; 
+    }
+    .dropdown-toggle { 
+      display: flex; 
+      align-items: center; 
+      gap: 4px;
+      cursor: pointer;
+    }
+    .dropdown-toggle::after { 
+      content: "▼"; 
+      font-size: 10px; 
+      transition: transform 0.3s ease;
+      margin-left: 2px;
+    }
+    .dropdown:hover .dropdown-toggle::after {
+      transform: rotate(180deg);
+    }
+    .dropdown-menu {
+      list-style: none;
+      padding: 8px 0;
+      margin: 0;
+      position: absolute;
+      top: 100%;
+      left: 0;
+      background-color: #fff;
+      min-width: 200px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+      border-radius: 8px;
+      z-index: 1000;
+      border: 1px solid #eee;
+      opacity: 0;
+      visibility: hidden;
+      transform: translateY(-10px);
+      transition: all 0.3s ease;
+    }
+    .dropdown:hover .dropdown-menu {
+      opacity: 1;
+      visibility: visible;
+      transform: translateY(0);
+    }
+    .dropdown-menu li { 
+      border-bottom: 1px solid #f0f0f0; 
+    }
+    .dropdown-menu li:last-child { 
+      border-bottom: none; 
+    }
+    .dropdown-menu li a {
+      display: block;
+      padding: 10px 16px;
+      color: var(--primary-color);
+      font-weight: 600;
+      text-decoration: none;
+      transition: all 0.2s ease;
+      position: relative;
+    }
+    .dropdown-menu li a::after {
+      content: '';
+      position: absolute;
+      width: 0;
+      height: 100%;
+      top: 0;
+      left: 0;
+      background-color: var(--light-color);
+      transition: width 0.2s ease;
+      z-index: -1;
+    }
+    .dropdown-menu li a:hover {
+      color: var(--secondary-color);
+    }
+    .dropdown-menu li a:hover::after {
+      width: 100%;
+    }
+
+    /* Search Box Atualizada */
     .search-box { position: relative; display: flex; align-items: center; }
     .search-toggle { background: none; border: none; font-size: 20px; cursor: pointer; color: var(--primary-color); padding: 8px; border-radius: 50%; transition: var(--transition); }
     .search-toggle:hover { background-color: rgba(61, 79, 247, 0.1); }
@@ -342,6 +418,20 @@
         margin: 0 10px;
       }
       
+      .dropdown-menu { 
+        position: static; 
+        box-shadow: none; 
+        border: none;
+        opacity: 1;
+        visibility: visible;
+        transform: none;
+        display: none;
+      }
+      
+      .dropdown:hover .dropdown-menu {
+        display: block;
+      }
+      
       .hero-section h1 {
         font-size: 2.2rem;
       }
@@ -369,20 +459,28 @@
   </style>
 </head>
 <body>
-  <!-- NAVBAR -->
-  <nav class="navbar">
-    <div class="logo">
-      <a href="index.html"><img src="logo.png" alt="logo"></a>
-    </div>
+  <!-- NAVBAR ATUALIZADA -->
+  <nav class="navbar" role="navigation" aria-label="Navegação principal">
+    <div class="logo"><a href="telainicial.php" aria-label="Página inicial"><img src="imgs/logo.png" alt="Formatis"></a></div>
     <ul class="nav-links">
-      <li><a href="minhastrilhas.html">Minhas trilhas</a></li>
+      <li><a href="telameuscursos.php">Minhas trilhas</a></li>
       <li><a href="telacursos.html">Cursos</a></li>
       <li><a href="quemsomos.html">Quem Somos</a></li>
       <li><a href="#ajuda">Ajuda</a></li>
+      
+      <!-- Menu dropdown corrigido e alinhado -->
+      <li class="dropdown">
+        <a href="#" class="dropdown-toggle">Área do Aluno</a>
+        <ul class="dropdown-menu">
+          <li><a href="atualizarsenha.html">Atualizar senha</a></li>
+          <li><a href="alterarcadastro.html">Alterar cadastro</a></li>
+          <li><a href="areadoaluno.php">Acessar área do aluno</a></li>
+        </ul>
+      </li>
     </ul>
     <div class="search-box">
-      <button class="search-toggle">🔍</button>
-      <input type="text" class="search-input" placeholder="Procurar cursos...">
+      <button class="search-toggle" aria-label="Abrir busca">🔍</button>
+      <input type="text" class="search-input" placeholder="Procurar cursos..." aria-label="Campo de busca" id="searchInput">
     </div>
   </nav>
 
@@ -474,20 +572,57 @@
   </footer>
 
   <script>
-    // Funcionalidade da busca
-    document.querySelector('.search-toggle').addEventListener('click', () => {
-      document.querySelector('.search-box').classList.toggle('active');
-    });
+    // Configuração da pesquisa da navbar
+    function configurarPesquisa() {
+      const searchToggle = document.querySelector('.search-toggle');
+      const searchBox = document.querySelector('.search-box');
+      const searchInput = document.getElementById('searchInput');
+      
+      // Abrir/fechar caixa de pesquisa
+      searchToggle.addEventListener('click', function(e) {
+        e.stopPropagation();
+        searchBox.classList.toggle('active');
+        if(searchBox.classList.contains('active')) {
+          searchInput.focus();
+        }
+      });
 
-    // Fechar busca ao clicar fora
-    document.addEventListener('click', function(e) {
-      if(!document.querySelector('.search-box').contains(e.target)) {
-        document.querySelector('.search-box').classList.remove('active');
+      // Pesquisa ao pressionar Enter
+      searchInput.addEventListener('keypress', function(e) {
+        if(e.key === 'Enter') {
+          realizarPesquisa();
+        }
+      });
+
+      // Fechar pesquisa ao clicar fora
+      document.addEventListener('click', function(e) {
+        if(!searchBox.contains(e.target)) {
+          searchBox.classList.remove('active');
+        }
+      });
+    }
+
+    function realizarPesquisa() {
+      const termo = document.getElementById('searchInput').value.trim();
+      
+      if(termo === '') {
+        alert('Por favor, digite um termo para pesquisar.');
+        return;
       }
-    });
+      
+      // Fecha a caixa de pesquisa
+      document.querySelector('.search-box').classList.remove('active');
+      
+      // Aqui você implementaria a lógica de pesquisa
+      console.log('Pesquisando por:', termo);
+      alert(`Pesquisando por: ${termo}\n\nEm um sistema real, você seria redirecionado para a página de resultados.`);
+    }
 
     // Animação de entrada para as seções
     document.addEventListener('DOMContentLoaded', function() {
+      // Configurar pesquisa
+      configurarPesquisa();
+      
       const sections = document.querySelectorAll('.content-section, .hero-section');
       
       const observerOptions = {

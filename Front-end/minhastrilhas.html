@@ -672,386 +672,285 @@ footer a:hover { color: var(--secondary-color); }
 </footer>
 
 <script>
-// Base de dados de cursos
-const cursosDisponiveis = [
-  { 
-    nome: "JavaScript Básico", 
-    categoria: "Programação", 
-    descricao: "Aprenda os fundamentos do JavaScript desde variáveis até funções.",
-    duracao: "8 horas",
-    nivel: "Iniciante"
-  },
-  { 
-    nome: "Python para Iniciantes", 
-    categoria: "Programação", 
-    descricao: "Introdução à programação com Python, ideal para quem está começando.",
-    duracao: "10 horas",
-    nivel: "Iniciante"
-  },
-  { 
-    nome: "HTML e CSS Moderno", 
-    categoria: "Web Design", 
-    descricao: "Crie sites responsivos e modernos com HTML5 e CSS3.",
-    duracao: "12 horas",
-    nivel: "Iniciante"
-  },
-  { 
-    nome: "React do Zero", 
-    categoria: "Programação", 
-    descricao: "Desenvolva aplicações web modernas com React e Hooks.",
-    duracao: "15 horas",
-    nivel: "Intermediário"
-  },
-  { 
-    nome: "Design de Interfaces", 
-    categoria: "Design", 
-    descricao: "Princípios de UI/UX Design para criar interfaces intuitivas.",
-    duracao: "6 horas",
-    nivel: "Intermediário"
-  },
-  { 
-    nome: "Banco de Dados SQL", 
-    categoria: "Banco de Dados", 
-    descricao: "Fundamentos de SQL e bancos de dados relacionais.",
-    duracao: "9 horas",
-    nivel: "Intermediário"
-  },
-  { 
-    nome: "Node.js Avançado", 
-    categoria: "Programação", 
-    descricao: "Desenvolvimento backend com Node.js, Express e MongoDB.",
-    duracao: "18 horas",
-    nivel: "Avançado"
-  },
-  { 
-    nome: "Machine Learning", 
-    categoria: "Data Science", 
-    descricao: "Introdução aos conceitos e algoritmos de Machine Learning.",
-    duracao: "20 horas",
-    nivel: "Avançado"
-  }
-];
 
-const etapas = [
-  { nome: "Fundamentos da Lógica", video: "0hN7_TTuR2M",
-    aulas: [
-      { titulo: "O que é algoritmo", objetivo: "Entender como a lógica resolve problemas." },
-      { titulo: "Variáveis e operadores", objetivo: "Compreender dados e operações básicas." },
-      { titulo: "Estruturas condicionais", objetivo: "Aprender a tomar decisões em programas." },
-      { titulo: "Repetições (loops)", objetivo: "Executar ações repetitivas eficientemente." },
-      { titulo: "Funções", objetivo: "Organizar código em blocos reutilizáveis." }
-    ]
-  },
-  { nome: "Avançando em Lógica", video: "Ohi-MGlBEws",
-    aulas: [
-      { titulo: "Algoritmos de ordenação", objetivo: "Métodos para organizar dados." },
-      { titulo: "Algoritmos de busca", objetivo: "Técnicas para encontrar elementos." },
-      { titulo: "Complexidade algorítmica", objetivo: "Medir eficiência de algoritmos." },
-      { titulo: "Recursividade", objetivo: "Funções que chamam a si mesmas." },
-      { titulo: "Manipulação de strings", objetivo: "Operações avançadas com texto." }
-    ]
-  }
-];
+// Função para pegar parâmetros da URL
+function getUrlParams() {
+    const params = new URLSearchParams(window.location.search);
+    const paramsObj = {};
+    for (const [key, value] of params) {
+        paramsObj[key] = value;
+    }
+    return paramsObj;
+}
 
+// Função para obter o ID da trilha da URL
+function getTrilhaId() {
+    const params = getUrlParams();
+    return params.id || params.trilha_id || null;
+}
+
+let etapas = [];
 let etapaAtual = 0;
+let trilhaId = null;
+let dadosTrilha = null;
 
+// Função principal para carregar dados da trilha
+async function carregarDadosTrilha() {
+    trilhaId = getTrilhaId();
+    
+    if (!trilhaId) {
+        alert('ID da trilha não encontrado na URL!');
+        window.location.href = 'telameuscursos.html';
+        return;
+    }
+
+    try {
+        // Mostrar loading
+        document.getElementById('mainContent').innerHTML = `
+            <div style="text-align: center; padding: 50px;">
+                <h2>Carregando trilha...</h2>
+                <p>Por favor, aguarde enquanto carregamos sua trilha de estudos.</p>
+            </div>
+        `;
+
+        // Buscar dados da trilha
+        const response = await fetch(`../controller/TrilhaController.php?action=getTrilha&id=${trilhaId}`);
+        
+        if (!response.ok) {
+            throw new Error('Erro ao carregar trilha');
+        }
+
+        const data = await response.json();
+        
+        if (data.success) {
+            dadosTrilha = data.trilha;
+            etapas = data.etapas || [];
+            inicializarTrilha();
+        } else {
+            throw new Error(data.message || 'Erro ao carregar trilha');
+        }
+
+    } catch (error) {
+        console.error('Erro:', error);
+        document.getElementById('mainContent').innerHTML = `
+            <div style="text-align: center; padding: 50px;">
+                <h2 style="color: #ff4444;">Erro ao carregar trilha</h2>
+                <p>${error.message}</p>
+                <button class="btn" onclick="window.location.href='telameuscursos.html'">Voltar para Minhas Trilhas</button>
+            </div>
+        `;
+    }
+}
+
+// Função para inicializar a trilha com os dados do BD
+function inicializarTrilha() {
+    const mainContent = document.getElementById('mainContent');
+    
+    mainContent.innerHTML = `
+        <h1>Trilha: ${dadosTrilha.titulo || 'Carregando...'}</h1>
+        <p>${dadosTrilha.descricao || 'Desenvolvendo conhecimento passo a passo.'}</p>
+
+        <div id="progressoTexto">Etapa <span id="etapaAtualNumero">1</span> de <span id="totalEtapas">${etapas.length}</span></div>
+
+        <div class="video-tabela">
+            <div class="tabela-wrapper">
+                <h2 id="nomeEtapa">Carregando etapa...</h2>
+                <table id="tabelaAulas">
+                    <thead><tr><th>Aula</th><th>Objetivo</th></tr></thead>
+                    <tbody></tbody>
+                </table>
+            </div>
+
+            <div class="video-container">
+                <div class="video-loading" id="loadingMessage">Carregando conteúdo...</div>
+                <div id="youtubePlayer"></div>
+            </div>
+        </div>
+
+        <div class="btn-group-navegacao">
+            <button id="voltarBtn" class="btn btn-secondary hidden">← Voltar</button>
+            <button id="proximaEtapaBtn" class="btn">Próxima etapa →</button>
+        </div>
+    `;
+
+    // Reconfigurar event listeners
+    document.getElementById('proximaEtapaBtn').addEventListener('click', function() {
+        if(etapaAtual === etapas.length-1) {
+            mostrarTelaConclusao();
+        } else { 
+            etapaAtual++; 
+            carregarEtapa(); 
+        }
+    });
+
+    document.getElementById('voltarBtn').addEventListener('click', function() {
+        if(etapaAtual > 0) { 
+            etapaAtual--; 
+            carregarEtapa(); 
+        }
+    });
+
+    // Carregar primeira etapa
+    if (etapas.length > 0) {
+        carregarEtapa();
+    } else {
+        mainContent.innerHTML = `
+            <div style="text-align: center; padding: 50px;">
+                <h2>Trilha vazia</h2>
+                <p>Esta trilha ainda não possui conteúdo.</p>
+                <button class="btn" onclick="window.location.href='telameuscursos.html'">Voltar para Minhas Trilhas</button>
+            </div>
+        `;
+    }
+}
+
+// Função para carregar etapa atual
+function carregarEtapa() {
+    if (etapas.length === 0) return;
+
+    document.getElementById('etapaAtualNumero').textContent = etapaAtual + 1;
+    document.getElementById('nomeEtapa').textContent = `Etapa ${etapaAtual + 1} — ${etapas[etapaAtual].nome}`;
+    
+    document.getElementById('voltarBtn').classList.toggle('hidden', etapaAtual === 0);
+    document.getElementById('proximaEtapaBtn').textContent = etapaAtual === etapas.length - 1 ? 'Finalizar trilha' : 'Próxima etapa →';
+
+    // Carregar aulas da etapa
+    const tbody = document.getElementById('tabelaAulas').querySelector('tbody');
+    tbody.innerHTML = '';
+    
+    etapas[etapaAtual].aulas.forEach((aula, i) => {
+        const tr = document.createElement('tr');
+        const storageKey = `trilha_${trilhaId}_etapa_${etapaAtual}_aula_${i}`;
+        
+        if(localStorage.getItem(storageKey) === 'true') tr.classList.add('completed');
+        
+        const tdAula = document.createElement('td'); 
+        tdAula.textContent = (i + 1) + '. ' + aula.titulo;
+        const tdObjetivo = document.createElement('td'); 
+        tdObjetivo.textContent = aula.objetivo;
+        
+        tr.appendChild(tdAula); 
+        tr.appendChild(tdObjetivo);
+        
+        tr.addEventListener('click', () => {
+            tr.classList.toggle('completed');
+            localStorage.setItem(storageKey, tr.classList.contains('completed').toString());
+            salvarProgresso();
+        });
+        
+        tbody.appendChild(tr);
+    });
+
+    // Carregar vídeo
+    const videoId = etapas[etapaAtual].video;
+    const container = document.getElementById('youtubePlayer');
+    const loading = document.getElementById('loadingMessage');
+    
+    loading.classList.remove('hidden'); 
+    loading.textContent = 'Carregando vídeo...';
+    
+    const tempoSalvo = localStorage.getItem(`trilha_${trilhaId}_video_tempo_${videoId}`) || 0;
+    
+    if (videoId) {
+        container.innerHTML = `<iframe width="100%" height="360" src="https://www.youtube.com/embed/${videoId}?rel=0&modestbranding=1&start=${tempoSalvo}" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen title="Vídeo da aula"></iframe>`;
+        const iframe = container.querySelector('iframe');
+        iframe.onload = () => loading.classList.add('hidden');
+    } else {
+        container.innerHTML = `
+            <div style="display: flex; justify-content: center; align-items: center; height: 100%; background: #f0f0f0; border-radius: 12px;">
+                <div style="text-align: center; padding: 20px;">
+                    <h3>Conteúdo de Leitura</h3>
+                    <p>${etapas[etapaAtual].conteudo_texto || 'Estude o material fornecido para esta etapa.'}</p>
+                </div>
+            </div>
+        `;
+        loading.classList.add('hidden');
+    }
+    
+    setTimeout(() => loading.classList.add('hidden'), 5000);
+}
+
+// Função para salvar progresso no backend
+async function salvarProgresso() {
+    try {
+        const progresso = {
+            trilha_id: trilhaId,
+            etapa_atual: etapaAtual,
+            concluido: etapaAtual === etapas.length - 1
+        };
+
+        await fetch('../controller/TrilhaController.php?action=salvarProgresso', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(progresso)
+        });
+    } catch (error) {
+        console.error('Erro ao salvar progresso:', error);
+    }
+}
+
+// Modifique o DOMContentLoaded para carregar a trilha do BD
 document.addEventListener('DOMContentLoaded', function() {
-  document.getElementById('totalEtapas').textContent = etapas.length;
+    // Configuração da pesquisa (mantenha este código)
+    const searchToggle = document.querySelector('.search-toggle');
+    const searchBox = document.querySelector('.search-box');
+    const searchInput = document.getElementById('searchInput');
+    
+    searchToggle.addEventListener('click', function(e) {
+        e.stopPropagation();
+        searchBox.classList.toggle('active');
+        if(searchBox.classList.contains('active')) {
+            searchInput.focus();
+        }
+    });
 
-  // Configuração da pesquisa
-  const searchToggle = document.querySelector('.search-toggle');
-  const searchBox = document.querySelector('.search-box');
-  const searchInput = document.getElementById('searchInput');
-  
-  // Abrir/fechar caixa de pesquisa
-  searchToggle.addEventListener('click', function(e) {
-    e.stopPropagation();
-    searchBox.classList.toggle('active');
-    if(searchBox.classList.contains('active')) {
-      searchInput.focus();
-    }
-  });
+    searchInput.addEventListener('keypress', function(e) {
+        if(e.key === 'Enter') {
+            realizarPesquisa();
+        }
+    });
 
-  // Pesquisa ao pressionar Enter
-  searchInput.addEventListener('keypress', function(e) {
-    if(e.key === 'Enter') {
-      realizarPesquisa();
-    }
-  });
+    document.addEventListener('click', function(e) {
+        if(!searchBox.contains(e.target)) {
+            searchBox.classList.remove('active');
+        }
+    });
 
-  // Fechar pesquisa ao clicar fora
-  document.addEventListener('click', function(e) {
-    if(!searchBox.contains(e.target)) {
-      searchBox.classList.remove('active');
-    }
-  });
+    // Botões da tela de conclusão
+    document.getElementById('btnCompartilhar').addEventListener('click', compartilharConquista);
+    document.getElementById('btnNovaTrilha').addEventListener('click', iniciarNovaTrilha);
+    document.getElementById('btnVoltarInicio').addEventListener('click', voltarAoInicio);
 
-  // Botões da trilha
-  document.getElementById('proximaEtapaBtn').addEventListener('click', function() {
-    if(etapaAtual === etapas.length-1) {
-      mostrarTelaConclusao();
-    } else { 
-      etapaAtual++; 
-      carregarEtapa(); 
-    }
-  });
-
-  document.getElementById('voltarBtn').addEventListener('click', function() {
-    if(etapaAtual > 0) { 
-      etapaAtual--; 
-      carregarEtapa(); 
-    }
-  });
-
-  // Botões da tela de conclusão
-  document.getElementById('btnCompartilhar').addEventListener('click', compartilharConquista);
-  document.getElementById('btnNovaTrilha').addEventListener('click', iniciarNovaTrilha);
-  document.getElementById('btnVoltarInicio').addEventListener('click', voltarAoInicio);
-
-  carregarEtapa();
+    // Carregar trilha do banco de dados
+    carregarDadosTrilha();
 });
 
+// Atualize a função mostrarTelaConclusao
 function mostrarTelaConclusao() {
-  // Esconde a tela principal
-  document.getElementById('mainContent').style.display = 'none';
-  
-  // Mostra a tela de conclusão
-  document.getElementById('telaConclusao').style.display = 'block';
-  
-  // Atualiza estatísticas
-  atualizarEstatisticas();
-  
-  // Dispara confetti
-  dispararConfetti();
-}
-
-function atualizarEstatisticas() {
-  // Calcula aulas concluídas
-  let aulasConcluidas = 0;
-  for (let i = 0; i < etapas.length; i++) {
-    for (let j = 0; j < etapas[i].aulas.length; j++) {
-      if (localStorage.getItem('aula_' + i + '_' + j) === 'true') {
-        aulasConcluidas++;
-      }
-    }
-  }
-  
-  // Define dias de estudo (simulação)
-  const diasEstudo = Math.max(1, Math.floor(aulasConcluidas / 2));
-  
-  // Atualiza elementos
-  document.getElementById('diasEstudo').textContent = diasEstudo;
-  document.getElementById('aulasConcluidas').textContent = aulasConcluidas;
-}
-
-function dispararConfetti() {
-  const colors = ['#3d4ff7', '#ffca28', '#4CAF50', '#e91e63', '#9c27b0'];
-  
-  for (let i = 0; i < 100; i++) {
-    const confetti = document.createElement('div');
-    confetti.className = 'confetti';
-    confetti.style.backgroundColor = colors[Math.floor(Math.random() * colors.length)];
-    confetti.style.left = Math.random() * 100 + 'vw';
-    confetti.style.width = Math.random() * 10 + 5 + 'px';
-    confetti.style.height = Math.random() * 10 + 5 + 'px';
-    confetti.style.opacity = Math.random() * 0.5 + 0.5;
+    // Esconde a tela principal
+    document.getElementById('mainContent').style.display = 'none';
     
-    document.body.appendChild(confetti);
+    // Mostra a tela de conclusão
+    document.getElementById('telaConclusao').style.display = 'block';
     
-    // Animação
-    const animation = confetti.animate([
-      { transform: 'translateY(0) rotate(0deg)', opacity: 1 },
-      { transform: `translateY(${window.innerHeight}px) rotate(${Math.random() * 360}deg)`, opacity: 0 }
-    ], {
-      duration: Math.random() * 3000 + 2000,
-      easing: 'cubic-bezier(0.1, 0.8, 0.2, 1)'
-    });
+    // Atualiza o título com o nome da trilha
+    document.querySelector('.conclusao-titulo span').textContent = `🎉 Parabéns!`;
+    document.querySelector('.conclusao-subtitulo').innerHTML = 
+        `Você concluiu com sucesso a trilha <strong>${dadosTrilha.titulo || 'Introdução à Programação'}</strong>`;
     
-    animation.onfinish = () => {
-      confetti.remove();
-    };
-  }
-}
-
-function compartilharConquista() {
-  if (navigator.share) {
-    navigator.share({
-      title: 'Concluí a Trilha de Introdução à Programação!',
-      text: 'Acabei de concluir a trilha de Introdução à Programação na Infinity Cursos! 🎓',
-      url: window.location.href
-    })
-    .then(() => console.log('Conteúdo compartilhado com sucesso'))
-    .catch((error) => console.log('Erro ao compartilhar:', error));
-  } else {
-    alert('📢 Compartilhe sua conquista nas redes sociais!\n\n"Concluí a trilha de Introdução à Programação na Infinity Cursos! 🎓 #Aprendizado #Programação"');
-  }
-}
-
-function iniciarNovaTrilha() {
-  alert('🚀 Em um sistema real, você seria redirecionado para a página de trilhas disponíveis.');
-  // Em um sistema real: window.location.href = 'telacursos.html';
-}
-
-function voltarAoInicio() {
-  // Esconde a tela de conclusão
-  document.getElementById('telaConclusao').style.display = 'none';
-  
-  // Mostra a tela principal novamente
-  document.getElementById('mainContent').style.display = 'block';
-  
-  // Reinicia a trilha
-  etapaAtual = 0;
-  carregarEtapa();
-}
-
-function realizarPesquisa() {
-  const termo = document.getElementById('searchInput').value.trim();
-  
-  if(termo === '') {
-    alert('Por favor, digite um termo para pesquisar.');
-    return;
-  }
-  
-  // Fecha a caixa de pesquisa
-  document.querySelector('.search-box').classList.remove('active');
-  
-  // Mostra os resultados da pesquisa
-  mostrarResultadosPesquisa(termo);
-}
-
-function mostrarResultadosPesquisa(termo) {
-  // Filtra cursos baseado no termo de pesquisa
-  const resultados = cursosDisponiveis.filter(curso => 
-    curso.nome.toLowerCase().includes(termo.toLowerCase()) ||
-    curso.categoria.toLowerCase().includes(termo.toLowerCase()) ||
-    curso.descricao.toLowerCase().includes(termo.toLowerCase()) ||
-    curso.nivel.toLowerCase().includes(termo.toLowerCase())
-  );
-  
-  // Atualiza o conteúdo principal com os resultados
-  const mainContent = document.getElementById('mainContent');
-  mainContent.innerHTML = `
-    <h1>Resultados da Pesquisa</h1>
-    <p>Encontramos ${resultados.length} curso(s) para: "<strong>${termo}</strong>"</p>
+    // Atualiza estatísticas
+    atualizarEstatisticas();
     
-    <div style="display: flex; flex-wrap: wrap; gap: 20px; justify-content: center; margin-top: 30px;">
-      ${resultados.length > 0 ? 
-        resultados.map(curso => `
-          <div class="curso-card">
-            <h3 style="color: var(--primary-color); margin-top: 0;">${curso.nome}</h3>
-            <div class="categoria-tag">${curso.categoria}</div>
-            <p><strong>Nível:</strong> ${curso.nivel}</p>
-            <p><strong>Duração:</strong> ${curso.duracao}</p>
-            <p>${curso.descricao}</p>
-            <button class="btn" style="margin-top: 15px;" onclick="acessarCurso('${curso.nome}')">Acessar Curso</button>
-          </div>
-        `).join('') 
-        : 
-        `<div style="text-align: center; padding: 40px;">
-          <p style="font-size: 18px; color: #666;">Nenhum curso encontrado para "${termo}"</p>
-          <p>Tente pesquisar por: programação, design, javascript, python, etc.</p>
-          <button class="btn" onclick="voltarParaTrilha()" style="margin-top: 20px;">Voltar para a Trilha</button>
-        </div>`
-      }
-    </div>
+    // Dispara confetti
+    dispararConfetti();
     
-    ${resultados.length > 0 ? 
-      `<button class="btn" onclick="voltarParaTrilha()" style="margin-top: 30px;">← Voltar para a Trilha</button>` 
-      : ''}
-  `;
+    // Marca trilha como concluída no backend
+    salvarProgresso();
 }
 
-function acessarCurso(nomeCurso) {
-  alert(`Redirecionando para o curso: ${nomeCurso}\n\nEm um sistema real, você seria redirecionado para a página do curso.`);
-  // Em um sistema real: window.location.href = `curso.html?nome=${encodeURIComponent(nomeCurso)}`;
-}
-
-function voltarParaTrilha() {
-  // Restaura o conteúdo original da trilha
-  const mainContent = document.getElementById('mainContent');
-  mainContent.innerHTML = `
-    <h1>Trilha: Introdução à Programação</h1>
-    <p>Desenvolver o raciocínio lógico e compreender os fundamentos da programação.</p>
-
-    <div id="progressoTexto">Etapa <span id="etapaAtualNumero">1</span> de <span id="totalEtapas">2</span></div>
-
-    <div class="video-tabela">
-      <div class="tabela-wrapper">
-        <h2 id="nomeEtapa">Etapa 1 — Fundamentos da Lógica</h2>
-        <table id="tabelaAulas">
-          <thead><tr><th>Aula</th><th>Objetivo</th></tr></thead>
-          <tbody></tbody>
-        </table>
-      </div>
-
-      <div class="video-container">
-        <div class="video-loading" id="loadingMessage">Carregando vídeo...</div>
-        <div id="youtubePlayer"></div>
-      </div>
-    </div>
-
-    <div class="btn-group-navegacao">
-      <button id="voltarBtn" class="btn btn-secondary hidden">← Voltar</button>
-      <button id="proximaEtapaBtn" class="btn">Próxima etapa →</button>
-    </div>
-  `;
-  
-  // Reconfigura os event listeners
-  document.getElementById('proximaEtapaBtn').addEventListener('click', function() {
-    if(etapaAtual === etapas.length-1) {
-      mostrarTelaConclusao();
-    } else { 
-      etapaAtual++; 
-      carregarEtapa(); 
-    }
-  });
-
-  document.getElementById('voltarBtn').addEventListener('click', function() {
-    if(etapaAtual > 0) { 
-      etapaAtual--; 
-      carregarEtapa(); 
-    }
-  });
-  
-  carregarEtapa();
-}
-
-function carregarEtapa() {
-  document.getElementById('etapaAtualNumero').textContent = etapaAtual + 1;
-  document.getElementById('nomeEtapa').textContent = 'Etapa ' + (etapaAtual + 1) + ' — ' + etapas[etapaAtual].nome;
-  document.getElementById('voltarBtn').classList.toggle('hidden', etapaAtual === 0);
-  document.getElementById('proximaEtapaBtn').textContent = etapaAtual === etapas.length - 1 ? 'Finalizar trilha' : 'Próxima etapa →';
-
-  const tbody = document.getElementById('tabelaAulas').querySelector('tbody');
-  tbody.innerHTML = '';
-  etapas[etapaAtual].aulas.forEach((aula, i) => {
-    const tr = document.createElement('tr');
-    if(localStorage.getItem('aula_' + etapaAtual + '_' + i) === 'true') tr.classList.add('completed');
-    const tdAula = document.createElement('td'); 
-    tdAula.textContent = (i + 1) + '. ' + aula.titulo;
-    const tdObjetivo = document.createElement('td'); 
-    tdObjetivo.textContent = aula.objetivo;
-    tr.appendChild(tdAula); 
-    tr.appendChild(tdObjetivo);
-    tr.addEventListener('click', () => {
-      tr.classList.toggle('completed');
-      localStorage.setItem('aula_' + etapaAtual + '_' + i, tr.classList.contains('completed').toString());
-    });
-    tbody.appendChild(tr);
-  });
-
-  // Carrega vídeo
-  const videoId = etapas[etapaAtual].video;
-  const container = document.getElementById('youtubePlayer');
-  const loading = document.getElementById('loadingMessage');
-  loading.classList.remove('hidden'); 
-  loading.textContent = 'Carregando vídeo...';
-  const tempoSalvo = localStorage.getItem('video_tempo_' + videoId) || 0;
-  container.innerHTML = `<iframe width="100%" height="360" src="https://www.youtube.com/embed/${videoId}?rel=0&modestbranding=1&start=${tempoSalvo}" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen title="Vídeo da aula"></iframe>`;
-  const iframe = container.querySelector('iframe');
-  iframe.onload = () => loading.classList.add('hidden');
-  setTimeout(() => loading.classList.add('hidden'), 5000);
-}
+// Mantenha as outras funções (atualizarEstatisticas, dispararConfetti, etc.) como estão
 </script>
 
 </body>

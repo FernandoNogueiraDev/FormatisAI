@@ -1,485 +1,1095 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="pt-br">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Curso de Programação - Fomatis</title>
-    <link rel="icon" href="imgs/favicon.jpg" type="image/png">
-<style>
-  body { margin: 0; font-family: Arial, sans-serif; }
+    <title>Cursos Disponíveis - Formatis</title>
+    <link rel="icon" href="imgs/favicon1.png" type="image/png">
+    <style>
+        /* ====== VARIÁVEIS CSS ====== */
+        :root {
+            --primary-color: #3d4ff7;
+            --secondary-color: #ffca28;
+            --light-color: #eef2ff;
+            --dark-color: #333;
+            --gray-color: #f5f5f5;
+            --white: #fff;
+            --error-color: #e74c3c;
+            --success-color: #2ecc71;
+            --border-radius: 12px;
+            --transition: all 0.3s ease;
+            --shadow: 0 4px 15px rgba(0,0,0,0.1);
+            --shadow-hover: 0 8px 25px rgba(0,0,0,0.15);
+        }
 
-  .navbar {
-    display: flex; justify-content: space-around; align-items: center;
-    margin: auto;
-  }
+        /* ====== BASE ====== */
+        body { 
+            margin: 0; 
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #f9f9f9;
+            color: var(--dark-color);
+            line-height: 1.6;
+        }
 
-  .logo img { height: 55px; width: auto; }
+        /* ====== NAVBAR ====== */
+        .navbar {
+            display: flex; 
+            justify-content: space-between; 
+            align-items: center;
+            margin: auto; 
+            padding: 10px 5%;
+            background-color: var(--white);
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+        .logo img { height: 55px; width: auto; }
+        .nav-links { 
+            display: flex; 
+            list-style: none; 
+            margin: 0; 
+            padding: 0; 
+            align-items: center;
+        }
+        .nav-links li { 
+            margin: 0 15px; 
+            position: relative;
+        }
+        .nav-links a { 
+            text-decoration: none; 
+            color: var(--primary-color); 
+            font-weight: 600; 
+            transition: var(--transition); 
+            padding: 8px 0; 
+            position: relative;
+            display: inline-block;
+        }
+        .nav-links a:hover { color: var(--secondary-color); }
+        .nav-links a::after { 
+            content: ''; 
+            position: absolute; 
+            width: 0; 
+            height: 2px; 
+            bottom: 0; 
+            left: 0; 
+            background-color: var(--secondary-color); 
+            transition: var(--transition); 
+        }
+        .nav-links a:hover::after { width: 100%; }
 
-  .nav-links { display: flex; list-style: none; margin: 0; padding: 0; }
+        /* Dropdown Menu */
+        .dropdown { 
+            position: relative; 
+        }
+        .dropdown-toggle { 
+            display: flex; 
+            align-items: center; 
+            gap: 4px;
+            cursor: pointer;
+        }
+        .dropdown-toggle::after { 
+            content: "▼"; 
+            font-size: 10px; 
+            transition: transform 0.3s ease;
+            margin-left: 2px;
+        }
+        .dropdown:hover .dropdown-toggle::after {
+            transform: rotate(180deg);
+        }
+        .dropdown-menu {
+            list-style: none;
+            padding: 8px 0;
+            margin: 0;
+            position: absolute;
+            top: 100%;
+            left: 0;
+            background-color: var(--white);
+            min-width: 200px;
+            box-shadow: var(--shadow);
+            border-radius: 8px;
+            z-index: 1000;
+            border: 1px solid #eee;
+            opacity: 0;
+            visibility: hidden;
+            transform: translateY(-10px);
+            transition: all 0.3s ease;
+        }
+        .dropdown:hover .dropdown-menu {
+            opacity: 1;
+            visibility: visible;
+            transform: translateY(0);
+        }
+        .dropdown-menu li { 
+            border-bottom: 1px solid #f0f0f0; 
+        }
+        .dropdown-menu li:last-child { 
+            border-bottom: none; 
+        }
+        .dropdown-menu li a {
+            display: block;
+            padding: 10px 16px;
+            color: var(--primary-color);
+            font-weight: 600;
+            text-decoration: none;
+            transition: all 0.2s ease;
+        }
+        .dropdown-menu li a:hover {
+            background-color: var(--light-color);
+            color: var(--secondary-color);
+        }
 
-  .nav-links li { margin: 0 15px; }
+        /* ====== PESQUISA ====== */
+        .search-box { position: relative; display: flex; align-items: center; }
+        .search-toggle { background: none; border: none; font-size: 20px; cursor: pointer; color: var(--primary-color); padding: 8px; border-radius: 50%; transition: var(--transition); }
+        .search-toggle:hover { background-color: rgba(61, 79, 247, 0.1); }
+        .search-input { width: 0; opacity: 0; padding: 10px 15px; border: 1px solid #ddd; border-radius: 30px; outline: none; transition: var(--transition); margin-left: 10px; font-size: 14px; }
+        .search-box.active .search-input { width: 250px; opacity: 1; }
 
-  .nav-links a {
-    text-decoration: none;
-    color: #3d4ff7;
-    font-weight: bold;
-    transition: color 0.3s;
-  }
+        /* ====== HERO SECTION ====== */
+        .hero-cursos {
+            text-align: center;
+            padding: 80px 20px 60px;
+            background: linear-gradient(135deg, var(--primary-color), #00bcd4);
+            color: white;
+            margin-bottom: 40px;
+        }
 
-  .nav-links a:hover { color: #ffca28; }
+        .hero-cursos h1 {
+            font-size: 2.8rem;
+            margin-bottom: 15px;
+            font-weight: 700;
+        }
 
-  .search-box {
-    position: relative;
-    display: flex;
-    align-items: center;
-  }
+        .hero-cursos p {
+            font-size: 1.2rem;
+            max-width: 700px;
+            margin: 0 auto 25px;
+            line-height: 1.6;
+        }
 
-  .search-toggle {
-    background: none;
-    border: none;
-    font-size: 20px;
-    cursor: pointer;
-    color: white;
-    padding: 6px;
-  }
+        .destaque-gratuito {
+            background: rgba(255, 255, 255, 0.2);
+            padding: 8px 20px;
+            border-radius: 20px;
+            font-weight: bold;
+            display: inline-block;
+            backdrop-filter: blur(10px);
+        }
 
-  .search-input {
-    width: 0;
-    opacity: 0;
-    padding: 6px;
-    border: none;
-    border-radius: 4px;
-    outline: none;
-    transition: width 0.3s ease, opacity 0.3s ease;
-    margin-left: 10px;
-  }
+        /* ====== FILTROS ====== */
+        .filtros-section {
+            max-width: 1200px;
+            margin: 0 auto 30px;
+            padding: 0 20px;
+        }
 
-  .search-box.active .search-input {
-    width: 200px;
-    opacity: 1;
-  }
-  .container-curso {
-      background: grey; padding: 12px; border-radius: 12px; width: 100%; max-width: 250px;
-      text-align: center; display: flex; flex-direction: column; align-items: center; color: white;
-    }
-    .curso-wrapper { display: flex; flex-wrap: wrap; justify-content: center; gap: 20px; padding: 40px; }
-    .curso-wrapper h2 { width: 100%; text-align: center; color: #3d4ff7; margin-bottom: 30px; }
-    .container-curso button {
-      margin-top: 10px; padding: 8px 16px; border: none; border-radius: 8px;
-      background-color: #3d4ff7; color: white; font-weight: bold; cursor: pointer; transition: background-color 0.3s;
-    }
-    .container-curso button:hover { background-color: #00bcd4; }
- .btn-group { display: flex; justify-content: center; gap: 10px; flex-wrap: wrap; margin-top: 10px; }
-    .btn {
-      padding: 10px 20px; border: 2px solid transparent; border-radius: 8px;
-      background: #f0f0f0; color: #222; cursor: pointer;
-      transition: transform 0.2s ease, box-shadow 0.3s ease; font-weight: bold;
-    }
-    .btn:hover { transform: scale(1.05); box-shadow: 0 0 10px rgba(255,255,255,0.3); }
-    .btn.selected { color: #000; background: #fff; animation: rainbow-glow 2.5s linear infinite; }
-    @keyframes rainbow-glow {
-      0% { box-shadow: 0 0 16px rgba(255, 0, 0, 0.8); }
-      25% { box-shadow: 0 0 16px rgba(255, 165, 0, 0.8); }
-      50% { box-shadow: 0 0 16px rgba(0, 255, 0, 0.8); }
-      75% { box-shadow: 0 0 16px rgba(0, 0, 255, 0.8); }
-      100% { box-shadow: 0 0 16px rgba(238, 130, 238, 0.8); }
-    }
-    .hidden { display: none; }
-    .submit-btn { margin-top: 30px; display: flex; justify-content: center; }
-    #enviarBtn { background: transparent; color: white; border: 2px solid white; }
+        .filtros-container {
+            display: flex;
+            gap: 15px;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
 
- /* Modal */
-    #modalCurso {
-      display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-      background: rgba(0,0,0,0.6); z-index: 9999; justify-content: center; align-items: center;
-    }
-    #modalCurso .container {
-      background: #fff; color: #333; padding: 30px; border-radius: 16px;
-      max-width: 800px; width: 90%; box-shadow: 0 0 20px rgba(0,0,0,0.3);
-      position: relative; animation: fadeIn 0.5s ease;
-    }
-    @keyframes fadeIn {
-      from { opacity: 0; transform: scale(0.95); }
-      to { opacity: 1; transform: scale(1); }
-    }
+        .filtro-btn {
+            padding: 10px 20px;
+            background: var(--white);
+            border: 2px solid var(--light-color);
+            border-radius: 25px;
+            cursor: pointer;
+            transition: var(--transition);
+            font-weight: 600;
+            color: var(--dark-color);
+        }
 
-    .input-box {
-  display: block;
-  margin: 20px auto;
-  width: 95%;
-  max-width: 700px;
-  padding: 14px 18px;
-  font-size: 18px;
-  border-radius: 8px;
-  border: 2px solid #ccc;
-  outline: none;
-  transition: border-color 0.3s;
-  box-sizing: border-box;
-}
-.input-box:focus {
-  border-color: #3d4ff7;
-  box-shadow: 0 0 0 2px rgba(61, 79, 247, 0.2);
-}
-.main-content {
-  max-width: 1200px;
-  margin: 0 auto;
-  padding: 0 20px;
-}
+        .filtro-btn:hover, .filtro-btn.ativo {
+            background: var(--primary-color);
+            color: white;
+            border-color: var(--primary-color);
+            transform: translateY(-2px);
+        }
 
-#gerarBtn {
-  background-color: #0056d2; /* azul mais forte */
-  color: white;
-  font-size: 18px;
-  padding: 14px 28px;
-  border: none;
-  border-radius: 10px;
-  font-weight: bold;
-  cursor: pointer;
-  transition: background-color 0.3s ease;
-}
+        /* ====== CONTEÚDO DOS CURSOS ====== */
+        .cursos-section {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px 60px;
+        }
 
-#gerarBtn:hover {
-  background-color: #003ea1;
-}
+        .section-title {
+            text-align: center;
+            color: var(--primary-color);
+            margin-bottom: 40px;
+            font-size: 2.2rem;
+        }
 
-#mensagemStatus {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  text-align: center;
-  margin: 20px auto;
-  font-weight: bold;
-  font-size: 16px;
-  padding: 12px 20px;
-  border-radius: 8px;
-  max-width: 500px;
-  min-height: 40px;
-  transition: opacity 1s ease-out;
-}
+        .cursos-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 30px;
+            margin-bottom: 50px;
+        }
 
-#mensagemStatus.fade-out {
-  opacity: 0;
-}
+        .card-curso {
+            background: var(--white);
+            border-radius: var(--border-radius);
+            overflow: hidden;
+            box-shadow: var(--shadow);
+            transition: var(--transition);
+            display: flex;
+            flex-direction: column;
+            height: 100%;
+        }
 
-.fade-out {
-  transition: opacity 0.5s ease;
-  opacity: 0;
-}
+        .card-curso:hover {
+            transform: translateY(-8px);
+            box-shadow: var(--shadow-hover);
+        }
 
-/* Dropdown Menu */
-    .dropdown { position: relative; }
-    .dropdown-toggle {
-      display: flex;
-      align-items: center;
-      gap: 4px;
-      cursor: pointer;
-    }
-    .dropdown-toggle::after {
-      content: "▼";
-      font-size: 10px;
-      transition: transform 0.3s ease;
-      margin-left: 2px;
-    }
-    .dropdown:hover .dropdown-toggle::after {
-      transform: rotate(180deg);
-    }
-    .dropdown-menu {
-      list-style: none;
-      padding: 8px 0;
-      margin: 0;
-      position: absolute;
-      top: 100%;
-      left: 0;
-      background-color: #fff;
-      min-width: 200px;
-      box-shadow: 0 4px 12px rgba(0,0,0,0.1);
-      border-radius: 8px;
-      z-index: 1000;
-      border: 1px solid #eee;
-      opacity: 0;
-      visibility: hidden;
-      transform: translateY(-10px);
-      transition: all 0.3s ease;
-    }
-    .dropdown:hover .dropdown-menu {
-      opacity: 1;
-      visibility: visible;
-      transform: translateY(0);
-    }
-    .dropdown-menu li { border-bottom: 1px solid #f0f0f0; }
-    .dropdown-menu li:last-child { border-bottom: none; }
-    .dropdown-menu li a {
-      display: block;
-      padding: 10px 16px;
-      color: var(--primary-color);
-      font-weight: 600;
-      text-decoration: none;
-      transition: all 0.2s ease;
-      position: relative;
-    }
-    .dropdown-menu li a::after {
-      content: '';
-      position: absolute;
-      width: 0;
-      height: 2px;
-      bottom: 0;
-      left: 16px;
-      right: 16px;
-      background-color: var(--secondary-color);
-      transition: width 0.2s ease;
-    }
-    .dropdown-menu li a:hover {
-      color: var(--secondary-color);
-    }
-    .dropdown-menu li a:hover::after {
-      width: calc(100% - 32px);
-    }
-</style>  
+        .card-imagem {
+            height: 160px;
+            background: var(--light-color);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+
+        .card-imagem img {
+            max-height: 100px;
+            max-width: 100%;
+            object-fit: contain;
+        }
+
+        .card-conteudo {
+            padding: 25px;
+            flex-grow: 1;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .card-curso h3 {
+            margin: 0 0 10px;
+            color: var(--primary-color);
+            font-size: 1.4rem;
+        }
+
+        .card-curso p {
+            color: #666;
+            margin-bottom: 20px;
+            flex-grow: 1;
+        }
+
+        .card-info {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 20px;
+            font-size: 0.9rem;
+            color: #888;
+        }
+
+        .card-info span {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .btn-acessar {
+            background: var(--primary-color);
+            color: white;
+            border: none;
+            padding: 12px 20px;
+            border-radius: 8px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: var(--transition);
+            text-align: center;
+            text-decoration: none;
+            display: block;
+        }
+
+        .btn-acessar:hover {
+            background: #2a3bd4;
+            transform: translateY(-2px);
+        }
+
+        /* ====== SEÇÃO GERAR CURSO ====== */
+        .gerar-curso-section {
+            background: var(--light-color);
+            padding: 60px 20px;
+            text-align: center;
+            border-radius: var(--border-radius);
+            margin: 40px 0;
+        }
+
+        .gerar-curso-section h2 {
+            color: var(--primary-color);
+            margin-bottom: 15px;
+        }
+
+        .gerar-curso-section p {
+            color: #666;
+            max-width: 600px;
+            margin: 0 auto 25px;
+            font-size: 1.1rem;
+        }
+
+        .btn-gerar {
+            background: linear-gradient(135deg, var(--primary-color), #00bcd4);
+            color: white;
+            border: none;
+            padding: 15px 30px;
+            border-radius: 8px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: var(--transition);
+            font-size: 1.1rem;
+        }
+
+        .btn-gerar:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 10px 20px rgba(61, 79, 247, 0.3);
+        }
+
+        /* ====== MODAL COM FORMULÁRIO ORIGINAL ====== */
+        #modalCurso {
+            display: none; 
+            position: fixed; 
+            top: 0; 
+            left: 0; 
+            width: 100%; 
+            height: 100%;
+            background: rgba(0,0,0,0.6); 
+            z-index: 9999; 
+            justify-content: center; 
+            align-items: center;
+        }
+        
+        #modalCurso .container {
+            background: var(--white); 
+            color: var(--dark-color); 
+            padding: 30px; 
+            border-radius: 16px;
+            max-width: 800px; 
+            width: 90%; 
+            box-shadow: 0 0 20px rgba(0,0,0,0.3);
+            position: relative; 
+            animation: fadeIn 0.5s ease;
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; transform: scale(0.95); }
+            to { opacity: 1; transform: scale(1); }
+        }
+
+        .input-box {
+            display: block;
+            margin: 20px auto;
+            width: 95%;
+            max-width: 700px;
+            padding: 14px 18px;
+            font-size: 18px;
+            border-radius: 8px;
+            border: 2px solid #ccc;
+            outline: none;
+            transition: border-color 0.3s;
+            box-sizing: border-box;
+        }
+        
+        .input-box:focus {
+            border-color: var(--primary-color);
+            box-shadow: 0 0 0 2px rgba(61, 79, 247, 0.2);
+        }
+
+        .section {
+            margin: 25px 0;
+        }
+
+        .section h3 {
+            color: var(--primary-color);
+            margin-bottom: 15px;
+            text-align: center;
+        }
+
+        .btn-group { 
+            display: flex; 
+            justify-content: center; 
+            gap: 10px; 
+            flex-wrap: wrap; 
+            margin-top: 10px; 
+        }
+        
+        .btn {
+            padding: 12px 20px; 
+            border: 2px solid transparent; 
+            border-radius: 8px;
+            background: #f0f0f0; 
+            color: #222; 
+            cursor: pointer;
+            transition: transform 0.2s ease, box-shadow 0.3s ease; 
+            font-weight: bold;
+            text-align: center;
+            min-width: 120px;
+        }
+        
+        .btn:hover { 
+            transform: scale(1.05); 
+            box-shadow: 0 0 10px rgba(255,255,255,0.3); 
+        }
+        
+        .btn.selected { 
+            color: #000; 
+            background: #fff; 
+            animation: rainbow-glow 2.5s linear infinite; 
+        }
+        
+        @keyframes rainbow-glow {
+            0% { box-shadow: 0 0 16px rgba(255, 0, 0, 0.8); }
+            25% { box-shadow: 0 0 16px rgba(255, 165, 0, 0.8); }
+            50% { box-shadow: 0 0 16px rgba(0, 255, 0, 0.8); }
+            75% { box-shadow: 0 0 16px rgba(0, 0, 255, 0.8); }
+            100% { box-shadow: 0 0 16px rgba(238, 130, 238, 0.8); }
+        }
+        
+        .hidden { display: none; }
+        .submit-btn { margin-top: 30px; display: flex; justify-content: center; }
+
+        #gerarBtn {
+            background-color: var(--primary-color);
+            color: white;
+            font-size: 18px;
+            padding: 14px 28px;
+            border: none;
+            border-radius: 10px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+
+        #gerarBtn:hover {
+            background-color: #2a3bd4;
+            transform: translateY(-2px);
+        }
+
+        #mensagemStatus {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+            margin: 20px auto;
+            font-weight: bold;
+            font-size: 16px;
+            padding: 12px 20px;
+            border-radius: 8px;
+            max-width: 500px;
+            min-height: 40px;
+            transition: opacity 1s ease-out;
+        }
+
+        #mensagemStatus.error {
+            color: var(--error-color);
+            background-color: rgba(231, 76, 60, 0.1);
+        }
+
+        #mensagemStatus.success {
+            color: var(--success-color);
+            background-color: rgba(46, 204, 113, 0.1);
+        }
+
+        #mensagemStatus.fade-out {
+            opacity: 0;
+        }
+
+        .fade-out {
+            transition: opacity 0.5s ease;
+            opacity: 0;
+        }
+
+        /* ====== RESPONSIVIDADE ====== */
+        @media (max-width: 768px) {
+            .navbar { 
+                flex-direction: column; 
+                padding: 15px; 
+            }
+            .nav-links { 
+                margin: 15px 0; 
+                flex-wrap: wrap;
+                justify-content: center;
+            }
+            .nav-links li { 
+                margin: 5px 10px; 
+            }
+            .dropdown-menu { 
+                position: static; 
+                box-shadow: none; 
+                border: none;
+                display: none;
+                opacity: 1;
+                visibility: visible;
+                transform: none;
+            }
+            .dropdown:hover .dropdown-menu {
+                display: block;
+            }
+            .search-box.active .search-input { 
+                width: 200px; 
+            }
+            
+            .hero-cursos h1 {
+                font-size: 2.2rem;
+            }
+            
+            .hero-cursos {
+                padding: 60px 20px 40px;
+            }
+            
+            .cursos-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .btn-group {
+                flex-direction: column;
+                align-items: center;
+            }
+            
+            .btn {
+                width: 100%;
+                max-width: 200px;
+            }
+
+            #modalCurso .container {
+                padding: 20px;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .hero-cursos h1 {
+                font-size: 1.8rem;
+            }
+            
+            .section-title {
+                font-size: 1.8rem;
+            }
+            
+            .filtros-container {
+                flex-direction: column;
+                align-items: center;
+            }
+            
+            .filtro-btn {
+                width: 100%;
+                max-width: 200px;
+            }
+        }
+    </style>  
 </head>
 <body>
     <div class="page">
-     <nav class="navbar">
-    <div class="logo">
-      <a href="index.html"><img src="imgs/logo.jpg" alt="Infinity Cursos"></a>
-    </div>
-    <ul class="nav-links">
-      <li><a href="minhastrilhas.html">Minhas trilhas</a></li>
-      <li><a href="telacursos.html">Cursos</a></li>
-      <li><a href="quemsomos.html">Quem Somos</a></li>
-      <!-- Menu suspenso Área do Aluno -->
-      <li class="dropdown">
-        <a href="#" class="dropdown-toggle">Área do Aluno</a>
-        <ul class="dropdown-menu">
-          <li><a href="alterarsenha.html">Alterar senha</a></li>
-          <li><a href="atualizarcadastro.html">Atualizar cadastro</a></li>
-          <li><a href="areadoaluno.html">Acessar área do aluno</a></li>
-        </ul>
-      </li>
-    </ul>
-    <div class="search-box">
-  <button class="search-toggle">
-    🔍
-  </button>
-  <input type="text" class="search-input" placeholder="Procurar cursos...">
-</div>
-</div>
+        <!-- NAVBAR -->
+        <nav class="navbar" role="navigation" aria-label="Navegação principal">
+            <div class="logo">
+                <a href="telainicial.php" aria-label="Página inicial">
+                    <img src="imgs/logo.png" alt="Formatis">
+                </a>
+            </div>
+            <ul class="nav-links">
+                <li><a href="telameuscursos.php">Minhas trilhas</a></li>
+                <li><a href="telacursos.html" style="color: var(--secondary-color);">Cursos</a></li>
+                <li><a href="quemsomos.html">Quem Somos</a></li>
+                <li><a href="ajuda.php">Ajuda</a></li>
+                
+                <li class="dropdown">
+                    <a href="#" class="dropdown-toggle">Área do Aluno</a>
+                    <ul class="dropdown-menu">
+                        <li><a href="atualizarsenha.html">Atualizar senha</a></li>
+                        <li><a href="alterarcadastro.html">Alterar cadastro</a></li>
+                        <li><a href="areadoaluno.php">Acessar área do aluno</a></li>
+                    </ul>
+                </li>
+            </ul>
+            <div class="search-box">
+                <button class="search-toggle" aria-label="Abrir busca">🔍</button>
+                <input type="text" class="search-input" placeholder="Procurar cursos..." aria-label="Campo de busca" id="searchInput">
+            </div>
+        </nav>
 
-<section style="padding: 40px; background-color: #f5f5f5;">
-    <h2 style="text-align: center; color: #3d4ff7;">Escolha sua Jornada</h2>
-    <div class="curso-wrapper">
-      <div class="container-curso"><img src="imgs/java.png"><h3>Java</h3><p>Domine os fundamentos da linguagem Java e aprenda a desenvolver aplicações robustas, seguras e escaláveis.</p><button>Acessar</button></div>
-      <div class="container-curso"><img src="imgs/python.png"><h3>Python</h3><p>Aprenda Python do zero e explore seu potencial em automação, análise de dados, desenvolvimento web e inteligência artificial.</p><button>Acessar</button></div>
-      <div class="container-curso"><img src="imgs/html-css.png"><h3>HTML e CSS</h3><p>Crie sites modernos e responsivos entendendo a base da web.</p><button>Acessar</button></div>
-      <div class="container-curso"><img src="imgs/english.png"><h3>Inglês</h3><p>Amplie suas oportunidades pessoais e profissionais dominando o inglês de forma prática e interativa.</p><button>Acessar</button></div>
-      <div class="container-curso"><img src="imgs/excel.png"><h3>Excel</h3><p>Transforme dados em resultados!</p><button>Acessar</button></div>
-      <div class="container-curso"><img src="imgs/word.png"><h3>Word</h3><p>Aprenda a criar documentos profissionais com o Word.</p><button>Acessar</button></div>
-      <div class="container-curso"><img src="imgs/powerpoint.png"><h3>Power Point</h3><p>Crie apresentações impactantes e profissionais.</p><button>Acessar</button></div>
-      <div class="container-curso"><img src="imgs/c.png"><h3>C</h3><p>Entenda a base de todas as linguagens com C!</p><button>Acessar</button></div>
-      <div class="container-curso"><img src="imgs/enterprise.png"><h3>Empreendedorismo</h3><p>Desperte sua mentalidade empreendedora.</p><button>Acessar</button></div>
-      <div class="container-curso"><img src="imgs/logic.png"><h3>Lógica de Programação</h3><p>Construa o raciocínio essencial de todo programador!</p><button>Acessar</button></div>
-    </div>
-  </section>
-  <!-- Botão para abrir o modal -->
-  <section style="padding: 40px; text-align: center; background-color: #f5f5f5;">
-    <h2 style="color: #3d4ff7;">Não encontrou o que procura?</h2>
-    <p style="font-size: 18px; color: #333;">Gere um curso agora sobre o assunto desejado</p>
-    <button onclick="abrirModal()" style="padding: 12px 24px; background-color: #3d4ff7; color: white; border: none; border-radius: 8px; font-weight: bold; cursor: pointer;">
-      Gerar novo curso
-    </button>
-  </section>
+        <!-- HERO SECTION -->
+        <section class="hero-cursos">
+            <h1>Descubra Novos Conhecimentos</h1>
+            <p>Explore nossa coleção de cursos gratuitos e comece sua jornada de aprendizado hoje mesmo</p>
+            <div class="destaque-gratuito">🎯 100% GRATUITO - SEM CERTIFICADOS</div>
+        </section>
 
-  <!-- Modal do formulário -->
-  <div id="modalCurso" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.6); z-index: 9999; justify-content: center; align-items: center;">
-    <div class="container" style="background: #fff; color: #333; padding: 30px; border-radius: 16px; max-width: 800px; width: 90%; box-shadow: 0 0 20px rgba(0,0,0,0.3); position: relative; animation: fadeIn 0.5s ease;">
-      <button onclick="fecharModal()" style="position: absolute; top: 15px; right: 15px; background: transparent; border: none; font-size: 24px; cursor: pointer;">×</button>
-      <h2 style="color: #3d4ff7; text-align: center;">Criar curso personalizado com IA</h2>
-      <input type="text" class="input-box" placeholder="Digite o tema do curso...">
+        <!-- FILTROS -->
+        <section class="filtros-section">
+            <div class="filtros-container">
+                <button class="filtro-btn ativo" data-categoria="todos">Todos os Cursos</button>
+                <button class="filtro-btn" data-categoria="programacao">Programação</button>
+                <button class="filtro-btn" data-categoria="produtividade">Produtividade</button>
+                <button class="filtro-btn" data-categoria="idiomas">Idiomas</button>
+                <button class="filtro-btn" data-categoria="negocios">Negócios</button>
+            </div>
+        </section>
 
-      <div class="section">
-        <h3>Como deseja ver o conteúdo?</h3>
-        <div class="btn-group" id="tipoConteudo">
-          <div class="btn" data-value="video">Vídeo</div>
-          <div class="btn" data-value="artigo">Artigo</div>
-          <div class="btn" data-value="ambos">Ambos</div>
+        <!-- CURSOS -->
+        <section class="cursos-section">
+            <h2 class="section-title">Cursos Disponíveis</h2>
+            
+            <div class="cursos-grid">
+                <!-- Curso 1 -->
+                <div class="card-curso" data-categoria="programacao">
+                    <div class="card-imagem">
+                        <img src="imgs/java.png" alt="Java" onerror="this.src='https://via.placeholder.com/100/3d4ff7/ffffff?text=J'">
+                    </div>
+                    <div class="card-conteudo">
+                        <h3>Java</h3>
+                        <p>Domine os fundamentos da linguagem Java e aprenda a desenvolver aplicações robustas, seguras e escaláveis.</p>
+                        <div class="card-info">
+                            <span>🕒 40 horas</span>
+                            <span>📚 15 módulos</span>
+                        </div>
+                        <a href="#" class="btn-acessar">Acessar Curso</a>
+                    </div>
+                </div>
+
+                <!-- Curso 2 -->
+                <div class="card-curso" data-categoria="programacao">
+                    <div class="card-imagem">
+                        <img src="imgs/python.png" alt="Python" onerror="this.src='https://via.placeholder.com/100/3d4ff7/ffffff?text=Py'">
+                    </div>
+                    <div class="card-conteudo">
+                        <h3>Python</h3>
+                        <p>Aprenda Python do zero e explore seu potencial em automação, análise de dados, desenvolvimento web e IA.</p>
+                        <div class="card-info">
+                            <span>🕒 35 horas</span>
+                            <span>📚 12 módulos</span>
+                        </div>
+                        <a href="#" class="btn-acessar">Acessar Curso</a>
+                    </div>
+                </div>
+
+                <!-- Curso 3 -->
+                <div class="card-curso" data-categoria="programacao">
+                    <div class="card-imagem">
+                        <img src="imgs/html-css.png" alt="HTML e CSS" onerror="this.src='https://via.placeholder.com/100/3d4ff7/ffffff?text=Web'">
+                    </div>
+                    <div class="card-conteudo">
+                        <h3>HTML e CSS</h3>
+                        <p>Crie sites modernos e responsivos entendendo a base da web. Do básico ao avançado em front-end.</p>
+                        <div class="card-info">
+                            <span>🕒 25 horas</span>
+                            <span>📚 10 módulos</span>
+                        </div>
+                        <a href="#" class="btn-acessar">Acessar Curso</a>
+                    </div>
+                </div>
+
+                <!-- Curso 4 -->
+                <div class="card-curso" data-categoria="idiomas">
+                    <div class="card-imagem">
+                        <img src="imgs/english.png" alt="Inglês" onerror="this.src='https://via.placeholder.com/100/3d4ff7/ffffff?text=EN'">
+                    </div>
+                    <div class="card-conteudo">
+                        <h3>Inglês</h3>
+                        <p>Amplie suas oportunidades pessoais e profissionais dominando o inglês de forma prática e interativa.</p>
+                        <div class="card-info">
+                            <span>🕒 50 horas</span>
+                            <span>📚 20 módulos</span>
+                        </div>
+                        <a href="#" class="btn-acessar">Acessar Curso</a>
+                    </div>
+                </div>
+
+                <!-- Curso 5 -->
+                <div class="card-curso" data-categoria="produtividade">
+                    <div class="card-imagem">
+                        <img src="imgs/excel.png" alt="Excel" onerror="this.src='https://via.placeholder.com/100/3d4ff7/ffffff?text=XLS'">
+                    </div>
+                    <div class="card-conteudo">
+                        <h3>Excel</h3>
+                        <p>Transforme dados em resultados! Domine fórmulas, gráficos e análise de dados com Excel.</p>
+                        <div class="card-info">
+                            <span>🕒 30 horas</span>
+                            <span>📚 12 módulos</span>
+                        </div>
+                        <a href="#" class="btn-acessar">Acessar Curso</a>
+                    </div>
+                </div>
+
+                <!-- Curso 6 -->
+                <div class="card-curso" data-categoria="produtividade">
+                    <div class="card-imagem">
+                        <img src="imgs/word.png" alt="Word" onerror="this.src='https://via.placeholder.com/100/3d4ff7/ffffff?text=DOC'">
+                    </div>
+                    <div class="card-conteudo">
+                        <h3>Word</h3>
+                        <p>Aprenda a criar documentos profissionais com o Word. Formatação, estilos e produtividade.</p>
+                        <div class="card-info">
+                            <span>🕒 20 horas</span>
+                            <span>📚 8 módulos</span>
+                        </div>
+                        <a href="#" class="btn-acessar">Acessar Curso</a>
+                    </div>
+                </div>
+
+                <!-- Curso 7 -->
+                <div class="card-curso" data-categoria="produtividade">
+                    <div class="card-imagem">
+                        <img src="imgs/powerpoint.png" alt="PowerPoint" onerror="this.src='https://via.placeholder.com/100/3d4ff7/ffffff?text=PPT'">
+                    </div>
+                    <div class="card-conteudo">
+                        <h3>PowerPoint</h3>
+                        <p>Crie apresentações impactantes e profissionais. Design, animações e técnicas de apresentação.</p>
+                        <div class="card-info">
+                            <span>🕒 18 horas</span>
+                            <span>📚 7 módulos</span>
+                        </div>
+                        <a href="#" class="btn-acessar">Acessar Curso</a>
+                    </div>
+                </div>
+
+                <!-- Curso 8 -->
+                <div class="card-curso" data-categoria="programacao">
+                    <div class="card-imagem">
+                        <img src="imgs/c.png" alt="Linguagem C" onerror="this.src='https://via.placeholder.com/100/3d4ff7/ffffff?text=C'">
+                    </div>
+                    <div class="card-conteudo">
+                        <h3>Linguagem C</h3>
+                        <p>Entenda a base de todas as linguagens com C! Programação estruturada e fundamentos da computação.</p>
+                        <div class="card-info">
+                            <span>🕒 30 horas</span>
+                            <span>📚 11 módulos</span>
+                        </div>
+                        <a href="#" class="btn-acessar">Acessar Curso</a>
+                    </div>
+                </div>
+
+                <!-- Curso 9 -->
+                <div class="card-curso" data-categoria="negocios">
+                    <div class="card-imagem">
+                        <img src="imgs/enterprise.png" alt="Empreendedorismo" onerror="this.src='https://via.placeholder.com/100/3d4ff7/ffffff?text=EMP'">
+                    </div>
+                    <div class="card-conteudo">
+                        <h3>Empreendedorismo</h3>
+                        <p>Desperte sua mentalidade empreendedora. Validação de ideias, planejamento e gestão de negócios.</p>
+                        <div class="card-info">
+                            <span>🕒 28 horas</span>
+                            <span>📚 11 módulos</span>
+                        </div>
+                        <a href="#" class="btn-acessar">Acessar Curso</a>
+                    </div>
+                </div>
+
+                <!-- Curso 10 -->
+                <div class="card-curso" data-categoria="programacao">
+                    <div class="card-imagem">
+                        <img src="imgs/logic.png" alt="Lógica de Programação" onerror="this.src='https://via.placeholder.com/100/3d4ff7/ffffff?text=LOG'">
+                    </div>
+                    <div class="card-conteudo">
+                        <h3>Lógica de Programação</h3>
+                        <p>Construa o raciocínio essencial de todo programador! Algoritmos, estruturas e resolução de problemas.</p>
+                        <div class="card-info">
+                            <span>🕒 25 horas</span>
+                            <span>📚 9 módulos</span>
+                        </div>
+                        <a href="#" class="btn-acessar">Acessar Curso</a>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- SEÇÃO GERAR CURSO PERSONALIZADO -->
+        <section class="gerar-curso-section">
+            <h2>Não encontrou o que procura?</h2>
+            <p>Solicite um curso personalizado sobre qualquer assunto que desejar</p>
+            <button class="btn-gerar" onclick="abrirModal()">
+                ✨ Gerar Curso Personalizado
+            </button>
+        </section>
+
+        <!-- MODAL GERAR CURSO COM FORMULÁRIO ORIGINAL -->
+        <div id="modalCurso">
+            <div class="container">
+                <button onclick="fecharModal()" style="position: absolute; top: 15px; right: 15px; background: transparent; border: none; font-size: 24px; cursor: pointer;">×</button>
+                <h2 style="color: var(--primary-color); text-align: center;">Criar curso personalizado com IA</h2>
+                <input type="text" class="input-box" placeholder="Digite o tema do curso...">
+
+                <div class="section">
+                    <h3>Como deseja ver o conteúdo?</h3>
+                    <div class="btn-group" id="tipoConteudo">
+                        <div class="btn" data-value="video">Vídeo</div>
+                        <div class="btn" data-value="artigo">Artigo</div>
+                        <div class="btn" data-value="ambos">Ambos</div>
+                    </div>
+                </div>
+
+                <div class="section hidden" id="duracaoSection">
+                    <h3>Tempo de duração</h3>
+                    <div class="btn-group" id="duracaoBtns">
+                        <div class="btn" data-value="curto">Curto<div>10 - 15 min</div></div>
+                        <div class="btn" data-value="medio">Médio<div>20 - 25 min</div></div>
+                        <div class="btn" data-value="longo">Longo<div>30+ min</div></div>
+                    </div>
+                </div>
+
+                <div class="section">
+                    <h3>Nível de conhecimento</h3>
+                    <div class="btn-group" id="nivelBtns">
+                        <div class="btn" data-value="basico">Básico</div>
+                        <div class="btn" data-value="medio">Médio</div>
+                        <div class="btn" data-value="avancado">Avançado</div>
+                    </div>
+                </div>
+
+                <div class="submit-btn">
+                    <button id="gerarBtn" class="btn"><span>Gerar</span></button>
+                </div>
+            
+                <div id="mensagemStatus"></div>
+            </div>
         </div>
-      </div>
-
-      <div class="section hidden" id="duracaoSection">
-        <h3>Tempo de duração</h3>
-        <div class="btn-group" id="duracaoBtns">
-          <div class="btn" data-value="curto">Curto<div>10 - 15 min</div></div>
-          <div class="btn" data-value="medio">Médio<div>20 - 25 min</div></div>
-          <div class="btn" data-value="longo">Longo<div>30+ min</div></div>
-        </div>
-      </div>
-
-      <div class="section">
-        <h3>Nível de conhecimento</h3>
-        <div class="btn-group" id="nivelBtns">
-          <div class="btn" data-value="basico">Básico</div>
-          <div class="btn" data-value="medio">Médio</div>
-          <div class="btn" data-value="avancado">Avançado</div>
-        </div>
-        <div class="submit-btn">
-  <button id="gerarBtn" class="btn"><span>Gerar</span></button>
-</div>
-      
-<div id="mensagemStatus"></div>
-
-      <div class="submit-btn">
-        <button id="enviarBtn" class="btn"><span>Enviar</span></button>
-
-      </div>
     </div>
-  </div>
-</div>
-  <style>
-    @keyframes fadeIn {
-      from { opacity: 0; transform: scale(0.95); }
-      to { opacity: 1; transform: scale(1); }
-    }
-  </style>
-  <script> function abrirModal() {
-    const modal = document.getElementById('modalCurso');
-    modal.style.display = 'flex';
-  }
 
-  function fecharModal() {
-    const modal = document.getElementById('modalCurso');
-    modal.style.display = 'none';
-
-    // Limpa seleções
-    document.querySelectorAll('#modalCurso .btn.selected').forEach(btn => {
-      btn.classList.remove('selected');
-    });
-
-    // Oculta duração
-    document.getElementById('duracaoSection').classList.add('hidden');
-
-    // Limpa campo de texto
-    document.querySelector('#modalCurso .input-box').value = '';
-
-    // Limpa mensagem
-    const mensagemStatus = document.getElementById('mensagemStatus');
-    mensagemStatus.textContent = '';
-    mensagemStatus.classList.remove('fade-out');
-    mensagemStatus.style.opacity = '1';
-  }
-
-  function handleSelection(groupId) {
-    const buttons = document.querySelectorAll(`#${groupId} .btn`);
-    buttons.forEach(btn => {
-      btn.addEventListener('click', () => {
-        buttons.forEach(b => b.classList.remove('selected'));
-        btn.classList.add('selected');
-      });
-    });
-  }
-
-  handleSelection('tipoConteudo');
-  handleSelection('duracaoBtns');
-  handleSelection('nivelBtns');
-
-  const tipoBtns = document.querySelectorAll('#tipoConteudo .btn');
-  const duracaoSection = document.getElementById('duracaoSection');
-
-  tipoBtns.forEach(btn => {
-    btn.addEventListener('click', () => {
-      const tipo = btn.dataset.value;
-      const duracaoBtns = document.querySelectorAll('#duracaoBtns .btn');
-
-      if (tipo === 'video' || tipo === 'ambos') {
-        duracaoSection.classList.remove('hidden');
-      } else {
-        duracaoSection.classList.add('hidden');
-        duracaoBtns.forEach(b => b.classList.remove('selected'));
-      }
-    });
-  });
-
-  document.getElementById("enviarBtn").addEventListener("click", () => {
-    const mensagemStatus = document.getElementById('mensagemStatus');
-    mensagemStatus.textContent = 'Preencha todos os campos.';
-    mensagemStatus.style.color = 'red';
-    mensagemStatus.classList.remove('fade-out');
-    mensagemStatus.style.opacity = '1';
-
-    setTimeout(() => {
-      mensagemStatus.classList.add('fade-out');
-      setTimeout(() => {
-        mensagemStatus.textContent = '';
-        mensagemStatus.classList.remove('fade-out');
-        mensagemStatus.style.opacity = '1';
-      }, 500);
-    }, 1000);
-
-    window.location.href = "tela.html";
-  });
-
-  document.querySelector('.search-toggle').addEventListener('click', () => {
-    document.querySelector('.search-box').classList.toggle('active');
-  });
-
-  document.getElementById("gerarBtn").addEventListener("click", function () {
-    const tema = document.querySelector(".input-box").value.trim();
-    const tipoSelecionado = document.querySelector("#tipoConteudo .btn.selected");
-    const nivelSelecionado = document.querySelector("#nivelBtns .btn.selected");
-    const duracaoSelecionada = document.querySelector("#duracaoBtns .btn.selected");
-    const mensagemStatus = document.getElementById("mensagemStatus");
-
-    const tipoValor = tipoSelecionado ? tipoSelecionado.getAttribute("data-value") : "";
-    const duracaoObrigatoria = (tipoValor === "video" || tipoValor === "ambos");
-
-    let erro = "";
-
-    if (!tema) {
-      erro = " Digite o tema do curso.";
-    } else if (!tipoSelecionado) {
-      erro = " Selecione o tipo de conteúdo.";
-    } else if (!nivelSelecionado) {
-      erro = " Selecione o nível de conhecimento.";
-    } else if (duracaoObrigatoria && !duracaoSelecionada) {
-      erro = " Selecione a duração do vídeo.";
-    }
-
-    if (erro) {
-      mensagemStatus.style.color = "red";
-      mensagemStatus.textContent = erro;
-      mensagemStatus.classList.remove("fade-out");
-      mensagemStatus.style.opacity = '1';
-
-      setTimeout(() => {
-        mensagemStatus.classList.add("fade-out");
-        setTimeout(() => {
-          mensagemStatus.textContent = '';
-          mensagemStatus.classList.remove("fade-out");
-          mensagemStatus.style.opacity = '1';
-        }, 500);
-      }, 1000);
-
-      return;
-    }
-  });
-
-  // Adiciona seleção visual aos botões
-  document.querySelectorAll(".btn-group .btn").forEach(btn => {
-    btn.addEventListener("click", () => {
-      const grupo = btn.parentElement;
-      grupo.querySelectorAll(".btn").forEach(b => b.classList.remove("selected"));
-      btn.classList.add("selected");
-
-      // Mostrar duração se tipo for vídeo ou ambos
-      if (grupo.id === "tipoConteudo") {
-        const valor = btn.getAttribute("data-value");
-        const duracao = document.getElementById("duracaoSection");
-        if (valor === "video" || valor === "ambos") {
-          duracao.classList.remove("hidden");
-        } else {
-          duracao.classList.add("hidden");
+    <script>
+        // Controle do Modal
+        function abrirModal() {
+            document.getElementById('modalCurso').style.display = 'flex';
         }
-      }
-    });
-  });
-  </script>
+
+        function fecharModal() {
+            const modal = document.getElementById('modalCurso');
+            modal.style.display = 'none';
+
+            // Limpa seleções
+            document.querySelectorAll('#modalCurso .btn.selected').forEach(btn => {
+                btn.classList.remove('selected');
+            });
+
+            // Oculta duração
+            document.getElementById('duracaoSection').classList.add('hidden');
+
+            // Limpa campo de texto
+            document.querySelector('#modalCurso .input-box').value = '';
+
+            // Limpa mensagem
+            const mensagemStatus = document.getElementById('mensagemStatus');
+            mensagemStatus.textContent = '';
+            mensagemStatus.className = '';
+            mensagemStatus.classList.remove('fade-out');
+            mensagemStatus.style.opacity = '1';
+        }
+
+        // Filtros de Cursos
+        document.querySelectorAll('.filtro-btn').forEach(btn => {
+            btn.addEventListener('click', function() {
+                // Atualiza botão ativo
+                document.querySelectorAll('.filtro-btn').forEach(b => b.classList.remove('ativo'));
+                this.classList.add('ativo');
+                
+                // Filtra cursos
+                const categoria = this.dataset.categoria;
+                const cursos = document.querySelectorAll('.card-curso');
+                
+                cursos.forEach(curso => {
+                    if (categoria === 'todos' || curso.dataset.categoria === categoria) {
+                        curso.style.display = 'block';
+                    } else {
+                        curso.style.display = 'none';
+                    }
+                });
+            });
+        });
+
+        // Sistema de Seleção de Botões (formulário original)
+        function handleSelection(groupId) {
+            const buttons = document.querySelectorAll(`#${groupId} .btn`);
+            buttons.forEach(btn => {
+                btn.addEventListener('click', () => {
+                    buttons.forEach(b => b.classList.remove('selected'));
+                    btn.classList.add('selected');
+                    
+                    // Se for o grupo de tipo de conteúdo, mostrar/ocultar duração
+                    if (groupId === 'tipoConteudo') {
+                        const tipo = btn.dataset.value;
+                        const duracaoSection = document.getElementById('duracaoSection');
+                        
+                        if (tipo === 'video' || tipo === 'ambos') {
+                            duracaoSection.classList.remove('hidden');
+                        } else {
+                            duracaoSection.classList.add('hidden');
+                            // Limpa seleção de duração se houver
+                            document.querySelectorAll('#duracaoBtns .btn.selected').forEach(b => {
+                                b.classList.remove('selected');
+                            });
+                        }
+                    }
+                });
+            });
+        }
+
+        // Pesquisa
+        function configurarPesquisa() {
+            const searchToggle = document.querySelector('.search-toggle');
+            const searchBox = document.querySelector('.search-box');
+            const searchInput = document.getElementById('searchInput');
+            
+            searchToggle.addEventListener('click', function(e) {
+                e.stopPropagation();
+                searchBox.classList.toggle('active');
+                if(searchBox.classList.contains('active')) {
+                    searchInput.focus();
+                }
+            });
+
+            searchInput.addEventListener('keypress', function(e) {
+                if(e.key === 'Enter') {
+                    realizarPesquisa();
+                }
+            });
+
+            document.addEventListener('click', function(e) {
+                if(!searchBox.contains(e.target)) {
+                    searchBox.classList.remove('active');
+                }
+            });
+        }
+
+        function realizarPesquisa() {
+            const termo = document.getElementById('searchInput').value.trim().toLowerCase();
+            
+            if(termo === '') {
+                alert('Por favor, digite um termo para pesquisar.');
+                return;
+            }
+            
+            document.querySelector('.search-box').classList.remove('active');
+            
+            // Filtra cursos baseado na pesquisa
+            const cursos = document.querySelectorAll('.card-curso');
+            let encontrados = 0;
+            
+            cursos.forEach(curso => {
+                const titulo = curso.querySelector('h3').textContent.toLowerCase();
+                const descricao = curso.querySelector('p').textContent.toLowerCase();
+                
+                if (titulo.includes(termo) || descricao.includes(termo)) {
+                    curso.style.display = 'block';
+                    encontrados++;
+                } else {
+                    curso.style.display = 'none';
+                }
+            });
+            
+            if (encontrados === 0) {
+                alert(`Nenhum curso encontrado para "${termo}". Tente outros termos.`);
+            }
+        }
+
+        // Validação do formulário original
+        function validarFormulario() {
+            const tema = document.querySelector(".input-box").value.trim();
+            const tipoSelecionado = document.querySelector("#tipoConteudo .btn.selected");
+            const nivelSelecionado = document.querySelector("#nivelBtns .btn.selected");
+            const duracaoSelecionada = document.querySelector("#duracaoBtns .btn.selected");
+            const mensagemStatus = document.getElementById("mensagemStatus");
+
+            const tipoValor = tipoSelecionado ? tipoSelecionado.getAttribute("data-value") : "";
+            const duracaoObrigatoria = (tipoValor === "video" || tipoValor === "ambos");
+
+            let erro = "";
+
+            if (!tema) {
+                erro = "Digite o tema do curso.";
+            } else if (!tipoSelecionado) {
+                erro = "Selecione o tipo de conteúdo.";
+            } else if (!nivelSelecionado) {
+                erro = "Selecione o nível de conhecimento.";
+            } else if (duracaoObrigatoria && !duracaoSelecionada) {
+                erro = "Selecione a duração do vídeo.";
+            }
+
+            if (erro) {
+                mostrarMensagem(erro, 'error');
+                return false;
+            }
+
+            return true;
+        }
+
+        // Função para exibir mensagens de status
+        function mostrarMensagem(mensagem, tipo) {
+            const mensagemStatus = document.getElementById("mensagemStatus");
+            mensagemStatus.textContent = mensagem;
+            mensagemStatus.className = tipo;
+            mensagemStatus.classList.remove("fade-out");
+            mensagemStatus.style.opacity = '1';
+
+            setTimeout(() => {
+                mensagemStatus.classList.add("fade-out");
+                setTimeout(() => {
+                    mensagemStatus.textContent = '';
+                    mensagemStatus.classList.remove("fade-out");
+                    mensagemStatus.style.opacity = '1';
+                }, 500);
+            }, 3000);
+        }
+
+        // Função para enviar dados do formulário (simulação)
+        function enviarDadosFormulario() {
+            const tema = document.querySelector(".input-box").value.trim();
+            const tipoSelecionado = document.querySelector("#tipoConteudo .btn.selected");
+            const nivelSelecionado = document.querySelector("#nivelBtns .btn.selected");
+            const duracaoSelecionada = document.querySelector("#duracaoBtns .btn.selected");
+            
+            const dados = {
+                tema: tema,
+                tipo: tipoSelecionado ? tipoSelecionado.getAttribute("data-value") : "",
+                nivel: nivelSelecionado ? nivelSelecionado.getAttribute("data-value") : "",
+                duracao: duracaoSelecionada ? duracaoSelecionada.getAttribute("data-value") : ""
+            };
+            
+            console.log("Dados do formulário:", dados);
+            
+            // Simula o processamento
+            mostrarMensagem("Gerando curso personalizado...", 'success');
+            
+            // Redireciona após um tempo
+            setTimeout(() => {
+                window.location.href = 'tela_gerando.html';
+            }, 2000);
+        }
+
+        // Inicialização
+        document.addEventListener('DOMContentLoaded', function() {
+            // Configura seleção de botões do formulário original
+            handleSelection('tipoConteudo');
+            handleSelection('duracaoBtns');
+            handleSelection('nivelBtns');
+            
+            // Configura pesquisa
+            configurarPesquisa();
+            
+            // Configura botão de gerar
+            document.getElementById("gerarBtn").addEventListener("click", function() {
+                if (validarFormulario()) {
+                    enviarDadosFormulario();
+                }
+            });
+            
+            // Fecha modal ao clicar fora dele
+            document.getElementById('modalCurso').addEventListener('click', function(e) {
+                if (e.target === this) {
+                    fecharModal();
+                }
+            });
+            
+            // Fecha modal com a tecla ESC
+            document.addEventListener('keydown', function(e) {
+                if (e.key === 'Escape') {
+                    fecharModal();
+                }
+            });
+        });
+    </script>
 </body>
 </html>
