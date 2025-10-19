@@ -1,6 +1,8 @@
 <?php
 namespace model;
 
+use DateTime;
+
 require_once ($_SERVER['DOCUMENT_ROOT'] . '/model/Banco.php');
 
 class Aluno
@@ -15,16 +17,19 @@ class Aluno
     private $senha;
 
     private $data_nascimento;
+    
+    private $tipo_aluno;
 
     private $criacao_em;
 
-    function __construct($idAluno, $nome, $email, $senha, $data_nascimento, $criacao_em)
+    function __construct($idAluno, $nome, $email, $senha, $data_nascimento, $tipo_aluno, $criacao_em)
     {
         $this->idAluno = $idAluno;
         $this->nome = $nome;
         $this->email = $email;
         $this->senha = $senha;
         $this->data_nascimento = $data_nascimento;
+        $this->tipo_aluno = $tipo_aluno;
         $this->criacao_em = $criacao_em;
 
         return $this;
@@ -90,23 +95,37 @@ class Aluno
         $this->criacao_em = $criacaoEm;
     }
     
-    public function calculaIdade(){
+    public function getTipo_aluno()
+    {
+        return $this->tipo_aluno;
+    }
+    
+    public function setTipo_aluno($tipo_aluno)
+    {
+        $this->tipo_aluno = $tipo_aluno;
+    }
+    
+    
+    public function calculaIdade(){    
         
-        $tz  = new DateTimeZone('America/Sao_Paulo');
-        $idade = DateTime::createFromFormat('d/m/Y', self->getDataNascimento(), $tz)
-        ->diff(new DateTime('now', $tz))
-        ->y;
+        $dataNascFormatada = new DateTime($this->getDataNascimento());
+        // Create a DateTime object for the current date
+        $currentDate = new DateTime(); // 'now' or 'today' can also be used
         
-        return $idade;
+        // Calculate the difference between the two dates
+        $intervalo = $currentDate->diff($dataNascFormatada);
+        
+        // Extract the number of years from the DateInterval object
+        return $intervalo->y;
     }
     
 
     public static function create($Aluno)
     {
-        $sql = 'INSERT INTO Aluno (nome, email, senha data_nascimento) VALUES (?,?,?)';
+        $sql = 'INSERT INTO Aluno (nome, email, senha, data_nascimento , tipo_aluno) VALUES (?,?,?,?)';
         $banco = new Banco();
         $stmt = $banco->conexao()->prepare($sql);
-        $stmt->bindParam($Aluno->getNome(), $Aluno->getEmail(), $Aluno->getSenha(), $Aluno->getDataNascimento());
+        $stmt->bindParam($Aluno->getNome(), $Aluno->getEmail(), $Aluno->getSenha(), $Aluno->getDataNascimento(), $Aluno->getTipo_aluno());
         $stmt->execute();
     }
 
@@ -121,14 +140,14 @@ class Aluno
 
     public static function selectTodos()
     {
-        $sql = 'SELECT idAluno, nome, email, senha data_nascimento, criacao_em FROM aluno';
+        $sql = 'SELECT idAluno, nome, email, senha, data_nascimento, tipo_aluno, criacao_em FROM aluno';
         $banco = new Banco();
         $resultSet = $banco->conexao()->query($sql);
         $listaRS = $resultSet->fetchAll();
 
         $listaAlunos = [];
         foreach ($listaRS as $item) {
-            $listaAlunos[] = new Aluno($item['idAluno'], $item['nome'], $item['email'], $item['senha'], $item['data_nascimento'], $item['criacao_em']);
+            $listaAlunos[] = new Aluno($item['idAluno'], $item['nome'], $item['email'], $item['senha'], $item['data_nascimento'], $item['tipo_aluno'], $item['criacao_em']);
         }
 
         return $listaAlunos;
@@ -136,11 +155,14 @@ class Aluno
 
     public static function selectPorId($id)
     {
-        $sql = "SELECT idAluno, nome, email, senha, data_nascimento, criacao_em FROM aluno WHERE idAluno = $id";
+        $sql = "SELECT idAluno, nome, email, senha, data_nascimento, tipo_aluno, criacao_em FROM aluno WHERE idAluno = $id";
         $banco = new Banco();
         $resultSet = $banco->conexao()->query($sql);
         $item = $resultSet->fetch();
-        $Aluno = new Aluno($item['idAluno'], $item['nome'], $item['email'], $item['senha'], $item['data_nascimento'], $item['criacao_em']);
+        $Aluno = new Aluno($item['idAluno'], $item['nome'], $item['email'], $item['senha'], $item['data_nascimento'], $item['tipo_aluno'], $item['criacao_em']);
         return $Aluno;
     }
+    
+    
+    
 }
