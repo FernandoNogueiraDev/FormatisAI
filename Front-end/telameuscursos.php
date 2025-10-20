@@ -1,59 +1,57 @@
 <?php
 session_start();
 require 'conexao.php';
+require_once '../controller/monitoradorLogin.php';
+
 
 // Inicializa como Visitante
 $usuario_nome = "Visitante";
 $aluno_id = null;
 
 // Verifica se o usuário está logado
-if(isset($_SESSION['usuario_email'])){
-    $email = $_SESSION['usuario_email'];
+if (isset($_SESSION['usuario_email'])) {
+  $email = $_SESSION['usuario_email'];
 
-    // Busca o nome do aluno pelo email
-    $query = $conn->prepare("SELECT idAluno, nome FROM Aluno WHERE email = ? LIMIT 1");
-    $query->bind_param("s", $email);
-    $query->execute();
-    $query->bind_result($idAluno, $nomeCompleto);
-    
-    if($query->fetch()){
-        // Pega apenas o primeiro nome e coloca a primeira letra maiúscula
-        $primeiroNome = explode(" ", $nomeCompleto)[0];
-        $usuario_nome = ucfirst(strtolower($primeiroNome));
-        $aluno_id = $idAluno;
-    }
 
-    $query->close();
+  // Busca o nome do aluno pelo email
+  $query = $conn->prepare("SELECT idAluno, nome FROM Aluno WHERE email = ? LIMIT 1");
+  $query->bind_param("s", $email);
+  $query->execute();
+  $query->bind_result($idAluno, $nomeCompleto);
+
+
+  if ($query->fetch()) {
+    // Pega apenas o primeiro nome e coloca a primeira letra maiúscula
+    $primeiroNome = explode(" ", $nomeCompleto)[0];
+    $usuario_nome = ucfirst(strtolower($primeiroNome));
+    $aluno_id = $idAluno;
+  }
+
+  $query->close();
 }
 
-// Verifica se a tabela trilhas existe
-$tabela_trilhas_existe = $conn->query("SHOW TABLES LIKE 'trilhas'")->num_rows > 0;
-$tabela_aluno_trilhas_existe = $conn->query("SHOW TABLES LIKE 'aluno_trilhas'")->num_rows > 0;
 
 // Busca trilhas do aluno do banco de dados
 $trilhas_do_usuario = [];
 
-if ($aluno_id && $tabela_trilhas_existe && $tabela_aluno_trilhas_existe) {
-    $trilhas_query = $conn->prepare("
-        SELECT t.id, t.nome, t.categoria, t.descricao, t.duracao, t.nivel, t.imagem, 
-               at.progresso, at.concluido, at.data_inicio, at.ultima_aula
-        FROM trilhas t 
-        INNER JOIN aluno_trilhas at ON t.id = at.trilha_id 
-        WHERE at.aluno_id = ? 
-        ORDER BY at.data_inicio DESC
-    ");
-    $trilhas_query->bind_param("i", $aluno_id);
-    $trilhas_query->execute();
-    $result = $trilhas_query->get_result();
-    $trilhas_do_usuario = $result->fetch_all(MYSQLI_ASSOC);
-    $trilhas_query->close();
+
+if (isset($aluno_id)) {
+  $query = "SELECT idTrilha_estudo, aluno_id, titulo, descricao, status FROM trilha_estudo WHERE aluno_id = " . $aluno_id;
+
+  $result = $conn->query($query);
+  $trilhas_do_usuario = $result->fetch_all(MYSQLI_ASSOC);
+
+  $result->close();
 }
 
+
 // Se as tabelas não existem, mostra dados de exemplo para demonstração
-$mostrar_dados_exemplo = !$tabela_trilhas_existe || !$tabela_aluno_trilhas_existe;
+$mostrar_dados_exemplo = false;
+//$mostrar_dados_exemplo = !$tabela_trilhas_existe || !$tabela_aluno_trilhas_existe;
 ?>
 <!DOCTYPE html>
 <html lang="pt-br">
+
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
@@ -84,70 +82,88 @@ $mostrar_dados_exemplo = !$tabela_trilhas_existe || !$tabela_aluno_trilhas_exist
 
     /* ====== NAVBAR ATUALIZADA ====== */
     .navbar {
-      display: flex; 
-      justify-content: space-between; 
+      display: flex;
+      justify-content: space-between;
       align-items: center;
-      margin: auto; 
+      margin: auto;
       padding: 10px 5%;
       background-color: var(--gray-color);
-      box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+      box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
       position: sticky;
       top: 0;
       z-index: 100;
     }
-    .logo img { height: 55px; width: auto; }
-    .nav-links { 
-      display: flex; 
-      list-style: none; 
-      margin: 0; 
-      padding: 0; 
+
+    .logo img {
+      height: 55px;
+      width: auto;
+    }
+
+    .nav-links {
+      display: flex;
+      list-style: none;
+      margin: 0;
+      padding: 0;
       align-items: center;
     }
-    .nav-links li { 
-      margin: 0 15px; 
+
+    .nav-links li {
+      margin: 0 15px;
       position: relative;
     }
-    .nav-links a { 
-      text-decoration: none; 
-      color: var(--primary-color); 
-      font-weight: 600; 
-      transition: var(--transition); 
-      padding: 8px 0; 
+
+    .nav-links a {
+      text-decoration: none;
+      color: var(--primary-color);
+      font-weight: 600;
+      transition: var(--transition);
+      padding: 8px 0;
       position: relative;
       display: inline-block;
     }
-    .nav-links a:hover { color: var(--secondary-color); }
-    .nav-links a::after { 
-      content: ''; 
-      position: absolute; 
-      width: 0; 
-      height: 2px; 
-      bottom: 0; 
-      left: 0; 
-      background-color: var(--secondary-color); 
-      transition: var(--transition); 
+
+    .nav-links a:hover {
+      color: var(--secondary-color);
     }
-    .nav-links a:hover::after { width: 100%; }
+
+    .nav-links a::after {
+      content: '';
+      position: absolute;
+      width: 0;
+      height: 2px;
+      bottom: 0;
+      left: 0;
+      background-color: var(--secondary-color);
+      transition: var(--transition);
+    }
+
+    .nav-links a:hover::after {
+      width: 100%;
+    }
 
     /* Dropdown Menu Atualizado */
-    .dropdown { 
-      position: relative; 
+    .dropdown {
+      position: relative;
     }
-    .dropdown-toggle { 
-      display: flex; 
-      align-items: center; 
+
+    .dropdown-toggle {
+      display: flex;
+      align-items: center;
       gap: 4px;
       cursor: pointer;
     }
-    .dropdown-toggle::after { 
-      content: "▼"; 
-      font-size: 10px; 
+
+    .dropdown-toggle::after {
+      content: "▼";
+      font-size: 10px;
       transition: transform 0.3s ease;
       margin-left: 2px;
     }
+
     .dropdown:hover .dropdown-toggle::after {
       transform: rotate(180deg);
     }
+
     .dropdown-menu {
       list-style: none;
       padding: 8px 0;
@@ -157,7 +173,7 @@ $mostrar_dados_exemplo = !$tabela_trilhas_existe || !$tabela_aluno_trilhas_exist
       left: 0;
       background-color: var(--white);
       min-width: 200px;
-      box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
       border-radius: 8px;
       z-index: 1000;
       border: 1px solid #eee;
@@ -166,17 +182,21 @@ $mostrar_dados_exemplo = !$tabela_trilhas_existe || !$tabela_aluno_trilhas_exist
       transform: translateY(-10px);
       transition: all 0.3s ease;
     }
+
     .dropdown:hover .dropdown-menu {
       opacity: 1;
       visibility: visible;
       transform: translateY(0);
     }
-    .dropdown-menu li { 
-      border-bottom: 1px solid #f0f0f0; 
+
+    .dropdown-menu li {
+      border-bottom: 1px solid #f0f0f0;
     }
-    .dropdown-menu li:last-child { 
-      border-bottom: none; 
+
+    .dropdown-menu li:last-child {
+      border-bottom: none;
     }
+
     .dropdown-menu li a {
       display: block;
       padding: 10px 16px;
@@ -186,6 +206,7 @@ $mostrar_dados_exemplo = !$tabela_trilhas_existe || !$tabela_aluno_trilhas_exist
       transition: all 0.2s ease;
       position: relative;
     }
+
     .dropdown-menu li a::after {
       content: '';
       position: absolute;
@@ -197,19 +218,53 @@ $mostrar_dados_exemplo = !$tabela_trilhas_existe || !$tabela_aluno_trilhas_exist
       transition: width 0.2s ease;
       z-index: -1;
     }
+
     .dropdown-menu li a:hover {
       color: var(--secondary-color);
     }
+
     .dropdown-menu li a:hover::after {
       width: 100%;
     }
 
     /* ====== PESQUISA ATUALIZADA ====== */
-    .search-box { position: relative; display: flex; align-items: center; }
-    .search-toggle { background: none; border: none; font-size: 20px; cursor: pointer; color: var(--primary-color); padding: 8px; border-radius: 50%; transition: var(--transition); }
-    .search-toggle:hover { background-color: rgba(61, 79, 247, 0.1); }
-    .search-input { width: 0; opacity: 0; padding: 10px 15px; border: 1px solid #ddd; border-radius: 30px; outline: none; transition: var(--transition); margin-left: 10px; font-size: 14px; }
-    .search-box.active .search-input { width: 250px; opacity: 1; }
+    .search-box {
+      position: relative;
+      display: flex;
+      align-items: center;
+    }
+
+    .search-toggle {
+      background: none;
+      border: none;
+      font-size: 20px;
+      cursor: pointer;
+      color: var(--primary-color);
+      padding: 8px;
+      border-radius: 50%;
+      transition: var(--transition);
+    }
+
+    .search-toggle:hover {
+      background-color: rgba(61, 79, 247, 0.1);
+    }
+
+    .search-input {
+      width: 0;
+      opacity: 0;
+      padding: 10px 15px;
+      border: 1px solid #ddd;
+      border-radius: 30px;
+      outline: none;
+      transition: var(--transition);
+      margin-left: 10px;
+      font-size: 14px;
+    }
+
+    .search-box.active .search-input {
+      width: 250px;
+      opacity: 1;
+    }
 
     /* ====== CONTEÚDO PRINCIPAL ====== */
     .main-content {
@@ -225,7 +280,7 @@ $mostrar_dados_exemplo = !$tabela_trilhas_existe || !$tabela_aluno_trilhas_exist
       background: linear-gradient(135deg, var(--primary-color), #00bcd4);
       color: white;
       border-radius: 0 0 20px 20px;
-      box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
       margin-bottom: 30px;
     }
 
@@ -271,13 +326,13 @@ $mostrar_dados_exemplo = !$tabela_trilhas_existe || !$tabela_aluno_trilhas_exist
       align-items: center;
       color: var(--dark-color);
       transition: transform 0.3s ease, box-shadow 0.3s ease;
-      box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+      box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
       border: 1px solid #eee;
     }
 
     .container-trilha:hover {
       transform: translateY(-5px);
-      box-shadow: 0 8px 25px rgba(0,0,0,0.15);
+      box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
     }
 
     .container-trilha img {
@@ -394,7 +449,7 @@ $mostrar_dados_exemplo = !$tabela_trilhas_existe || !$tabela_aluno_trilhas_exist
       padding: 60px 20px;
       background-color: var(--white);
       border-radius: var(--border-radius);
-      box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+      box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
       margin: 20px 0;
     }
 
@@ -456,36 +511,50 @@ $mostrar_dados_exemplo = !$tabela_trilhas_existe || !$tabela_aluno_trilhas_exist
 
     /* ====== RESPONSIVIDADE ====== */
     @media (max-width: 768px) {
-      .navbar { flex-direction: column; padding: 15px; }
-      .nav-links { margin: 15px 0; }
-      .nav-links li { margin: 0 10px; }
-      .dropdown-menu { 
-        position: static; 
-        box-shadow: none; 
+      .navbar {
+        flex-direction: column;
+        padding: 15px;
+      }
+
+      .nav-links {
+        margin: 15px 0;
+      }
+
+      .nav-links li {
+        margin: 0 10px;
+      }
+
+      .dropdown-menu {
+        position: static;
+        box-shadow: none;
         border: none;
         opacity: 1;
         visibility: visible;
         transform: none;
         display: none;
       }
+
       .dropdown:hover .dropdown-menu {
         display: block;
       }
-      .search-box.active .search-input { width: 200px; }
-      
+
+      .search-box.active .search-input {
+        width: 200px;
+      }
+
       .hero-retomar h1 {
         font-size: 2rem;
       }
-      
+
       .hero-retomar {
         padding: 40px 20px 30px;
       }
-      
+
       .trilha-wrapper {
         flex-direction: column;
         align-items: center;
       }
-      
+
       .container-trilha {
         max-width: 100%;
       }
@@ -496,13 +565,14 @@ $mostrar_dados_exemplo = !$tabela_trilhas_existe || !$tabela_aluno_trilhas_exist
         flex-direction: column;
         gap: 10px;
       }
-      
+
       .hero-retomar h1 {
         font-size: 1.8rem;
       }
     }
   </style>
 </head>
+
 <body>
 
   <div class="page">
@@ -514,7 +584,7 @@ $mostrar_dados_exemplo = !$tabela_trilhas_existe || !$tabela_aluno_trilhas_exist
         <li><a href="telacursos.html">Cursos</a></li>
         <li><a href="quemsomos.html">Quem Somos</a></li>
         <li><a href="ajuda.html">Ajuda</a></li>
-        
+
         <!-- Menu dropdown corrigido e alinhado -->
         <li class="dropdown">
           <a href="#" class="dropdown-toggle">Área do Aluno</a>
@@ -545,7 +615,7 @@ $mostrar_dados_exemplo = !$tabela_trilhas_existe || !$tabela_aluno_trilhas_exist
 
       <section id="minhasTrilhas" class="trilha-wrapper">
         <?php if (count($trilhas_do_usuario) > 0 || $mostrar_dados_exemplo): ?>
-          <?php 
+          <?php
           // Se não há trilhas no banco, mostra exemplos
           $trilhas_para_exibir = count($trilhas_do_usuario) > 0 ? $trilhas_do_usuario : [
             [
@@ -587,30 +657,43 @@ $mostrar_dados_exemplo = !$tabela_trilhas_existe || !$tabela_aluno_trilhas_exist
           ];
           ?>
 
-          <?php foreach ($trilhas_para_exibir as $trilha): ?>
+          <?php foreach ($trilhas_do_usuario as $trilha): ?>
+
+            <?php
+
+
+            $trilhaConteudoResult = $conn->query("SELECT idTrilha_conteudo, trilha_id, conteudo_id, ordem, obrigatorio, estimativa_min FROM trilha_conteudo WHERE trilha_id = " . $trilha['idTrilha_estudo']);
+            $trilha_conteudo = $trilhaConteudoResult->fetch_assoc();
+
+            $conteudoResult = $conn->query("SELECT * FROM conteudo WHERE idConteudo = " . $trilha_conteudo['conteudo_id']);
+            $conteudo = $conteudoResult->fetch_assoc();
+
+
+            $progressoTrilhaResult = $conn->query("SELECT * FROM progresso_trilha WHERE trilhaConteudo_id = " . $trilha_conteudo['conteudo_id'] . " AND aluno_id = " . $aluno_id);
+            $progressoTrilhaLista = $progressoTrilhaResult->fetch_all(MYSQLI_ASSOC);
+
+            ?>
+
             <div class="container-trilha">
-              <img src="<?php echo htmlspecialchars($trilha['imagem'] ?? 'imgs/default-course.png'); ?>" 
-                   alt="<?php echo htmlspecialchars($trilha['nome']); ?>"
-                   onerror="this.src='https://via.placeholder.com/70/3d4ff7/ffffff?text=🎯'">
-              
-              <div class="categoria"><?php echo htmlspecialchars($trilha['categoria']); ?></div>
-              
-              <?php if ($trilha['concluido']): ?>
-                <div class="trilha-status status-concluido">✅ Concluída</div>
+              <img src="imgs/programming.png"
+                alt="<?php echo htmlspecialchars($trilha['titulo']); ?>"
+                onerror="this.src='https://via.placeholder.com/70/3d4ff7/ffffff?text=🎯'">
+
+              <div class="categoria"><?php echo htmlspecialchars($conteudo['categoria']); ?></div>
+
+
+              <?php if (!$progressoTrilhaResult->num_rows > 0): ?>
+                  <div class="trilha-status status-andamento">🔄 A iniciar</div>
               <?php else: ?>
-                <div class="trilha-status status-andamento">🔄 Em Andamento</div>
-              <?php endif; ?>
-              
-              <h3><?php echo htmlspecialchars($trilha['nome']); ?></h3>
-              <p><?php echo htmlspecialchars($trilha['descricao']); ?></p>
-              
-              <div class="trilha-info">
-                <div><strong>Duração:</strong> <?php echo htmlspecialchars($trilha['duracao']); ?></div>
-                <div><strong>Nível:</strong> <?php echo htmlspecialchars($trilha['nivel']); ?></div>
-                <?php if (isset($trilha['ultima_aula'])): ?>
-                  <div><strong>Última aula:</strong> <?php echo htmlspecialchars($trilha['ultima_aula']); ?></div>
+                <?php if ($trilha['concluido']): ?>
+                  <div class="trilha-status status-concluido">✅ Concluída</div>
+                <?php else: ?>
+                  <div class="trilha-status status-andamento">🔄 Em Andamento</div>
                 <?php endif; ?>
-              </div>
+              <?php endif; ?>
+
+              <h3><?php echo htmlspecialchars($trilha['titulo']); ?></h3>
+              <p><?php echo htmlspecialchars($trilha['descricao']); ?></p>
 
               <?php if (isset($trilha['progresso'])): ?>
                 <div class="trilha-progresso">
@@ -619,15 +702,10 @@ $mostrar_dados_exemplo = !$tabela_trilhas_existe || !$tabela_aluno_trilhas_exist
                 <div class="progresso-texto"><?php echo $trilha['progresso']; ?>% concluído</div>
               <?php endif; ?>
 
-              <?php if ($trilha['concluido']): ?>
-                <button class="btn btn-success" onclick="acessarTrilha(<?php echo $trilha['id']; ?>)">
-                  ✅ Revisar Trilha
-                </button>
-              <?php else: ?>
-                <button class="btn btn-continuar" onclick="acessarTrilha(<?php echo $trilha['id']; ?>)">
+
+                <button class="btn btn-continuar" onclick="acessarTrilha(<?php echo $trilha_conteudo['trilha_id']; ?>)">
                   ▶ Continuar Estudando
                 </button>
-              <?php endif; ?>
             </div>
           <?php endforeach; ?>
         <?php else: ?>
@@ -635,12 +713,14 @@ $mostrar_dados_exemplo = !$tabela_trilhas_existe || !$tabela_aluno_trilhas_exist
             <?php if ($usuario_nome === "Visitante"): ?>
               <h3>🔒 Acesso Restrito</h3>
               <p>Você precisa estar logado para ver suas trilhas.</p>
-              <a href="login.html" class="btn-explorar">Fazer Login</a>
+              <a href="telalogin.html" class="btn-explorar">Fazer Login</a>
             <?php else: ?>
-              <h3>📝 Nenhuma trilha em andamento</h3>
-              <p>Você ainda não se inscreveu em nenhuma trilha ou não possui trilhas em progresso.</p>
-              <p>Explore nossa plataforma e comece sua jornada de aprendizado!</p>
-              <a href="telatrilhas.html" class="btn-explorar">Explorar Trilhas</a>
+              <?php if (true): ?>
+                <h3>📝 Nenhuma trilha em andamento</h3>
+                <p>Você ainda não se inscreveu em nenhuma trilha ou não possui trilhas em progresso.</p>
+                <p>Explore nossa plataforma e comece sua jornada de aprendizado!</p>
+                <a href="telatrilhas.html" class="btn-explorar">Explorar Trilhas</a>
+              <?php endif; ?>
             <?php endif; ?>
           </div>
         <?php endif; ?>
@@ -652,7 +732,7 @@ $mostrar_dados_exemplo = !$tabela_trilhas_existe || !$tabela_aluno_trilhas_exist
     // Função para acessar a trilha
     function acessarTrilha(trilhaId) {
       // Redireciona para a página da trilha
-      window.location.href = `minhastrilhas.html?id=${trilhaId}`;
+      window.location.href = `minhastrilhas.php?id=${trilhaId}`;
     }
 
     // Configuração da pesquisa da navbar
@@ -660,26 +740,26 @@ $mostrar_dados_exemplo = !$tabela_trilhas_existe || !$tabela_aluno_trilhas_exist
       const searchToggle = document.querySelector('.search-toggle');
       const searchBox = document.querySelector('.search-box');
       const searchInput = document.getElementById('searchInput');
-      
+
       // Abrir/fechar caixa de pesquisa
       searchToggle.addEventListener('click', function(e) {
         e.stopPropagation();
         searchBox.classList.toggle('active');
-        if(searchBox.classList.contains('active')) {
+        if (searchBox.classList.contains('active')) {
           searchInput.focus();
         }
       });
 
       // Pesquisa ao pressionar Enter
       searchInput.addEventListener('keypress', function(e) {
-        if(e.key === 'Enter') {
+        if (e.key === 'Enter') {
           realizarPesquisa();
         }
       });
 
       // Fechar pesquisa ao clicar fora
       document.addEventListener('click', function(e) {
-        if(!searchBox.contains(e.target)) {
+        if (!searchBox.contains(e.target)) {
           searchBox.classList.remove('active');
         }
       });
@@ -687,15 +767,15 @@ $mostrar_dados_exemplo = !$tabela_trilhas_existe || !$tabela_aluno_trilhas_exist
 
     function realizarPesquisa() {
       const termo = document.getElementById('searchInput').value.trim();
-      
-      if(termo === '') {
+
+      if (termo === '') {
         alert('Por favor, digite um termo para pesquisar.');
         return;
       }
-      
+
       // Fecha a caixa de pesquisa
       document.querySelector('.search-box').classList.remove('active');
-      
+
       // Redireciona para a página de busca
       window.location.href = `busca_trilhas.php?q=${encodeURIComponent(termo)}`;
     }
@@ -707,4 +787,5 @@ $mostrar_dados_exemplo = !$tabela_trilhas_existe || !$tabela_aluno_trilhas_exist
   </script>
 
 </body>
+
 </html>

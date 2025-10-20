@@ -143,7 +143,7 @@ class TrilhaEstudo
 
     public static function selectPorId($id)
     {
-        $sql = "SELECT idConteudo, idFonte, titulo, categoria, dificuldade, link, duracao_min FROM conteudo WHERE idConteudo = $id";
+        $sql = "SELECT trilha_estudo, idFonte, titulo, categoria, dificuldade, link, duracao_min FROM trilha_estudo WHERE idConteudo = $id";
         $banco = new Banco();
         $resultSet = $banco->conexao()->query($sql);
         $item = $resultSet->fetch();

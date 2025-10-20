@@ -2,6 +2,7 @@
 namespace controller;
 session_start();
 
+use Exception;
 
 use IA\TrilhaIA;
 use model\Banco;
@@ -85,7 +86,7 @@ function getTrilha($banco)
         }
 
         // Buscar conteúdos da trilha
-        $conteudosTrilha = TrilhaConteudo::selectPorTrilhaId($trilhaId);
+        $conteudosTrilha = TrilhaConteudo::selectPorId($trilhaId);
 
         // Organizar em etapas (você pode adaptar esta lógica conforme sua estrutura)
         $etapas = organizarEmEtapas($conteudosTrilha);
@@ -205,8 +206,6 @@ function salvarProgresso($banco)
 
 function gerarTrilha($banco)
 {
-    $_POST["idAluno"] = 1; // REMOVER
-    $_SESSION["idAluno"] = 1;
     $idAluno = $_SESSION["idAluno"];
     $duracao = $_POST['duracao'];
     $tipo_conteudo = $_POST['tipo'];
@@ -279,6 +278,7 @@ function gerarTrilha($banco)
             $conteudo = Conteudo::constroiVazio();
             $conteudo->setTitulo($conteudo_trilha['titulo']);
             $conteudo->setCategoria($conteudo_trilha['tipo_conteudo']);
+            $conteudo->setDificuldade($Nivel);
             $conteudo->setLink($conteudo_trilha['link_referencia']);
             $conteudo->setDuracao_min($conteudo_trilha['duracao']);
 

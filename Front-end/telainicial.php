@@ -1018,7 +1018,7 @@ function enviarDadosFormulario() {
     
 
     setTimeout(() => {
-        window.location.href = 'tela_gerando.html';
+        window.location.href = 'tela_gerando.php';
     }, 1500);
 }
 
