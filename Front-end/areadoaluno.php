@@ -29,7 +29,7 @@ if(isset($_SESSION['usuario_email'])){
 
 // Se não está logado, redireciona
 if($usuario_nome === "Visitante" || !$aluno_id) {
-    header("Location: login.html");
+    header("Location: telalogin.html");
     exit();
 }
 
@@ -578,8 +578,9 @@ $avatar = strtoupper(substr($aluno_nome_completo, 0, 1));
           <a href="#" class="dropdown-toggle">Área do Aluno</a>
           <ul class="dropdown-menu">
             <li><a href="atualizarsenha.html">Atualizar senha</a></li>
-            <li><a href="alterarcadastro.html">Alterar cadastro</a></li>
+            <li><a href="#AlterarCadastro">Alterar cadastro</a></li>
             <li><a href="areadoaluno.php">Acessar área do aluno</a></li>
+<li><a href="logout.php">Sair</a></li>
           </ul>
         </li>
       </ul>

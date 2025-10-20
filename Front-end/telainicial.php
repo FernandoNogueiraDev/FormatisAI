@@ -700,8 +700,9 @@ if(isset($_SESSION['usuario_email'])){
             <a href="#" class="dropdown-toggle">Área do Aluno</a>
             <ul class="dropdown-menu">
               <li><a href="atualizarsenha.html">Atualizar senha</a></li>
-              <li><a href="alterarcadastro.html">Alterar cadastro</a></li>
+              <li><a href="#AlterarCadastro">Alterar cadastro</a></li>
               <li><a href="areadoaluno.php">Acessar área do aluno</a></li>
+<li><a href="logout.php">Sair</a></li>
             </ul>
           </li>
         </ul>
@@ -837,7 +838,7 @@ if(isset($_SESSION['usuario_email'])){
       <!-- SEÇÃO GERAR CURSO PERSONALIZADO -->
       <section class="section generate-section">
         <h2 class="section-title">Não encontrou o que procura?</h2>
-        <p class="section-subtitle">Crie um curso personalizado sobre qualquer assunto que desejar com nossa IA</p>
+        <p class="section-subtitle" style="color: white;">Crie um curso personalizado sobre qualquer assunto que desejar com nossa IA</p>
         <button class="btn-gerar" onclick="abrirModal()">
           ✨ Gerar Curso Personalizado
         </button>

@@ -590,8 +590,9 @@ $mostrar_dados_exemplo = false;
           <a href="#" class="dropdown-toggle">Área do Aluno</a>
           <ul class="dropdown-menu">
             <li><a href="atualizarsenha.html">Atualizar senha</a></li>
-            <li><a href="alterarcadastro.html">Alterar cadastro</a></li>
+            <li><a href="#AlterarCadastro">Alterar cadastro</a></li>
             <li><a href="areadoaluno.php">Acessar área do aluno</a></li>
+<li><a href="logout.php">Sair</a></li>
           </ul>
         </li>
       </ul>
