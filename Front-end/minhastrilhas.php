@@ -861,18 +861,19 @@ if (isset($_SESSION['usuario_email'])) {
   <nav class="navbar" role="navigation" aria-label="Navegação principal">
     <div class="logo"><a href="telainicial.php" aria-label="Página inicial"><img src="imgs/logo.png" alt="logo"></a></div>
     <ul class="nav-links">
-      <li><a href="telameuscursos.html">Minhas trilhas</a></li>
+      <li><a href="telameuscursos.php">Minhas trilhas</a></li>
       <li><a href="telacursos.html">Cursos</a></li>
       <li><a href="quemsomos.html">Quem Somos</a></li>
-      <li><a href="#ajuda">Ajuda</a></li>
+      <li><a href="ajuda.html">Ajuda</a></li>
 
       <!-- Menu dropdown corrigido e alinhado -->
       <li class="dropdown">
         <a href="#" class="dropdown-toggle">Área do Aluno</a>
         <ul class="dropdown-menu">
-          <li><a href="atualizarsenha.html">Atualizar senha</a></li>
-          <li><a href="alterarcadastro.html">Alterar cadastro</a></li>
+          <li><a href="#AtualizarSenha">Atualizar senha</a></li>
+          <li><a href="#AlterarCadastro">Alterar cadastro</a></li>
           <li><a href="areadoaluno.php">Acessar área do aluno</a></li>
+<li><a href="logout.php">Sair</a></li>
         </ul>
       </li>
     </ul>
@@ -1142,7 +1143,7 @@ $video_id = $video_id[1];
             <div style="text-align: center; padding: 50px;">
                 <h2>Trilha vazia</h2>
                 <p>Esta trilha ainda não possui conteúdo.</p>
-                <button class="btn" onclick="window.location.href='telameuscursos.html'">Voltar para Minhas Trilhas</button>
+                <button class="btn" onclick="window.location.href='telameuscursos.php'">Voltar para Minhas Trilhas</button>
             </div>
         `;
       }
