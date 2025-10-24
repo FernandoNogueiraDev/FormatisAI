@@ -6,7 +6,7 @@ class TrilhaIA
 
     public static function montaTrilha($json_string)
     {
-        $current_directory = $_SERVER['DOCUMENT_ROOT'] . '/IA';
+        $current_directory = $_SERVER['DOCUMENT_ROOT'] . '../IA';
 
         // Display the current directory
         //echo "The current working directory is: " . $current_directory;
