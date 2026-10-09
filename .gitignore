@@ -86,6 +86,12 @@ coverage.xml
 .env.local
 .env.*.local
 
+# ================================================
+# 🤖 IA (scripts compilados e ambiente virtual empacotado)
+# ================================================
+IA/*.exe
+IA/.venv.zip
+
 # OS files
 .DS_Store
 Thumbs.db

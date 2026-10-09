@@ -1,7 +1,22 @@
+Depois de qualquer alteração nos scripts .py, é preciso recompilar
+para gerar/atualizar o .exe correspondente e copiar pra pasta IA do
+XAMPP (repita o comando para cada script: gerar_trilha.py, duvida.py
+e questionario.py).
+
 Linux:
 pyinstaller --onefile --hidden-import=appdirs --collect-submodules venv/lib/python3.9/site-packages --paths venv/lib/python3.9/site-packages/ gerar_trilha.py
+pyinstaller --onefile --hidden-import=appdirs --collect-submodules venv/lib/python3.9/site-packages --paths venv/lib/python3.9/site-packages/ duvida.py
+pyinstaller --onefile --hidden-import=appdirs --collect-submodules venv/lib/python3.9/site-packages --paths venv/lib/python3.9/site-packages/ questionario.py
 
 Windows:
 .\.venv\Scripts\activate
 pyinstaller --onefile --hidden-import=appdirs --collect-submodules .venv/Lib/site-packages --paths .venv/Lib/site-packages gerar_trilha.py
+pyinstaller --onefile --hidden-import=appdirs --collect-submodules .venv/Lib/site-packages --paths .venv/Lib/site-packages duvida.py
+pyinstaller --onefile --hidden-import=appdirs --collect-submodules .venv/Lib/site-packages --paths .venv/Lib/site-packages questionario.py
 copy .\dist\gerar_trilha.exe C:\xampp\htdocs\IA\
+copy .\dist\duvida.exe C:\xampp\htdocs\IA\
+copy .\dist\questionario.exe C:\xampp\htdocs\IA\
+
+IMPORTANTE: o arquivo IA\.env (com as chaves de API) também precisa
+estar em C:\xampp\htdocs\IA\, do lado dos .exe. Ele NUNCA deve ir
+para o GitHub (já está no .gitignore).
