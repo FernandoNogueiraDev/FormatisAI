@@ -207,7 +207,7 @@ $mostrar_dados_exemplo = false;
                 <h3>📝 Nenhuma trilha em andamento</h3>
                 <p>Você ainda não se inscreveu em nenhuma trilha ou não possui trilhas em progresso.</p>
                 <p>Explore nossa plataforma e comece sua jornada de aprendizado!</p>
-                <a href="telatrilhas.html" class="btn-explorar">Explorar Trilhas</a>
+                <a href="telacursos.html" class="btn-explorar">Explorar Trilhas</a>
               <?php endif; ?>
             <?php endif; ?>
           </div>

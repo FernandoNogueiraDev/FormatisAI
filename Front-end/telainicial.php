@@ -197,49 +197,117 @@ if(isset($_SESSION['usuario_email'])){
         </button>
       </section>
 
-      <!-- MODAL GERAR CURSO -->
-      <div id="modalCurso" class="modal">
-        <div class="modal-container">
-          <button class="modal-close" onclick="fecharModal()">×</button>
-          <h2>Criar Curso Personalizado com IA</h2>
-          
-          <input type="text" class="input-box" placeholder="Digite o tema do curso...">
+     <!-- MODAL GERAR CURSO (padronizado) -->
+<div id="modalCurso" class="modal-overlay" role="dialog" aria-modal="true">
+  <div class="modal-box">
 
-          <div class="section-modal">
-            <h3>Como deseja ver o conteúdo?</h3>
-            <div class="btn-group" id="tipoConteudo">
-              <div class="btn" data-value="video">🎥 Vídeo</div>
-              <div class="btn" data-value="artigo">📝 Artigo</div>
-              <div class="btn" data-value="ambos">📚 Ambos</div>
-            </div>
-          </div>
-
-          <div class="section-modal hidden" id="duracaoSection">
-            <h3>Tempo de Duração</h3>
-            <div class="btn-group" id="duracaoBtns">
-              <div class="btn" data-value="curto">⏱️ Curto<div>10-15 min</div></div>
-              <div class="btn" data-value="medio">🕒 Médio<div>20-25 min</div></div>
-              <div class="btn" data-value="longo">⏳ Longo<div>30+ min</div></div>
-            </div>
-          </div>
-
-          <div class="section-modal">
-            <h3>Nível de Conhecimento</h3>
-            <div class="btn-group" id="nivelBtns">
-              <div class="btn" data-value="basico">👶 Básico</div>
-              <div class="btn" data-value="medio">🚶 Intermediário</div>
-              <div class="btn" data-value="avancado">🏃 Avançado</div>
-            </div>
-          </div>
-
-          <div class="submit-btn">
-            <button id="gerarBtn" class="btn"><span>🚀 Gerar Curso</span></button>
-          </div>
-          
-          <div id="mensagemStatus"></div>
-        </div>
+    <!-- Header -->
+    <div class="modal-header">
+      <button class="modal-fechar" onclick="fecharModal()" aria-label="Fechar">×</button>
+      <span class="modal-header__emoji">✨</span>
+      <h2 class="modal-header__titulo">Criar curso personalizado</h2>
+      <p class="modal-header__sub">A IA vai montar o curso do seu jeito</p>
+      <div class="modal-progresso">
+        <span class="modal-progresso__dot ativo"></span>
+        <span class="modal-progresso__dot"></span>
+        <span class="modal-progresso__dot"></span>
       </div>
     </div>
+
+    <!-- Corpo -->
+    <div class="modal-body">
+
+      <!-- 1. Tema -->
+      <span class="modal-label">
+        <span class="modal-label__num">1</span>
+        Sobre o que quer aprender?
+      </span>
+      <input type="text" id="temaCurso" class="modal-input"
+             placeholder="Ex: Python para iniciantes, Marketing digital...">
+
+      <!-- 2. Formato -->
+      <span class="modal-label">
+        <span class="modal-label__num">2</span>
+        Como prefere o conteúdo?
+      </span>
+      <div class="formatos-grid" id="formatosGrid">
+        <div class="formato-card ativo" data-valor="video">
+          <span class="check-badge">✓</span>
+          <span class="formato-card__ico">🎬</span>
+          <span class="formato-card__nome">Vídeo</span>
+          <span class="formato-card__desc">Assistir aulas</span>
+        </div>
+        <div class="formato-card" data-valor="artigo">
+          <span class="check-badge">✓</span>
+          <span class="formato-card__ico">📖</span>
+          <span class="formato-card__nome">Artigo</span>
+          <span class="formato-card__desc">Ler no ritmo</span>
+        </div>
+        <div class="formato-card" data-valor="ambos">
+          <span class="check-badge">✓</span>
+          <span class="formato-card__ico">🎯</span>
+          <span class="formato-card__nome">Ambos</span>
+          <span class="formato-card__desc">Combinar os dois</span>
+        </div>
+      </div>
+
+      <!-- 3. Duração -->
+      <span class="modal-label" id="duracaoLabel">
+        <span class="modal-label__num">3</span>
+        Tempo de duração?
+      </span>
+      <div class="niveis-grid" id="duracaoGrid">
+        <div class="nivel-card ativo" data-valor="curto">
+          <span class="check-badge">✓</span>
+          <span class="nivel-card__ico">⚡</span>
+          <span class="nivel-card__nome">Curto</span>
+          <span class="nivel-card__desc">10 a 15 min</span>
+        </div>
+        <div class="nivel-card" data-valor="medio">
+          <span class="check-badge">✓</span>
+          <span class="nivel-card__ico">🕒</span>
+          <span class="nivel-card__nome">Médio</span>
+          <span class="nivel-card__desc">20 a 25 min</span>
+        </div>
+        <div class="nivel-card" data-valor="longo">
+          <span class="check-badge">✓</span>
+          <span class="nivel-card__ico">⏳</span>
+          <span class="nivel-card__nome">Longo</span>
+          <span class="nivel-card__desc">30+ min</span>
+        </div>
+      </div>
+
+      <!-- 4. Nível -->
+      <span class="modal-label">
+        <span class="modal-label__num">4</span>
+        Qual seu nível?
+      </span>
+      <div class="niveis-grid" id="nivelGrid">
+        <div class="nivel-card ativo" data-valor="basico">
+          <span class="check-badge">✓</span>
+          <span class="nivel-card__ico">🌱</span>
+          <span class="nivel-card__nome">Básico</span>
+          <span class="nivel-card__desc">Nunca vi nada</span>
+        </div>
+        <div class="nivel-card" data-valor="medio">
+          <span class="check-badge">✓</span>
+          <span class="nivel-card__ico">🌿</span>
+          <span class="nivel-card__nome">Médio</span>
+          <span class="nivel-card__desc">Já conheço um pouco</span>
+        </div>
+        <div class="nivel-card" data-valor="avancado">
+          <span class="check-badge">✓</span>
+          <span class="nivel-card__ico">🌳</span>
+          <span class="nivel-card__nome">Avançado</span>
+          <span class="nivel-card__desc">Quero me aprofundar</span>
+        </div>
+      </div>
+
+      <button class="modal-btn" id="gerarBtn">✨ Gerar curso</button>
+
+    </div>
+  </div>
+</div>
 
     <script src="../js/telainicial.js"></script>
   </body>

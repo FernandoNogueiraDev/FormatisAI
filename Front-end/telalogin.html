@@ -3,64 +3,77 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Formatis - Login</title>
+  <title>Formatis — Login</title>
   <link rel="icon" href="imgs/favicon1.png" type="image/png">
   <link rel="stylesheet" href="../css/telalogin.css">
-
 </head>
 <body>
 
-<div class="login-container">
-  <div class="logo">
-    <img src="imgs/logo.png" alt="Formatis" onerror="this.src='https://via.placeholder.com/200/3d4ff7/ffffff?text=Formatis'">
-  </div>
-  
-  <h2>Bem-vindo de volta!</h2>
-  <p class="subtitle">Faça login para continuar sua jornada de aprendizado</p>
-  
-  <form id="loginForm">
-    <div class="form-group">
-      <label for="username">E-mail ou usuário</label>
-      <div class="input-with-icon">
-        <span class="input-icon">👤</span>
-        <input type="text" id="username" placeholder="seu@email.com" autocomplete="username">
+<div class="login-page">
+
+  <!-- Topo: logo + boas-vindas -->
+  <header class="login-hero">
+    <div class="login-logo">
+      <img src="imgs/logo.png" alt="Formatis"
+           onerror="this.src='https://via.placeholder.com/200/3d4ff7/ffffff?text=Formatis'">
+    </div>
+    <h1>Bem-vindo de volta</h1>
+    <p>Faça login para continuar sua jornada</p>
+  </header>
+
+  <!-- Card do formulário -->
+  <main class="login-card">
+    <form id="loginForm" onsubmit="return false;">
+
+      <div class="field">
+        <label for="username">E-mail ou usuário</label>
+        <div class="input-wrap">
+          <span class="input-ico">👤</span>
+          <input type="text" id="username" placeholder="seu@email.com" autocomplete="username">
+        </div>
       </div>
-    </div>
-    
-    <div class="form-group">
-      <label for="password">Senha</label>
-      <div class="input-with-icon">
-        <span class="input-icon">🔒</span>
-        <input type="password" id="password" placeholder="Sua senha" autocomplete="current-password">
+
+      <div class="field">
+        <label for="password">Senha</label>
+        <div class="input-wrap">
+          <span class="input-ico">🔒</span>
+          <input type="password" id="password" placeholder="Sua senha" autocomplete="current-password">
+          <button type="button" class="toggle-pass" id="togglePass" onclick="toggleSenha()" aria-label="Mostrar senha">👁</button>
+        </div>
       </div>
-    </div>
-    
-    <div class="button-group">
-      <button type="button" class="btn btn-primary" onclick="login()" id="loginBtn">
-        <span>🚀 Entrar na Plataforma</span>
+
+      <div class="row-between">
+        <label class="checkbox">
+          <input type="checkbox" id="lembrar">
+          <span>Lembrar de mim</span>
+        </label>
+        <a href="#" class="link-suave" onclick="esqueciSenha(); return false;">Esqueci a senha</a>
+      </div>
+
+      <button type="button" class="btn-primario" id="loginBtn" onclick="login()">
+        <span class="btn-primario__txt">Entrar na plataforma →</span>
+        <span class="btn-primario__load" style="display:none;">
+          <span class="spinner"></span> Entrando...
+        </span>
       </button>
-      <button type="button" class="btn btn-secondary" onclick="cadastro()">
-        <span>📝 Criar Nova Conta</span>
+
+      <div class="divisor"><span>ou</span></div>
+
+      <button type="button" class="btn-visitante" onclick="continuarComoVisitante()">
+        🔍 Explorar como visitante
       </button>
-    </div>
-  </form>
-  
-  <div class="login-links">
-    <a href="#" onclick="esqueciSenha()">🔓 Esqueci minha senha</a>
-    <a href="#" onclick="continuarComoVisitante()">👀 Continuar como visitante</a>
-  </div>
-  
-  <div class="guest-section">
-    <p style="color: #666; margin-bottom: 15px; font-size: 0.9rem;">
-      Quer apenas explorar?
-    </p>
-    <button type="button" class="btn btn-ghost" onclick="continuarComoVisitante()">
-      <span>🔍 Explorar como Visitante</span>
-    </button>
-  </div>
-  
-  <div id="error-message" class="error" style="display: none;"></div>
-  <div id="success-message" class="success" style="display: none;"></div>
+
+    </form>
+
+    <div id="error-message" class="msg msg--erro" style="display: none;"></div>
+    <div id="success-message" class="msg msg--sucesso" style="display: none;"></div>
+  </main>
+
+  <p class="login-copy">
+    Não tem conta?
+    <a href="#" onclick="cadastro(); return false;">Criar agora</a>
+  </p>
+
 </div>
 
 <script src="../js/telalogin.js"></script>
