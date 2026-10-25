@@ -1,0 +1,58 @@
+-- ============================================================
+-- 1) TABELA DE CURSOS E SUAS COLUNAS NOVAS
+-- ============================================================
+CREATE TABLE IF NOT EXISTS cursos (
+  id INT AUTO_INCREMENT PRIMARY KEY,
+  slug VARCHAR(100) NOT NULL UNIQUE,
+  nome VARCHAR(100) NOT NULL,
+  descricao TEXT NOT NULL,
+  carga_horaria INT NOT NULL,
+  modulos INT NOT NULL,
+  imagem VARCHAR(255) DEFAULT NULL,
+  ativo TINYINT(1) DEFAULT 1,
+  ordem INT DEFAULT 0,
+  criado_em TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+-- Colunas novas (se der erro "duplicado", ignore e vá para a próxima)
+ALTER TABLE cursos ADD COLUMN nivel VARCHAR(30) DEFAULT 'Iniciante';
+ALTER TABLE cursos ADD COLUMN categoria VARCHAR(50) DEFAULT 'Programação';
+ALTER TABLE cursos ADD COLUMN cor VARCHAR(20) DEFAULT '#2563eb';
+ALTER TABLE cursos ADD COLUMN icone VARCHAR(10) DEFAULT '📘';
+
+-- Inserir os cursos base (se não existirem)
+INSERT IGNORE INTO cursos (slug, nome, descricao, carga_horaria, modulos, icone, cor, ordem) VALUES
+('java','Java','Domine os fundamentos da linguagem Java...',40,15,'☕','#f89820',1),
+('python','Python','Aprenda Python do zero...',35,12,'🐍','#3776ab',2),
+('html-css','HTML e CSS','Crie sites modernos e responsivos...',25,10,'🌐','#e34f26',3),
+('ingles','Inglês','Amplie suas oportunidades...',50,20,'🇬🇧','#1e40af',4),
+('excel','Excel','Transforme dados em resultados...',30,12,'📊','#217346',5),
+('word','Word','Aprenda a criar documentos profissionais...',20,8,'📝','#2b579a',6),
+('powerpoint','PowerPoint','Crie apresentações impactantes...',18,7,'📽️','#d24726',7),
+('linguagem-c','Linguagem C','Entenda a base de todas as linguagens...',30,11,'⚙️','#5c6bc0',8),
+('empreendedorismo','Empreendedorismo','Desperte sua mentalidade empreendedora...',28,11,'🚀','#16a34a',9),
+('logica-de-programacao','Lógica de Programação','Construa o raciocínio essencial...',25,9,'🧠','#8b5cf6',10);
+
+-- ============================================================
+-- 2) TABELA DE MÓDULOS E SUAS COLUNAS NOVAS
+-- ============================================================
+CREATE TABLE IF NOT EXISTS modulos_curso (
+  id INT AUTO_INCREMENT PRIMARY KEY,
+  curso_id INT NOT NULL,
+  titulo VARCHAR(200) NOT NULL,
+  ordem INT DEFAULT 0,
+  FOREIGN KEY (curso_id) REFERENCES cursos(id) ON DELETE CASCADE
+);
+
+-- Colunas novas (duração, conteúdo do artigo e link do vídeo)
+ALTER TABLE modulos_curso ADD COLUMN duracao VARCHAR(20) DEFAULT '15 min';
+ALTER TABLE modulos_curso ADD COLUMN conteudo MEDIUMTEXT DEFAULT NULL;
+ALTER TABLE modulos_curso ADD COLUMN video_url VARCHAR(255) DEFAULT NULL;
+
+-- ============================================================
+-- 3) ATUALIZAR CATEGORIAS (Para as cores funcionarem)
+-- ============================================================
+UPDATE cursos SET categoria = 'Programação' WHERE slug IN ('java','python','html-css','linguagem-c','logica-de-programacao');
+UPDATE cursos SET categoria = 'Produtividade' WHERE slug IN ('excel','word','powerpoint');
+UPDATE cursos SET categoria = 'Idiomas' WHERE slug = 'ingles';
+UPDATE cursos SET categoria = 'Negócios' WHERE slug = 'empreendedorismo';
